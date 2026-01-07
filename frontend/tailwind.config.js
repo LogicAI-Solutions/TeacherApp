@@ -23,6 +23,7 @@ export default {
         },
         danger: '#ef4444',
         success: '#22c55e',
+        warning: '#eab308',   // Yellow 500
         border: '#334155',    // Slate 700
       },
       fontFamily: {

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import api from '../api';
-import { Plus, Search, Pencil, Trash, X, AlertTriangle, UserCircle, LineChart as LineChartIcon, Download } from 'lucide-react';
+import { Plus, Search, Pencil, Trash, X, AlertTriangle, UserCircle, LineChart as LineChartIcon, Download, MoreVertical, CheckCircle, XCircle } from 'lucide-react';
 import html2canvas from 'html2canvas';
 import { formatPhone, unmaskPhone } from '../utils/masks';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
@@ -35,7 +35,7 @@ export const Students = () => {
     const [classes, setClasses] = useState<ClassModel[]>([]);
     const [search, setSearch] = useState('');
     const [page, setPage] = useState(0);
-    const [limit] = useState(10); // Items per page
+    const [limit] = useState(8); // Diminuir para nao ter que ficar scrollando a pagina para baixo para ver mais alunos
     const [isLoading, setIsLoading] = useState(true);
 
     // Modal States
@@ -53,6 +53,22 @@ export const Students = () => {
     const [evolutionData, setEvolutionData] = useState<EvolutionPoint[]>([]);
     const [reportMonth, setReportMonth] = useState<number | ''>(''); // '' = Todos
     const [reportYear, setReportYear] = useState<number>(new Date().getFullYear());
+
+    // Dropdown Menu State
+    const [openMenuId, setOpenMenuId] = useState<number | null>(null);
+
+    // Close menu when clicking outside
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (openMenuId !== null && !(event.target as Element).closest('.action-menu-container')) {
+                setOpenMenuId(null);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [openMenuId]);
 
 
     useEffect(() => {
@@ -225,16 +241,26 @@ export const Students = () => {
             </div>
 
             {/* Search Bar */}
-            <div className="bg-bg-card border border-white/5 rounded-xl p-4 mb-6 sticky top-0 z-10 shadow-xl backdrop-blur-md">
-                <div className="relative">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-text-muted" size={20} />
-                    <input
-                        type="text"
-                        placeholder="Buscar por nome do aluno ou responsável..."
-                        className="w-full bg-bg-dark border border-white/10 rounded-lg pl-10 pr-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-primary placeholder-text-muted/50 transition-all"
-                        value={search}
-                        onChange={e => setSearch(e.target.value)}
-                    />
+            <div className={`transition-all duration-500 mb-6 sticky top-0 z-10 ${search.length > 0 ? '-translate-y-2 opacity-95' : ''}`}>
+                <div className="relative group max-w-2xl mx-auto shadow-2xl rounded-2xl">
+                    <div className="absolute inset-0 bg-primary/10 rounded-2xl blur-lg group-hover:bg-primary/30 transition-all duration-500"></div>
+                    <div className="relative bg-bg-card border border-white/5 rounded-2xl flex items-center p-1">
+                        <div className="pl-4 pr-3 text-text-muted group-focus-within:text-primary transition-colors">
+                            <Search size={24} />
+                        </div>
+                        <input
+                            type="text"
+                            placeholder="Buscar aluno por nome..."
+                            className="w-full bg-transparent border-none text-white text-lg placeholder-text-muted/50 focus:ring-0 focus:outline-none py-3"
+                            value={search}
+                            onChange={e => setSearch(e.target.value)}
+                        />
+                         {search && (
+                            <button onClick={() => setSearch('')} className="p-2 text-text-muted hover:text-white hover:bg-white/10 rounded-xl transition-all mr-1">
+                                <X size={20} />
+                            </button>
+                        )}
+                    </div>
                 </div>
             </div>
 
@@ -254,11 +280,14 @@ export const Students = () => {
                                 <th className="text-left p-4 text-xs font-bold text-text-muted uppercase tracking-wider">Responsável</th>
                                 <th className="text-left p-4 text-xs font-bold text-text-muted uppercase tracking-wider">Ano Escolar</th>
                                 <th className="text-left p-4 text-xs font-bold text-text-muted uppercase tracking-wider">Tipo de Aula</th>
+                                <th className="text-center p-4 text-xs font-bold text-text-muted uppercase tracking-wider">Status</th>
                                 <th className="text-right p-4 text-xs font-bold text-text-muted uppercase tracking-wider">Ações</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-white/5">
-                            {students.map(student => (
+                            {students.map((student, index) => {
+                                const isLastItems = students.length > 2 && index >= students.length - 2;
+                                return (
                                 <tr key={student.id} className="hover:bg-white/5 transition-colors">
                                     <td className="p-4">
                                         <div className="font-medium text-white">{student.name}</div>
@@ -270,43 +299,71 @@ export const Students = () => {
                                     </td>
                                     <td className="p-4 text-text-muted text-sm">{student.school_year || '-'}</td>
                                     <td className="p-4 text-text-muted text-sm">{student.class_type || '-'}</td>
-                                    <td className="p-4 text-right">
-                                        <div className="flex justify-end gap-2">
-                                            <button
-                                                onClick={() => handleViewEvolution(student)}
-                                                className="p-2 hover:bg-white/10 text-text-muted hover:text-primary rounded-lg transition-colors"
-                                                title="Ver Evolução"
-                                            >
-                                                <LineChartIcon size={18} />
-                                            </button>
-                                            <button
-                                                onClick={() => {
-                                                    setEditingStudent(student);
-                                                    setEditStudentData({
-                                                        name: student.name,
-                                                        phone: student.phone || '',
-                                                        parent_name: student.parent_name || '',
-                                                        parent_phone: student.parent_phone || '',
-                                                        parent_email: student.parent_email || '',
-                                                        school_year: student.school_year || '',
-                                                        class_type: (student.class_type as any) || '',
-                                                        active: student.active ?? true
-                                                    });
-                                                }}
-                                                className="p-2 hover:bg-white/10 text-text-muted hover:text-white rounded-lg transition-colors"
-                                            >
-                                                <Pencil size={18} />
-                                            </button>
-                                            <button
-                                                onClick={() => setDeletingStudent(student)}
-                                                className="p-2 hover:bg-danger/20 text-text-muted hover:text-danger rounded-lg transition-colors"
-                                            >
-                                                <Trash size={18} />
-                                            </button>
+                                    <td className="p-4 text-center">
+                                        <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border ${student.active
+                                            ? 'bg-success/10 text-success border-success/20'
+                                            : 'bg-text-muted/10 text-text-muted border-white/5'}`}>
+                                            {student.active ? <CheckCircle size={12} /> : <XCircle size={12} />}
+                                            {student.active ? 'Ativo' : 'Inativo'}
                                         </div>
                                     </td>
+                                    <td className="p-4 text-right relative action-menu-container">
+                                        <button
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                setOpenMenuId(openMenuId === student.id ? null : student.id);
+                                            }}
+                                            className={`p-2 rounded-lg transition-colors ${openMenuId === student.id ? 'bg-white/10 text-white' : 'text-text-muted hover:text-white hover:bg-white/5'}`}
+                                        >
+                                            <MoreVertical size={18} />
+                                        </button>
+
+                                        {openMenuId === student.id && (
+                                            <div className={`absolute right-4 z-50 w-48 bg-bg-card border border-white/10 rounded-xl shadow-xl overflow-hidden animate-fade-in ${isLastItems ? 'bottom-12 origin-bottom-right' : 'top-12 origin-top-right'}`}>
+                                                <button
+                                                    onClick={() => {
+                                                        handleViewEvolution(student);
+                                                        setOpenMenuId(null);
+                                                    }}
+                                                    className="w-full text-left px-4 py-3 text-sm text-text-muted hover:text-white hover:bg-white/5 flex items-center gap-2 transition-colors"
+                                                >
+                                                    <LineChartIcon size={16} /> Ver Evolução
+                                                </button>
+                                                <button
+                                                    onClick={() => {
+                                                        setEditingStudent(student);
+                                                        setEditStudentData({
+                                                            name: student.name,
+                                                            phone: student.phone || '',
+                                                            parent_name: student.parent_name || '',
+                                                            parent_phone: student.parent_phone || '',
+                                                            parent_email: student.parent_email || '',
+                                                            school_year: student.school_year || '',
+                                                            class_type: (student.class_type as any) || '',
+                                                            active: student.active ?? true
+                                                        });
+                                                        setOpenMenuId(null);
+                                                    }}
+                                                    className="w-full text-left px-4 py-3 text-sm text-text-muted hover:text-white hover:bg-white/5 flex items-center gap-2 transition-colors"
+                                                >
+                                                    <Pencil size={16} /> Editar
+                                                </button>
+                                                <div className="h-[1px] bg-white/5 mx-2 my-1"></div>
+                                                <button
+                                                    onClick={() => {
+                                                        setDeletingStudent(student);
+                                                        setOpenMenuId(null);
+                                                    }}
+                                                    className="w-full text-left px-4 py-3 text-sm text-danger hover:bg-danger/10 flex items-center gap-2 transition-colors"
+                                                >
+                                                    <Trash size={16} /> Excluir
+                                                </button>
+                                            </div>
+                                        )}
+                                    </td>
                                 </tr>
-                            ))}
+                                );
+                            })}
                             {students.length === 0 && !isLoading && (
                                 <tr>
                                     <td colSpan={4} className="p-8 text-center text-text-muted italic">Nenhum aluno encontrado.</td>
