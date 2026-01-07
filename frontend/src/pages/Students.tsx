@@ -35,7 +35,7 @@ export const Students = () => {
     const [classes, setClasses] = useState<ClassModel[]>([]);
     const [search, setSearch] = useState('');
     const [page, setPage] = useState(0);
-    const [limit] = useState(10); // Items per page
+    const [limit] = useState(8); // Diminuir para nao ter que ficar scrollando a pagina para baixo para ver mais alunos
     const [isLoading, setIsLoading] = useState(true);
 
     // Modal States
@@ -275,7 +275,9 @@ export const Students = () => {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-white/5">
-                            {students.map(student => (
+                            {students.map((student, index) => {
+                                const isLastItems = students.length > 2 && index >= students.length - 2;
+                                return (
                                 <tr key={student.id} className="hover:bg-white/5 transition-colors">
                                     <td className="p-4">
                                         <div className="font-medium text-white">{student.name}</div>
@@ -307,7 +309,7 @@ export const Students = () => {
                                         </button>
 
                                         {openMenuId === student.id && (
-                                            <div className="absolute right-4 top-12 z-50 w-48 bg-bg-card border border-white/10 rounded-xl shadow-xl overflow-hidden animate-fade-in origin-top-right">
+                                            <div className={`absolute right-4 z-50 w-48 bg-bg-card border border-white/10 rounded-xl shadow-xl overflow-hidden animate-fade-in ${isLastItems ? 'bottom-12 origin-bottom-right' : 'top-12 origin-top-right'}`}>
                                                 <button
                                                     onClick={() => {
                                                         handleViewEvolution(student);
@@ -350,7 +352,8 @@ export const Students = () => {
                                         )}
                                     </td>
                                 </tr>
-                            ))}
+                                );
+                            })}
                             {students.length === 0 && !isLoading && (
                                 <tr>
                                     <td colSpan={4} className="p-8 text-center text-text-muted italic">Nenhum aluno encontrado.</td>
