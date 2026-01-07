@@ -677,8 +677,8 @@ export const ClassDetails = () => {
                                                             value={log.status}
                                                             onChange={e => updateLog(s.id, 'status', e.target.value)}
                                                         >
-                                                            <option value="present">Presente</option>
-                                                            <option value="absent">Ausente</option>
+                                                            <option value="present" className="bg-bg-card text-white">Presente</option>
+                                                            <option value="absent" className="bg-bg-card text-white">Ausente</option>
                                                         </select>
                                                     </td>
                                                     <td className="p-4 text-center">
@@ -786,12 +786,12 @@ export const ClassDetails = () => {
                         <div className="flex gap-2">
                             <select value={selectedMonth} onChange={e => setSelectedMonth(Number(e.target.value))} className="bg-bg-dark border border-white/10 rounded-lg px-3 py-1 text-white">
                                 {Array.from({ length: 12 }, (_, i) => i + 1).map(m => (
-                                    <option key={m} value={m}>{new Date(0, m - 1).toLocaleString('pt-BR', { month: 'long' })}</option>
+                                    <option key={m} value={m} className="bg-bg-dark text-white">{new Date(0, m - 1).toLocaleString('pt-BR', { month: 'long' })}</option>
                                 ))}
                             </select>
                             <select value={selectedYear} onChange={e => setSelectedYear(Number(e.target.value))} className="bg-bg-dark border border-white/10 rounded-lg px-3 py-1 text-white">
                                 {Array.from({ length: 5 }, (_, i) => new Date().getFullYear() - 2 + i).map(y => (
-                                    <option key={y} value={y}>{y}</option>
+                                    <option key={y} value={y} className="bg-bg-dark text-white">{y}</option>
                                 ))}
                             </select>
                         </div>
@@ -824,8 +824,8 @@ export const ClassDetails = () => {
                                                     value={payment.status}
                                                     onChange={e => updateLocalPayment(s.id, 'status', e.target.value)}
                                                 >
-                                                    <option value="PENDING">Pendente</option>
-                                                    <option value="PAID">Pago</option>
+                                                    <option value="PENDING" className="bg-bg-card text-white">Pendente</option>
+                                                    <option value="PAID" className="bg-bg-card text-white">Pago</option>
                                                 </select>
                                             </td>
                                             <td className="p-4">

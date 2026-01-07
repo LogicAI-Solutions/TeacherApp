@@ -243,7 +243,7 @@ export const Students = () => {
             {/* Search Bar */}
             <div className={`transition-all duration-500 mb-6 sticky top-0 z-10 ${search.length > 0 ? '-translate-y-2 opacity-95' : ''}`}>
                 <div className="relative group max-w-2xl mx-auto shadow-2xl rounded-2xl">
-                    <div className="absolute inset-0 bg-primary/20 rounded-2xl blur-lg group-hover:bg-primary/30 transition-all duration-500"></div>
+                    <div className="absolute inset-0 bg-primary/10 rounded-2xl blur-lg group-hover:bg-primary/30 transition-all duration-500"></div>
                     <div className="relative bg-bg-card border border-white/5 rounded-2xl flex items-center p-1">
                         <div className="pl-4 pr-3 text-text-muted group-focus-within:text-primary transition-colors">
                             <Search size={24} />

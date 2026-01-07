@@ -201,12 +201,12 @@ export const Payments = () => {
                     </button>
                     <select value={selectedMonth} onChange={e => setSelectedMonth(Number(e.target.value))} className="bg-bg-dark border border-white/10 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-1 focus:ring-primary">
                         {Array.from({ length: 12 }, (_, i) => i + 1).map(m => (
-                            <option key={m} value={m}>{new Date(0, m - 1).toLocaleString('pt-BR', { month: 'long' })}</option>
+                            <option key={m} value={m} className="bg-bg-dark text-white">{new Date(0, m - 1).toLocaleString('pt-BR', { month: 'long' })}</option>
                         ))}
                     </select>
                     <select value={selectedYear} onChange={e => setSelectedYear(Number(e.target.value))} className="bg-bg-dark border border-white/10 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-1 focus:ring-primary">
                         {Array.from({ length: 5 }, (_, i) => new Date().getFullYear() - 2 + i).map(y => (
-                            <option key={y} value={y}>{y}</option>
+                            <option key={y} value={y} className="bg-bg-dark text-white">{y}</option>
                         ))}
                     </select>
                 </div>
@@ -260,7 +260,7 @@ export const Payments = () => {
             {/* Search Bar */}
             <div className={`transition-all duration-500 mb-6 sticky top-0 z-10 ${search.length > 0 ? '-translate-y-2 opacity-95' : ''}`}>
                <div className="relative group max-w-2xl mx-auto shadow-2xl rounded-2xl">
-                    <div className="absolute inset-0 bg-primary/20 rounded-2xl blur-lg group-hover:bg-primary/30 transition-all duration-500"></div>
+                    <div className="absolute inset-0 bg-primary/10 rounded-2xl blur-lg group-hover:bg-primary/30 transition-all duration-500"></div>
                      <div className="relative bg-bg-card border border-white/5 rounded-2xl flex items-center p-1">
                         <div className="pl-4 pr-3 text-text-muted group-focus-within:text-primary transition-colors">
                             <Search size={24} />
@@ -277,7 +277,7 @@ export const Payments = () => {
             </div>
 
             {/* Table */}
-            <div className="glass-card overflow-hidden relative min-h-[400px]">
+            <div className="glass-card overflow-hidden relative min-h-[400px] flex flex-col justify-between">
                 {loading && (
                     <div className="absolute inset-0 z-50 flex items-center justify-center bg-bg-card/60 backdrop-blur-sm rounded-xl">
                         <Loading text="Carregando financeiro..." />
@@ -296,7 +296,7 @@ export const Payments = () => {
                         {saving ? 'Salvando...' : <><DollarSign size={16} /> Salvar Alterações</>}
                     </button>
                 </div>
-                <div className="overflow-x-auto">
+                <div className="overflow-x-auto flex-1">
                     <table className="w-full">
                         <thead className="bg-black/20">
                             <tr>
@@ -305,7 +305,7 @@ export const Payments = () => {
                                 <th className="text-left p-4 text-xs font-bold text-text-muted uppercase tracking-wider">Ano Escolar</th>
                                 <th className="text-left p-4 text-xs font-bold text-text-muted uppercase tracking-wider">Tipo de Aula</th>
                                 <th className="text-left p-4 text-xs font-bold text-text-muted uppercase tracking-wider w-[180px]">Status</th>
-                                <th className="text-left p-4 text-xs font-bold text-text-muted uppercase tracking-wider w-[180px]">Valor Pago</th>
+                                <th className="text-right p-4 text-xs font-bold text-text-muted uppercase tracking-wider w-[180px]">Valor Pago</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-white/5">
@@ -327,8 +327,8 @@ export const Payments = () => {
                                                 value={payment.status}
                                                 onChange={e => updateLocalPayment(student.id, 'status', e.target.value)}
                                             >
-                                                <option value="PENDING">Pendente</option>
-                                                <option value="PAID">Pago</option>
+                                                <option value="PENDING" className="bg-bg-card text-white">Pendente</option>
+                                                <option value="PAID" className="bg-bg-card text-white">Pago</option>
                                             </select>
                                         </td>
                                         <td className="p-4">
