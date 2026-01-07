@@ -241,16 +241,26 @@ export const Students = () => {
             </div>
 
             {/* Search Bar */}
-            <div className="bg-bg-card border border-white/5 rounded-xl p-4 mb-6 sticky top-0 z-10 shadow-xl backdrop-blur-md">
-                <div className="relative">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-text-muted" size={20} />
-                    <input
-                        type="text"
-                        placeholder="Buscar por nome do aluno ou responsável..."
-                        className="w-full bg-bg-dark border border-white/10 rounded-lg pl-10 pr-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-primary placeholder-text-muted/50 transition-all"
-                        value={search}
-                        onChange={e => setSearch(e.target.value)}
-                    />
+            <div className={`transition-all duration-500 mb-6 sticky top-0 z-10 ${search.length > 0 ? '-translate-y-2 opacity-95' : ''}`}>
+                <div className="relative group max-w-2xl mx-auto shadow-2xl rounded-2xl">
+                    <div className="absolute inset-0 bg-primary/20 rounded-2xl blur-lg group-hover:bg-primary/30 transition-all duration-500"></div>
+                    <div className="relative bg-bg-card border border-white/5 rounded-2xl flex items-center p-1">
+                        <div className="pl-4 pr-3 text-text-muted group-focus-within:text-primary transition-colors">
+                            <Search size={24} />
+                        </div>
+                        <input
+                            type="text"
+                            placeholder="Buscar aluno por nome..."
+                            className="w-full bg-transparent border-none text-white text-lg placeholder-text-muted/50 focus:ring-0 focus:outline-none py-3"
+                            value={search}
+                            onChange={e => setSearch(e.target.value)}
+                        />
+                         {search && (
+                            <button onClick={() => setSearch('')} className="p-2 text-text-muted hover:text-white hover:bg-white/10 rounded-xl transition-all mr-1">
+                                <X size={20} />
+                            </button>
+                        )}
+                    </div>
                 </div>
             </div>
 

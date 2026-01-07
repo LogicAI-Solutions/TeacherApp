@@ -195,7 +195,7 @@ export const Payments = () => {
                 <div className="flex gap-2 bg-bg-card p-2 rounded-xl border border-white/5">
                     <button
                         onClick={handleExportReport}
-                        className="bg-primary hover:bg-primary-hover text-white px-4 py-2 rounded-lg text-sm font-bold transition-colors shadow-lg shadow-primary/20 flex items-center gap-2"
+                        className="btn-primary-gradient px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2"
                     >
                         <DollarSign size={16} /> Exportar Relatório
                     </button>
@@ -214,46 +214,65 @@ export const Payments = () => {
 
             {/* Stats Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                <div className="glass-card p-6 flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center text-primary">
-                        <DollarSign size={24} />
-                    </div>
-                    <div>
-                        <p className="text-sm text-text-muted uppercase font-bold">Total Alunos</p>
-                        <p className="text-2xl font-bold text-white">{totalStudents}</p>
-                    </div>
+                <div className="card-gradient-1 p-6 rounded-2xl relative overflow-hidden group">
+                     <div className="absolute right-0 top-0 w-32 h-32 bg-primary/10 rounded-full -mr-10 -mt-10 blur-2xl group-hover:bg-primary/20 transition-all duration-500"></div>
+                     <div className="relative z-10">
+                        <div className="flex items-center gap-4 mb-4">
+                            <div className="w-12 h-12 rounded-xl bg-indigo-500/20 flex items-center justify-center text-indigo-400 border border-indigo-500/10">
+                                <DollarSign size={24} />
+                            </div>
+                            <span className="text-text-muted font-medium">Total de Alunos</span>
+                        </div>
+                        <p className="text-4xl font-bold text-white tracking-tight">{totalStudents}</p>
+                        <p className="text-sm text-indigo-400 mt-2 font-medium">Matrículas Ativas</p>
+                     </div>
                 </div>
-                <div className="glass-card p-6 flex items-center gap-4 border-l-4 border-l-success">
-                    <div className="w-12 h-12 rounded-full bg-success/20 flex items-center justify-center text-success">
-                        <CheckCircle size={24} />
-                    </div>
-                    <div>
-                        <p className="text-sm text-text-muted uppercase font-bold">Pagos</p>
-                        <p className="text-2xl font-bold text-white">{actualPaidCount}</p>
-                    </div>
+
+                <div className="card-gradient-1 p-6 rounded-2xl relative overflow-hidden group border-emerald-500/10 hover:border-emerald-500/20 transition-all">
+                     <div className="absolute right-0 top-0 w-32 h-32 bg-emerald-500/10 rounded-full -mr-10 -mt-10 blur-2xl group-hover:bg-emerald-500/20 transition-all duration-500"></div>
+                     <div className="relative z-10">
+                        <div className="flex items-center gap-4 mb-4">
+                            <div className="w-12 h-12 rounded-xl bg-emerald-500/20 flex items-center justify-center text-emerald-400 border border-emerald-500/10">
+                                <CheckCircle size={24} />
+                            </div>
+                            <span className="text-text-muted font-medium">Pagamentos Realizados</span>
+                        </div>
+                        <p className="text-4xl font-bold text-white tracking-tight">{actualPaidCount}</p>
+                        <p className="text-sm text-emerald-400 mt-2 font-medium">No mês atual</p>
+                     </div>
                 </div>
-                <div className="glass-card p-6 flex items-center gap-4 border-l-4 border-l-warning">
-                    <div className="w-12 h-12 rounded-full bg-warning/20 flex items-center justify-center text-warning">
-                        <AlertCircle size={24} />
-                    </div>
-                    <div>
-                        <p className="text-sm text-text-muted uppercase font-bold">Pendentes</p>
-                        <p className="text-2xl font-bold text-white">{pendingCount}</p>
-                    </div>
+
+                <div className="card-gradient-1 p-6 rounded-2xl relative overflow-hidden group border-amber-500/10 hover:border-amber-500/20 transition-all">
+                     <div className="absolute right-0 top-0 w-32 h-32 bg-amber-500/10 rounded-full -mr-10 -mt-10 blur-2xl group-hover:bg-amber-500/20 transition-all duration-500"></div>
+                     <div className="relative z-10">
+                        <div className="flex items-center gap-4 mb-4">
+                            <div className="w-12 h-12 rounded-xl bg-amber-500/20 flex items-center justify-center text-amber-400 border border-amber-500/10">
+                                <AlertCircle size={24} />
+                            </div>
+                            <span className="text-text-muted font-medium">Pagamentos Pendentes</span>
+                        </div>
+                        <p className="text-4xl font-bold text-white tracking-tight">{pendingCount}</p>
+                        <p className="text-sm text-amber-400 mt-2 font-medium">Aguardando regularização</p>
+                     </div>
                 </div>
             </div>
 
             {/* Search Bar */}
-            <div className="bg-bg-card border border-white/5 rounded-xl p-4 mb-6 sticky top-0 z-10 shadow-xl backdrop-blur-md">
-                <div className="relative">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-text-muted" size={20} />
-                    <input
-                        type="text"
-                        placeholder="Buscar aluno..."
-                        className="w-full bg-bg-dark border border-white/10 rounded-lg pl-10 pr-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-primary placeholder-text-muted/50 transition-all"
-                        value={search}
-                        onChange={e => setSearch(e.target.value)}
-                    />
+            <div className={`transition-all duration-500 mb-6 sticky top-0 z-10 ${search.length > 0 ? '-translate-y-2 opacity-95' : ''}`}>
+               <div className="relative group max-w-2xl mx-auto shadow-2xl rounded-2xl">
+                    <div className="absolute inset-0 bg-primary/20 rounded-2xl blur-lg group-hover:bg-primary/30 transition-all duration-500"></div>
+                     <div className="relative bg-bg-card border border-white/5 rounded-2xl flex items-center p-1">
+                        <div className="pl-4 pr-3 text-text-muted group-focus-within:text-primary transition-colors">
+                            <Search size={24} />
+                        </div>
+                        <input
+                            type="text"
+                            placeholder="Buscar aluno por nome..."
+                            className="w-full bg-transparent border-none text-white text-lg placeholder-text-muted/50 focus:ring-0 focus:outline-none py-3"
+                            value={search}
+                            onChange={e => setSearch(e.target.value)}
+                        />
+                    </div>
                 </div>
             </div>
 
@@ -270,9 +289,8 @@ export const Payments = () => {
                         onClick={handleSavePayments}
                         disabled={saving}
                         className={`
-                             bg-gradient-to-r from-success to-success-hover text-white px-6 py-2 rounded-lg font-bold shadow-lg shadow-success/25 
-                             transition-all flex items-center gap-2 text-sm
-                             ${saving ? 'opacity-70 cursor-wait' : 'hover:shadow-success/40 hover:-translate-y-1 active:translate-y-0'}
+                             btn-success-gradient px-6 py-2 rounded-lg font-bold flex items-center gap-2 text-sm
+                             ${saving ? 'opacity-70 cursor-wait' : ''}
                         `}
                     >
                         {saving ? 'Salvando...' : <><DollarSign size={16} /> Salvar Alterações</>}
