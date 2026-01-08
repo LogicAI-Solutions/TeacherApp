@@ -255,7 +255,7 @@ export const Students = () => {
                             value={search}
                             onChange={e => setSearch(e.target.value)}
                         />
-                         {search && (
+                        {search && (
                             <button onClick={() => setSearch('')} className="p-2 text-text-muted hover:text-white hover:bg-white/10 rounded-xl transition-all mr-1">
                                 <X size={20} />
                             </button>
@@ -288,80 +288,94 @@ export const Students = () => {
                             {students.map((student, index) => {
                                 const isLastItems = students.length > 2 && index >= students.length - 2;
                                 return (
-                                <tr key={student.id} className="hover:bg-white/5 transition-colors">
-                                    <td className="p-4">
-                                        <div className="font-medium text-white">{student.name}</div>
-                                    </td>
-                                    <td className="p-4 text-text-muted text-sm">{student.phone ? formatPhone(student.phone) : '-'}</td>
-                                    <td className="p-4">
-                                        <div className="text-sm text-white">{student.parent_name || '-'}</div>
-                                        <div className="text-xs text-text-muted">{student.parent_phone ? formatPhone(student.parent_phone) : ''}</div>
-                                    </td>
-                                    <td className="p-4 text-text-muted text-sm">{student.school_year || '-'}</td>
-                                    <td className="p-4 text-text-muted text-sm">{student.class_type || '-'}</td>
-                                    <td className="p-4 text-center">
-                                        <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border ${student.active
-                                            ? 'bg-success/10 text-success border-success/20'
-                                            : 'bg-text-muted/10 text-text-muted border-white/5'}`}>
-                                            {student.active ? <CheckCircle size={12} /> : <XCircle size={12} />}
-                                            {student.active ? 'Ativo' : 'Inativo'}
-                                        </div>
-                                    </td>
-                                    <td className="p-4 text-right relative action-menu-container">
-                                        <button
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                setOpenMenuId(openMenuId === student.id ? null : student.id);
-                                            }}
-                                            className={`p-2 rounded-lg transition-colors ${openMenuId === student.id ? 'bg-white/10 text-white' : 'text-text-muted hover:text-white hover:bg-white/5'}`}
-                                        >
-                                            <MoreVertical size={18} />
-                                        </button>
+                                    <tr key={student.id} className="hover:bg-white/5 transition-colors">
+                                        <td className="p-4">
+                                            <div className="font-medium text-white">{student.name}</div>
+                                        </td>
+                                        <td className="p-4 text-text-muted text-sm">{student.phone ? formatPhone(student.phone) : '-'}</td>
+                                        <td className="p-4">
+                                            <div className="text-sm text-white">{student.parent_name || '-'}</div>
+                                            <div className="text-xs text-text-muted">{student.parent_phone ? formatPhone(student.parent_phone) : ''}</div>
+                                        </td>
+                                        <td className="p-4 text-text-muted text-sm">{student.school_year || '-'}</td>
+                                        <td className="p-4 text-text-muted text-sm">{student.class_type || '-'}</td>
+                                        <td className="p-4 text-center">
+                                            <select
+                                                className={`px-3 py-1.5 rounded-lg text-xs font-medium border-none focus:ring-2 focus:ring-primary outline-none transition-colors cursor-pointer ${student.active
+                                                    ? 'bg-success/20 text-success'
+                                                    : 'bg-text-muted/20 text-text-muted'}`}
+                                                value={student.active ? 'true' : 'false'}
+                                                onClick={(e) => e.stopPropagation()}
+                                                onChange={async (e) => {
+                                                    const newActive = e.target.value === 'true';
+                                                    try {
+                                                        await api.put(`/students/${student.id}`, { ...student, active: newActive });
+                                                        fetchData();
+                                                    } catch (err) {
+                                                        console.error(err);
+                                                        alert('Erro ao atualizar status');
+                                                    }
+                                                }}
+                                            >
+                                                <option value="true" className="bg-bg-card text-white">Ativo</option>
+                                                <option value="false" className="bg-bg-card text-white">Inativo</option>
+                                            </select>
+                                        </td>
+                                        <td className="p-4 text-right relative action-menu-container">
+                                            <button
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    setOpenMenuId(openMenuId === student.id ? null : student.id);
+                                                }}
+                                                className={`p-2 rounded-lg transition-colors ${openMenuId === student.id ? 'bg-white/10 text-white' : 'text-text-muted hover:text-white hover:bg-white/5'}`}
+                                            >
+                                                <MoreVertical size={18} />
+                                            </button>
 
-                                        {openMenuId === student.id && (
-                                            <div className={`absolute right-4 z-50 w-48 bg-bg-card border border-white/10 rounded-xl shadow-xl overflow-hidden animate-fade-in ${isLastItems ? 'bottom-12 origin-bottom-right' : 'top-12 origin-top-right'}`}>
-                                                <button
-                                                    onClick={() => {
-                                                        handleViewEvolution(student);
-                                                        setOpenMenuId(null);
-                                                    }}
-                                                    className="w-full text-left px-4 py-3 text-sm text-text-muted hover:text-white hover:bg-white/5 flex items-center gap-2 transition-colors"
-                                                >
-                                                    <LineChartIcon size={16} /> Ver Evolução
-                                                </button>
-                                                <button
-                                                    onClick={() => {
-                                                        setEditingStudent(student);
-                                                        setEditStudentData({
-                                                            name: student.name,
-                                                            phone: student.phone || '',
-                                                            parent_name: student.parent_name || '',
-                                                            parent_phone: student.parent_phone || '',
-                                                            parent_email: student.parent_email || '',
-                                                            school_year: student.school_year || '',
-                                                            class_type: (student.class_type as any) || '',
-                                                            active: student.active ?? true
-                                                        });
-                                                        setOpenMenuId(null);
-                                                    }}
-                                                    className="w-full text-left px-4 py-3 text-sm text-text-muted hover:text-white hover:bg-white/5 flex items-center gap-2 transition-colors"
-                                                >
-                                                    <Pencil size={16} /> Editar
-                                                </button>
-                                                <div className="h-[1px] bg-white/5 mx-2 my-1"></div>
-                                                <button
-                                                    onClick={() => {
-                                                        setDeletingStudent(student);
-                                                        setOpenMenuId(null);
-                                                    }}
-                                                    className="w-full text-left px-4 py-3 text-sm text-danger hover:bg-danger/10 flex items-center gap-2 transition-colors"
-                                                >
-                                                    <Trash size={16} /> Excluir
-                                                </button>
-                                            </div>
-                                        )}
-                                    </td>
-                                </tr>
+                                            {openMenuId === student.id && (
+                                                <div className={`absolute right-4 z-50 w-48 bg-bg-card border border-white/10 rounded-xl shadow-xl overflow-hidden animate-fade-in ${isLastItems ? 'bottom-12 origin-bottom-right' : 'top-12 origin-top-right'}`}>
+                                                    <button
+                                                        onClick={() => {
+                                                            handleViewEvolution(student);
+                                                            setOpenMenuId(null);
+                                                        }}
+                                                        className="w-full text-left px-4 py-3 text-sm text-text-muted hover:text-white hover:bg-white/5 flex items-center gap-2 transition-colors"
+                                                    >
+                                                        <LineChartIcon size={16} /> Ver Evolução
+                                                    </button>
+                                                    <button
+                                                        onClick={() => {
+                                                            setEditingStudent(student);
+                                                            setEditStudentData({
+                                                                name: student.name,
+                                                                phone: student.phone || '',
+                                                                parent_name: student.parent_name || '',
+                                                                parent_phone: student.parent_phone || '',
+                                                                parent_email: student.parent_email || '',
+                                                                school_year: student.school_year || '',
+                                                                class_type: (student.class_type as any) || '',
+                                                                active: student.active ?? true
+                                                            });
+                                                            setOpenMenuId(null);
+                                                        }}
+                                                        className="w-full text-left px-4 py-3 text-sm text-text-muted hover:text-white hover:bg-white/5 flex items-center gap-2 transition-colors"
+                                                    >
+                                                        <Pencil size={16} /> Editar
+                                                    </button>
+                                                    <div className="h-[1px] bg-white/5 mx-2 my-1"></div>
+                                                    <button
+                                                        onClick={() => {
+                                                            setDeletingStudent(student);
+                                                            setOpenMenuId(null);
+                                                        }}
+                                                        className="w-full text-left px-4 py-3 text-sm text-danger hover:bg-danger/10 flex items-center gap-2 transition-colors"
+                                                    >
+                                                        <Trash size={16} /> Excluir
+                                                    </button>
+                                                </div>
+                                            )}
+                                        </td>
+                                    </tr>
                                 );
                             })}
                             {students.length === 0 && !isLoading && (
