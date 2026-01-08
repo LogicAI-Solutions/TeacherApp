@@ -147,6 +147,11 @@ export const Payments = () => {
 
     const pendingCount = totalStudents - actualPaidCount;
 
+    // Total recebido: soma dos valores de todos os pagamentos pagos
+    const totalReceived = payments
+        .filter(p => p.status === 'PAID' && allStudentIds.includes(p.student_id))
+        .reduce((sum, p) => sum + (p.amount || 0), 0);
+
 
 
 
@@ -213,7 +218,7 @@ export const Payments = () => {
             </div>
 
             {/* Stats Cards */}
-            <div className="grid grid-cols-3 gap-2 sm:gap-4 mb-4 sm:mb-6">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4 mb-4 sm:mb-6">
                 <div className="card-gradient-1 p-3 sm:p-4 rounded-xl relative overflow-hidden">
                     <div className="flex items-center gap-2 sm:gap-3 mb-1 sm:mb-2">
                         <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-indigo-500/20 flex items-center justify-center text-indigo-400">
@@ -248,6 +253,18 @@ export const Payments = () => {
                     </div>
                     <p className="text-xl sm:text-2xl md:text-3xl font-bold text-white">{pendingCount}</p>
                     <p className="text-xs text-amber-400 mt-0.5 sm:mt-1 font-medium truncate">Pendentes</p>
+                </div>
+
+                <div className="card-gradient-1 p-3 sm:p-4 rounded-xl relative overflow-hidden">
+                    <div className="flex items-center gap-2 sm:gap-3 mb-1 sm:mb-2">
+                        <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-green-500/20 flex items-center justify-center text-green-400">
+                            <DollarSign size={16} className="sm:hidden" />
+                            <DollarSign size={20} className="hidden sm:block" />
+                        </div>
+                        <span className="text-text-muted text-xs sm:text-sm font-medium hidden sm:inline">Total Recebido</span>
+                    </div>
+                    <p className="text-lg sm:text-xl md:text-2xl font-bold text-white">{formatCurrency(totalReceived)}</p>
+                    <p className="text-xs text-green-400 mt-0.5 sm:mt-1 font-medium truncate">Recebido</p>
                 </div>
             </div>
 
