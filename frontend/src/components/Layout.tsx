@@ -53,12 +53,12 @@ export const Layout = () => {
     return (
         <div className="flex h-screen bg-bg-dark overflow-hidden">
             {/* Mobile Header */}
-            <header className="md:hidden flex items-center justify-between p-4 bg-bg-card border-b border-border w-full fixed top-0 left-0 z-50">
-                <h1 className="text-xl font-bold flex items-center gap-2 text-primary">
-                    <GraduationCap /> TeacherApp
+            <header className="md:hidden flex items-center justify-between px-3 py-2 bg-bg-card border-b border-border w-full fixed top-0 left-0 z-50">
+                <h1 className="text-base font-bold flex items-center gap-1.5 text-primary">
+                    <GraduationCap size={20} /> TeacherApp
                 </h1>
-                <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="btn btn-outline p-2 border-0">
-                    {isMobileMenuOpen ? <X /> : <Menu />}
+                <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="p-1.5 text-text-muted hover:text-white">
+                    {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
                 </button>
             </header>
 
@@ -166,7 +166,7 @@ export const Layout = () => {
             </aside>
 
             {/* Main Content */}
-            <main className="flex-1 overflow-auto bg-bg-dark p-4 md:p-8 pt-20 md:pt-8 w-full h-screen">
+            <main className="flex-1 overflow-auto bg-bg-dark px-3 py-4 sm:p-4 md:p-6 lg:p-8 pt-14 md:pt-6 lg:pt-8 w-full h-screen">
                 <div className="container mx-auto max-w-6xl">
                     <Outlet />
                 </div>
