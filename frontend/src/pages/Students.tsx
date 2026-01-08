@@ -225,18 +225,18 @@ export const Students = () => {
 
     return (
         <div className="animate-fade-in">
-            <div className="flex justify-between items-center mb-8">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 sm:mb-6 gap-2 sm:gap-4">
                 <div>
-                    <h1 className="text-3xl font-bold text-white flex items-center gap-2">
-                        <UserCircle className="text-primary" size={32} /> Alunos
+                    <h1 className="text-lg sm:text-2xl md:text-3xl font-bold text-white flex items-center gap-1.5 sm:gap-2">
+                        <UserCircle className="text-primary" size={20} /> Alunos
                     </h1>
-                    <p className="text-text-muted mt-1">Gerencie todos os alunos cadastrados.</p>
+                    <p className="text-text-muted mt-0.5 text-xs sm:text-sm">Gerencie todos os alunos cadastrados.</p>
                 </div>
                 <button
                     onClick={() => setShowCreateModal(true)}
-                    className="bg-primary hover:bg-primary-hover text-white px-4 py-2 rounded-lg shadow-lg shadow-primary/20 flex items-center gap-2 transition-all"
+                    className="bg-primary hover:bg-primary-hover text-white px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg shadow-lg shadow-primary/20 flex items-center gap-1.5 transition-all text-xs sm:text-sm w-full sm:w-auto justify-center"
                 >
-                    <Plus size={20} /> Novo Aluno
+                    <Plus size={16} /> Novo Aluno
                 </button>
             </div>
 
@@ -275,13 +275,13 @@ export const Students = () => {
                     <table className="w-full">
                         <thead className="bg-black/20">
                             <tr>
-                                <th className="text-left p-4 text-xs font-bold text-text-muted uppercase tracking-wider">Nome</th>
-                                <th className="text-left p-4 text-xs font-bold text-text-muted uppercase tracking-wider">Contato</th>
-                                <th className="text-left p-4 text-xs font-bold text-text-muted uppercase tracking-wider">Responsável</th>
-                                <th className="text-left p-4 text-xs font-bold text-text-muted uppercase tracking-wider">Ano Escolar</th>
-                                <th className="text-left p-4 text-xs font-bold text-text-muted uppercase tracking-wider">Tipo de Aula</th>
-                                <th className="text-center p-4 text-xs font-bold text-text-muted uppercase tracking-wider">Status</th>
-                                <th className="text-right p-4 text-xs font-bold text-text-muted uppercase tracking-wider">Ações</th>
+                                <th className="text-left p-3 sm:p-4 text-xs font-bold text-text-muted uppercase tracking-wider">Nome</th>
+                                <th className="text-left p-3 sm:p-4 text-xs font-bold text-text-muted uppercase tracking-wider hidden md:table-cell">Contato</th>
+                                <th className="text-left p-3 sm:p-4 text-xs font-bold text-text-muted uppercase tracking-wider hidden lg:table-cell">Responsável</th>
+                                <th className="text-left p-3 sm:p-4 text-xs font-bold text-text-muted uppercase tracking-wider hidden xl:table-cell">Ano Escolar</th>
+                                <th className="text-left p-3 sm:p-4 text-xs font-bold text-text-muted uppercase tracking-wider hidden xl:table-cell">Tipo de Aula</th>
+                                <th className="text-center p-3 sm:p-4 text-xs font-bold text-text-muted uppercase tracking-wider">Status</th>
+                                <th className="text-right p-3 sm:p-4 text-xs font-bold text-text-muted uppercase tracking-wider">Ações</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-white/5">
@@ -289,19 +289,20 @@ export const Students = () => {
                                 const isLastItems = students.length > 2 && index >= students.length - 2;
                                 return (
                                     <tr key={student.id} className="hover:bg-white/5 transition-colors">
-                                        <td className="p-4">
-                                            <div className="font-medium text-white">{student.name}</div>
+                                        <td className="p-3 sm:p-4">
+                                            <div className="font-medium text-white text-sm sm:text-base">{student.name}</div>
+                                            <div className="text-xs text-text-muted md:hidden">{student.phone ? formatPhone(student.phone) : ''}</div>
                                         </td>
-                                        <td className="p-4 text-text-muted text-sm">{student.phone ? formatPhone(student.phone) : '-'}</td>
-                                        <td className="p-4">
+                                        <td className="p-3 sm:p-4 text-text-muted text-sm hidden md:table-cell">{student.phone ? formatPhone(student.phone) : '-'}</td>
+                                        <td className="p-3 sm:p-4 hidden lg:table-cell">
                                             <div className="text-sm text-white">{student.parent_name || '-'}</div>
                                             <div className="text-xs text-text-muted">{student.parent_phone ? formatPhone(student.parent_phone) : ''}</div>
                                         </td>
-                                        <td className="p-4 text-text-muted text-sm">{student.school_year || '-'}</td>
-                                        <td className="p-4 text-text-muted text-sm">{student.class_type || '-'}</td>
-                                        <td className="p-4 text-center">
+                                        <td className="p-3 sm:p-4 text-text-muted text-sm hidden xl:table-cell">{student.school_year || '-'}</td>
+                                        <td className="p-3 sm:p-4 text-text-muted text-sm hidden xl:table-cell">{student.class_type || '-'}</td>
+                                        <td className="p-3 sm:p-4 text-center">
                                             <select
-                                                className={`px-3 py-1.5 rounded-lg text-xs font-medium border-none focus:ring-2 focus:ring-primary outline-none transition-colors cursor-pointer ${student.active
+                                                className={`px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg text-xs font-medium border-none focus:ring-2 focus:ring-primary outline-none transition-colors cursor-pointer ${student.active
                                                     ? 'bg-success/20 text-success'
                                                     : 'bg-text-muted/20 text-text-muted'}`}
                                                 value={student.active ? 'true' : 'false'}
@@ -321,7 +322,7 @@ export const Students = () => {
                                                 <option value="false" className="bg-bg-card text-white">Inativo</option>
                                             </select>
                                         </td>
-                                        <td className="p-4 text-right relative action-menu-container">
+                                        <td className="p-3 sm:p-4 text-right relative action-menu-container">
                                             <button
                                                 onClick={(e) => {
                                                     e.stopPropagation();

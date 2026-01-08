@@ -61,6 +61,24 @@
 }
 
 @layer base {
+  html {
+    font-size: 14px;
+    /* Base menor para mobile */
+  }
+
+  @media (min-width: 640px) {
+    html {
+      font-size: 15px;
+    }
+  }
+
+  @media (min-width: 768px) {
+    html {
+      font-size: 16px;
+      /* Volta ao normal em tablet+ */
+    }
+  }
+
   body {
     @apply bg-bg-dark text-text-main antialiased font-sans;
   }
@@ -68,7 +86,7 @@
 
 @layer components {
   .btn {
-    @apply inline-flex items-center justify-center px-4 py-2 rounded-lg font-medium transition-all duration-200 border-none text-sm gap-2 cursor-pointer;
+    @apply inline-flex items-center justify-center px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg font-medium transition-all duration-200 border-none text-xs sm:text-sm gap-1.5 sm:gap-2 cursor-pointer;
   }
 
   .btn-primary {
@@ -123,7 +141,7 @@
   }
 
   .glass-card {
-    @apply bg-white/5 backdrop-blur-lg border border-white/5 shadow-xl rounded-xl;
+    @apply bg-white/5 backdrop-blur-lg border border-white/5 shadow-xl rounded-xl p-3 sm:p-4 md:p-6;
   }
 
   .text-gradient {

@@ -183,28 +183,28 @@ export const Payments = () => {
                 </div>
             )}
 
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 sm:mb-6 gap-2 sm:gap-4">
                 <div>
-                    <h1 className="text-3xl font-bold text-white flex items-center gap-2">
-                        <DollarSign className="text-success" size={32} /> Financeiro
+                    <h1 className="text-lg sm:text-2xl md:text-3xl font-bold text-white flex items-center gap-1.5 sm:gap-2">
+                        <DollarSign className="text-success" size={20} /> Financeiro
                     </h1>
-                    <p className="text-text-muted mt-1">Controle de mensalidades.</p>
+                    <p className="text-text-muted mt-0.5 text-xs sm:text-sm">Controle de mensalidades.</p>
                 </div>
 
                 {/* Filters */}
-                <div className="flex gap-2 bg-bg-card p-2 rounded-xl border border-white/5">
+                <div className="flex flex-wrap gap-2 bg-bg-card p-2 rounded-xl border border-white/5 w-full md:w-auto">
                     <button
                         onClick={handleExportReport}
-                        className="btn-primary-gradient px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2"
+                        className="btn-primary-gradient px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-bold flex items-center gap-2 flex-1 sm:flex-none justify-center"
                     >
-                        <DollarSign size={16} /> Exportar Relatório
+                        <DollarSign size={16} /> <span className="hidden sm:inline">Exportar</span> Relatório
                     </button>
-                    <select value={selectedMonth} onChange={e => setSelectedMonth(Number(e.target.value))} className="bg-bg-dark border border-white/10 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-1 focus:ring-primary">
+                    <select value={selectedMonth} onChange={e => setSelectedMonth(Number(e.target.value))} className="bg-bg-dark border border-white/10 rounded-lg px-2 sm:px-3 py-2 text-white focus:outline-none focus:ring-1 focus:ring-primary text-sm flex-1 sm:flex-none">
                         {Array.from({ length: 12 }, (_, i) => i + 1).map(m => (
-                            <option key={m} value={m} className="bg-bg-dark text-white">{new Date(0, m - 1).toLocaleString('pt-BR', { month: 'long' })}</option>
+                            <option key={m} value={m} className="bg-bg-dark text-white">{new Date(0, m - 1).toLocaleString('pt-BR', { month: 'short' })}</option>
                         ))}
                     </select>
-                    <select value={selectedYear} onChange={e => setSelectedYear(Number(e.target.value))} className="bg-bg-dark border border-white/10 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-1 focus:ring-primary">
+                    <select value={selectedYear} onChange={e => setSelectedYear(Number(e.target.value))} className="bg-bg-dark border border-white/10 rounded-lg px-2 sm:px-3 py-2 text-white focus:outline-none focus:ring-1 focus:ring-primary text-sm flex-1 sm:flex-none">
                         {Array.from({ length: 5 }, (_, i) => new Date().getFullYear() - 2 + i).map(y => (
                             <option key={y} value={y} className="bg-bg-dark text-white">{y}</option>
                         ))}
@@ -213,55 +213,49 @@ export const Payments = () => {
             </div>
 
             {/* Stats Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                <div className="card-gradient-1 p-6 rounded-2xl relative overflow-hidden group">
-                     <div className="absolute right-0 top-0 w-32 h-32 bg-primary/10 rounded-full -mr-10 -mt-10 blur-2xl group-hover:bg-primary/20 transition-all duration-500"></div>
-                     <div className="relative z-10">
-                        <div className="flex items-center gap-4 mb-4">
-                            <div className="w-12 h-12 rounded-xl bg-indigo-500/20 flex items-center justify-center text-indigo-400 border border-indigo-500/10">
-                                <DollarSign size={24} />
-                            </div>
-                            <span className="text-text-muted font-medium">Total de Alunos</span>
+            <div className="grid grid-cols-3 gap-2 sm:gap-4 mb-4 sm:mb-6">
+                <div className="card-gradient-1 p-3 sm:p-4 rounded-xl relative overflow-hidden">
+                    <div className="flex items-center gap-2 sm:gap-3 mb-1 sm:mb-2">
+                        <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-indigo-500/20 flex items-center justify-center text-indigo-400">
+                            <DollarSign size={16} className="sm:hidden" />
+                            <DollarSign size={20} className="hidden sm:block" />
                         </div>
-                        <p className="text-4xl font-bold text-white tracking-tight">{totalStudents}</p>
-                        <p className="text-sm text-indigo-400 mt-2 font-medium">Matrículas Ativas</p>
-                     </div>
+                        <span className="text-text-muted text-xs sm:text-sm font-medium hidden sm:inline">Total Alunos</span>
+                    </div>
+                    <p className="text-xl sm:text-2xl md:text-3xl font-bold text-white">{totalStudents}</p>
+                    <p className="text-xs text-indigo-400 mt-0.5 sm:mt-1 font-medium truncate">Alunos</p>
                 </div>
 
-                <div className="card-gradient-1 p-6 rounded-2xl relative overflow-hidden group border-emerald-500/10 hover:border-emerald-500/20 transition-all">
-                     <div className="absolute right-0 top-0 w-32 h-32 bg-emerald-500/10 rounded-full -mr-10 -mt-10 blur-2xl group-hover:bg-emerald-500/20 transition-all duration-500"></div>
-                     <div className="relative z-10">
-                        <div className="flex items-center gap-4 mb-4">
-                            <div className="w-12 h-12 rounded-xl bg-emerald-500/20 flex items-center justify-center text-emerald-400 border border-emerald-500/10">
-                                <CheckCircle size={24} />
-                            </div>
-                            <span className="text-text-muted font-medium">Pagamentos Realizados</span>
+                <div className="card-gradient-1 p-3 sm:p-4 rounded-xl relative overflow-hidden">
+                    <div className="flex items-center gap-2 sm:gap-3 mb-1 sm:mb-2">
+                        <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-emerald-500/20 flex items-center justify-center text-emerald-400">
+                            <CheckCircle size={16} className="sm:hidden" />
+                            <CheckCircle size={20} className="hidden sm:block" />
                         </div>
-                        <p className="text-4xl font-bold text-white tracking-tight">{actualPaidCount}</p>
-                        <p className="text-sm text-emerald-400 mt-2 font-medium">No mês atual</p>
-                     </div>
+                        <span className="text-text-muted text-xs sm:text-sm font-medium hidden sm:inline">Pagos</span>
+                    </div>
+                    <p className="text-xl sm:text-2xl md:text-3xl font-bold text-white">{actualPaidCount}</p>
+                    <p className="text-xs text-emerald-400 mt-0.5 sm:mt-1 font-medium truncate">Pagos</p>
                 </div>
 
-                <div className="card-gradient-1 p-6 rounded-2xl relative overflow-hidden group border-amber-500/10 hover:border-amber-500/20 transition-all">
-                     <div className="absolute right-0 top-0 w-32 h-32 bg-amber-500/10 rounded-full -mr-10 -mt-10 blur-2xl group-hover:bg-amber-500/20 transition-all duration-500"></div>
-                     <div className="relative z-10">
-                        <div className="flex items-center gap-4 mb-4">
-                            <div className="w-12 h-12 rounded-xl bg-amber-500/20 flex items-center justify-center text-amber-400 border border-amber-500/10">
-                                <AlertCircle size={24} />
-                            </div>
-                            <span className="text-text-muted font-medium">Pagamentos Pendentes</span>
+                <div className="card-gradient-1 p-3 sm:p-4 rounded-xl relative overflow-hidden">
+                    <div className="flex items-center gap-2 sm:gap-3 mb-1 sm:mb-2">
+                        <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-amber-500/20 flex items-center justify-center text-amber-400">
+                            <AlertCircle size={16} className="sm:hidden" />
+                            <AlertCircle size={20} className="hidden sm:block" />
                         </div>
-                        <p className="text-4xl font-bold text-white tracking-tight">{pendingCount}</p>
-                        <p className="text-sm text-amber-400 mt-2 font-medium">Aguardando regularização</p>
-                     </div>
+                        <span className="text-text-muted text-xs sm:text-sm font-medium hidden sm:inline">Pendentes</span>
+                    </div>
+                    <p className="text-xl sm:text-2xl md:text-3xl font-bold text-white">{pendingCount}</p>
+                    <p className="text-xs text-amber-400 mt-0.5 sm:mt-1 font-medium truncate">Pendentes</p>
                 </div>
             </div>
 
             {/* Search Bar */}
             <div className={`transition-all duration-500 mb-6 sticky top-0 z-10 ${search.length > 0 ? '-translate-y-2 opacity-95' : ''}`}>
-               <div className="relative group max-w-2xl mx-auto shadow-2xl rounded-2xl">
+                <div className="relative group max-w-2xl mx-auto shadow-2xl rounded-2xl">
                     <div className="absolute inset-0 bg-primary/10 rounded-2xl blur-lg group-hover:bg-primary/30 transition-all duration-500"></div>
-                     <div className="relative bg-bg-card border border-white/5 rounded-2xl flex items-center p-1">
+                    <div className="relative bg-bg-card border border-white/5 rounded-2xl flex items-center p-1">
                         <div className="pl-4 pr-3 text-text-muted group-focus-within:text-primary transition-colors">
                             <Search size={24} />
                         </div>
@@ -300,12 +294,12 @@ export const Payments = () => {
                     <table className="w-full">
                         <thead className="bg-black/20">
                             <tr>
-                                <th className="text-left p-4 text-xs font-bold text-text-muted uppercase tracking-wider">Aluno</th>
-                                <th className="text-left p-4 text-xs font-bold text-text-muted uppercase tracking-wider">Responsável</th>
-                                <th className="text-left p-4 text-xs font-bold text-text-muted uppercase tracking-wider">Ano Escolar</th>
-                                <th className="text-left p-4 text-xs font-bold text-text-muted uppercase tracking-wider">Tipo de Aula</th>
-                                <th className="text-left p-4 text-xs font-bold text-text-muted uppercase tracking-wider w-[180px]">Status</th>
-                                <th className="text-right p-4 text-xs font-bold text-text-muted uppercase tracking-wider w-[180px]">Valor Pago</th>
+                                <th className="text-left p-2 sm:p-4 text-xs font-bold text-text-muted uppercase tracking-wider">Aluno</th>
+                                <th className="text-left p-2 sm:p-4 text-xs font-bold text-text-muted uppercase tracking-wider hidden md:table-cell">Responsável</th>
+                                <th className="text-left p-2 sm:p-4 text-xs font-bold text-text-muted uppercase tracking-wider hidden xl:table-cell">Ano</th>
+                                <th className="text-left p-2 sm:p-4 text-xs font-bold text-text-muted uppercase tracking-wider hidden xl:table-cell">Tipo</th>
+                                <th className="text-center p-2 sm:p-4 text-xs font-bold text-text-muted uppercase tracking-wider w-[90px] sm:w-[140px]">Status</th>
+                                <th className="text-right p-2 sm:p-4 text-xs font-bold text-text-muted uppercase tracking-wider w-[80px] sm:w-[140px]">Valor</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-white/5">
@@ -314,16 +308,17 @@ export const Payments = () => {
                                 const isPaid = payment.status === 'PAID';
                                 return (
                                     <tr key={student.id} className="hover:bg-white/5 transition-colors group">
-                                        <td className="p-4 font-medium text-white">{student.name}</td>
-                                        <td className="p-4">
-                                            <div className="text-sm text-text-muted">{student.parent_name || '-'}</div>
-                                            <div className="text-xs opacity-50">{student.parent_phone}</div>
+                                        <td className="p-2 sm:p-4">
+                                            <div className="font-medium text-white text-xs sm:text-sm truncate max-w-[100px] sm:max-w-none">{student.name}</div>
                                         </td>
-                                        <td className="p-4 text-left">{student.school_year || '-'}</td>
-                                        <td className="p-4 text-left">{student.class_type || '-'}</td>
-                                        <td className="p-4">
+                                        <td className="p-2 sm:p-4 hidden md:table-cell">
+                                            <div className="text-sm text-text-muted truncate max-w-[120px]">{student.parent_name || '-'}</div>
+                                        </td>
+                                        <td className="p-2 sm:p-4 text-left text-sm text-text-muted hidden xl:table-cell">{student.school_year || '-'}</td>
+                                        <td className="p-2 sm:p-4 text-left text-sm text-text-muted hidden xl:table-cell">{student.class_type || '-'}</td>
+                                        <td className="p-2 sm:p-4">
                                             <select
-                                                className={`w-full p-2 rounded-lg text-sm border-none focus:ring-2 focus:ring-primary outline-none transition-colors cursor-pointer ${isPaid ? 'bg-success/20 text-success' : 'bg-warning/20 text-warning'}`}
+                                                className={`w-full px-2 py-1 sm:p-2 rounded-lg text-xs sm:text-sm border-none focus:ring-2 focus:ring-primary outline-none transition-colors cursor-pointer ${isPaid ? 'bg-success/20 text-success' : 'bg-warning/20 text-warning'}`}
                                                 value={payment.status}
                                                 onChange={e => updateLocalPayment(student.id, 'status', e.target.value)}
                                             >
@@ -331,20 +326,18 @@ export const Payments = () => {
                                                 <option value="PAID" className="bg-bg-card text-white">Pago</option>
                                             </select>
                                         </td>
-                                        <td className="p-4">
-                                            <div className="relative">
-                                                <input
-                                                    type="text"
-                                                    className={`w-full bg-transparent border-b outline-none py-1 text-sm font-mono transition-colors text-right ${isPaid
-                                                        ? 'border-white/10 focus:border-primary text-white'
-                                                        : 'border-transparent text-text-muted cursor-not-allowed'
-                                                        }`}
-                                                    value={formatCurrency(payment.amount)}
-                                                    onChange={e => updateLocalPayment(student.id, 'amount', parseCurrency(e.target.value))}
-                                                    disabled={!isPaid}
-                                                    placeholder="R$ 0,00"
-                                                />
-                                            </div>
+                                        <td className="p-2 sm:p-4">
+                                            <input
+                                                type="text"
+                                                className={`w-full bg-transparent border-b outline-none py-1 text-xs sm:text-sm font-mono transition-colors text-right ${isPaid
+                                                    ? 'border-white/10 focus:border-primary text-white'
+                                                    : 'border-transparent text-text-muted cursor-not-allowed'
+                                                    }`}
+                                                value={formatCurrency(payment.amount)}
+                                                onChange={e => updateLocalPayment(student.id, 'amount', parseCurrency(e.target.value))}
+                                                disabled={!isPaid}
+                                                placeholder="R$ 0"
+                                            />
                                         </td>
                                     </tr>
                                 );
