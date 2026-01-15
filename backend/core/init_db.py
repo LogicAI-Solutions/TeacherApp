@@ -7,11 +7,11 @@ import os
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 def init_db(db: Session = next(database.get_db())):
-    admin_email = os.getenv("ADMIN_EMAIL")
-    admin_password = os.getenv("ADMIN_PASSWORD")
+    admin_email = os.getenv("PGADMIN_DEFAULT_EMAIL")
+    admin_password = os.getenv("PGADMIN_DEFAULT_PASSWORD")
 
     if not admin_email or not admin_password:
-        print("ADMIN_EMAIL or ADMIN_PASSWORD not set in .env")
+        print("PGADMIN_DEFAULT_EMAIL or PGADMIN_DEFAULT_PASSWORD not set in .env")
         return
 
     user = db.query(User).filter(User.email == admin_email).first()
