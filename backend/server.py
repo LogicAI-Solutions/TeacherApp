@@ -9,6 +9,9 @@ from backend.core.router_loader import include_routers
 
 database.Base.metadata.create_all(bind=database.engine)
 
+from backend.core.init_db import init_db
+init_db()
+
 app = FastAPI()
 
 # CORS
