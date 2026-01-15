@@ -7,25 +7,46 @@
 #   - Sempre reinicia automaticamente
 
 services:
+  db:
+    image: postgres:15-alpine
+    container_name: teacher_app_db
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-student_management}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres}" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
   backend:
     build:
       context: .
-      dockerfile: Dockerfile.backend
+      dockerfile: backend/Dockerfile.prod
     container_name: teacher_app_backend
     restart: always
-    volumes:
-      - sqlite_data:/app/db
+    depends_on:
+      db:
+        condition: service_healthy
     env_file:
       - .env
     environment:
-      - DB_PATH=/app/db/student_management.db
-    ports:
-      - "${PORT_BACKEND:-8000}:8000"
+      - POSTGRES_SERVER=db
+      - POSTGRES_USER=${POSTGRES_USER:-postgres}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-postgres}
+      - POSTGRES_DB=${POSTGRES_DB:-student_management}
+    # Port not exposed to host, only reachable by frontend (nginx) within docker network
+    # ports:
+    #   - "${PORT_BACKEND:-8000}:8000"
 
   frontend:
     build:
       context: .
-      dockerfile: Dockerfile.frontend
+      dockerfile: frontend/Dockerfile.prod
     container_name: teacher_app_frontend
     restart: always
     depends_on:
@@ -33,5 +54,19 @@ services:
     ports:
       - "${PORT_FRONTEND:-80}:80"
 
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: teacher_app_pgadmin
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL:-admin@admin.com}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD:-admin}
+    ports:
+      - "5050:80"
+    depends_on:
+      - db
+    volumes:
+      - ./database/servers.json:/pgadmin4/servers.json
+
 volumes:
-  sqlite_data:
+  postgres_data:
