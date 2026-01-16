@@ -29,10 +29,10 @@ export const Login = () => {
             console.error(err);
             if (err.code === 'ERR_NETWORK' || !err.response) {
                 setError('O sistema parece estar offline. Verifique sua conexão ou tente mais tarde.');
-            } else if (err.response?.status === 401) {
-                setError('Email ou senha incorretos. Tente novamente.');
             } else if (err.response?.data?.detail) {
                 setError(err.response.data.detail);
+            } else if (err.response?.status === 401) {
+                setError('Email ou senha incorretos. Tente novamente.');
             } else {
                 setError('Ocorreu um erro inesperado. Tente novamente.');
             }
