@@ -22,7 +22,9 @@ def init_db(db: Session = next(database.get_db())):
             email=admin_email,
             hashed_password=hashed_password,
             is_admin=True,
-            is_active=True
+            is_active=True,
+            full_name="Administrator",
+            nickname="Admin"
         )
         db.add(db_user)
         db.commit()

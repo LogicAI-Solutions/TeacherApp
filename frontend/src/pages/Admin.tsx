@@ -6,6 +6,9 @@ interface UserData {
     id: number;
     email: string;
     is_active: boolean;
+    full_name?: string;
+    birth_date?: string;
+    nickname?: string;
 }
 
 const Admin = () => {
@@ -23,6 +26,9 @@ const Admin = () => {
     // Form states
     const [newUserEmail, setNewUserEmail] = useState('');
     const [newUserPassword, setNewUserPassword] = useState('');
+    const [newUserName, setNewUserName] = useState('');
+    const [newUserBirthDate, setNewUserBirthDate] = useState('');
+    const [newUserNickname, setNewUserNickname] = useState('');
     const [newPassword, setNewPassword] = useState('');
 
     useEffect(() => {
@@ -38,20 +44,31 @@ const Admin = () => {
         }
     };
 
+
+
     const handleCreateUser = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
         setSuccess('');
+
+
+
         setLoading(true);
 
         try {
             await api.post('/users/', {
                 email: newUserEmail,
-                password: newUserPassword
+                password: newUserPassword,
+                full_name: newUserName,
+                birth_date: newUserBirthDate || null,
+                nickname: newUserNickname
             });
             setSuccess('Usuário criado com sucesso!');
             setNewUserEmail('');
             setNewUserPassword('');
+            setNewUserName('');
+            setNewUserBirthDate('');
+            setNewUserNickname('');
             setIsCreateModalOpen(false);
             loadUsers();
         } catch (err: any) {
@@ -80,6 +97,13 @@ const Admin = () => {
     const handleResetPassword = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!selectedUser) return;
+
+        // Clear previous messages
+        setError('');
+        setSuccess('');
+
+
+
         setLoading(true);
         try {
             await api.put(`/users/${selectedUser.id}/password`, {
@@ -115,6 +139,9 @@ const Admin = () => {
         setIsCreateModalOpen(true);
         setNewUserEmail('');
         setNewUserPassword('');
+        setNewUserName('');
+        setNewUserBirthDate('');
+        setNewUserNickname('');
         setError('');
         setSuccess('');
     };
@@ -183,6 +210,35 @@ const Admin = () => {
                             <Plus size={20} className="text-primary" /> Novo Professor
                         </h2>
                         <form onSubmit={handleCreateUser} className="space-y-4">
+                            <div>
+                                <label className="text-xs font-medium text-text-muted uppercase tracking-wider ml-1">Nome Completo</label>
+                                <input
+                                    type="text"
+                                    className="w-full p-3 bg-bg-dark/50 border border-border rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                                    value={newUserName}
+                                    onChange={e => setNewUserName(e.target.value)}
+                                    placeholder="João da Silva"
+                                />
+                            </div>
+                            <div>
+                                <label className="text-xs font-medium text-text-muted uppercase tracking-wider ml-1">Data de Nascimento</label>
+                                <input
+                                    type="date"
+                                    className="w-full p-3 bg-bg-dark/50 border border-border rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                                    value={newUserBirthDate}
+                                    onChange={e => setNewUserBirthDate(e.target.value)}
+                                />
+                            </div>
+                            <div>
+                                <label className="text-xs font-medium text-text-muted uppercase tracking-wider ml-1">Nickname (Apelido)</label>
+                                <input
+                                    type="text"
+                                    className="w-full p-3 bg-bg-dark/50 border border-border rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                                    value={newUserNickname}
+                                    onChange={e => setNewUserNickname(e.target.value)}
+                                    placeholder="Prof. João"
+                                />
+                            </div>
                             <div>
                                 <label className="text-xs font-medium text-text-muted uppercase tracking-wider ml-1">Email</label>
                                 <input
