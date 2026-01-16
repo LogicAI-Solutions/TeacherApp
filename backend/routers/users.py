@@ -19,10 +19,10 @@ def create_user(user: user_schemas.UserCreate, db: Session = Depends(database.ge
     return user_crud.create_user(db=db, user=user)
 
 @router.get("/users/", response_model=List[user_schemas.User])
-def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(database.get_db), current_user: user_schemas.User = Depends(security.get_current_user)):
+def read_users(skip: int = 0, limit: int = 100, search: str = None, db: Session = Depends(database.get_db), current_user: user_schemas.User = Depends(security.get_current_user)):
     if not current_user.is_admin:
         raise HTTPException(status_code=403, detail="Acesso restrito a administradores.")
-    return user_crud.get_users(db, skip=skip, limit=limit)
+    return user_crud.get_users(db, skip=skip, limit=limit, search=search)
 
 @router.get("/users/me", response_model=user_schemas.User)
 async def read_users_me(current_user: user_schemas.User = Depends(security.get_current_user)):

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import api from '../api';
-import { User, Plus, Trash2, Key, X, AlertTriangle, Edit } from 'lucide-react';
+import { User, Plus, Trash2, Key, X, AlertTriangle, Edit, Search, Check, Ban } from 'lucide-react';
 
 interface UserData {
     id: number;
@@ -39,16 +39,31 @@ const Admin = () => {
     const [editUserNickname, setEditUserNickname] = useState('');
     const [editUserIsActive, setEditUserIsActive] = useState(true);
 
+    // Search state
+    const [searchTerm, setSearchTerm] = useState('');
+
+    // Pagination
+    const [page, setPage] = useState(0);
+    const [limit] = useState(10);
+
     useEffect(() => {
-        loadUsers();
-    }, []);
+        const timeoutId = setTimeout(() => {
+            loadUsers();
+        }, 500);
+        return () => clearTimeout(timeoutId);
+    }, [searchTerm, page]);
 
     const loadUsers = async () => {
+        setLoading(true);
         try {
-            const res = await api.get('/users/');
+            const skip = page * limit;
+            const res = await api.get(`/users/?skip=${skip}&limit=${limit}&search=${searchTerm}`);
             setUsers(res.data);
         } catch (err) {
             console.error('Failed to load users');
+            setError('Erro ao carregar usuários.');
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -193,6 +208,20 @@ const Admin = () => {
         setSuccess('');
     };
 
+    const handleUpdateStatus = async (user: UserData, newStatus: boolean) => {
+        try {
+            await api.put(`/users/${user.id}`, {
+                email: user.email,
+                is_active: newStatus
+            });
+            setUsers(users.map(u => u.id === user.id ? { ...u, is_active: newStatus } : u));
+            setSuccess(`Status atualizado!`);
+            setTimeout(() => setSuccess(''), 3000);
+        } catch (err) {
+            setError('Erro ao atualizar status');
+        }
+    };
+
     return (
         <div className="p-6 md:p-10 animate-fade-in relative">
             <h1 className="text-3xl font-bold mb-8 bg-clip-text text-transparent bg-gradient-to-r from-primary-light to-primary">Painel do Administrador</h1>
@@ -201,54 +230,122 @@ const Admin = () => {
             {success && <div className="bg-success/10 text-success p-3 rounded mb-4 text-sm border border-success/20">{success}</div>}
 
             <div className="grid grid-cols-1 gap-8">
-                {/* Users List */}
+                {/* Users List with Search and Sort */}
                 <div className="glass-card p-6">
-                    <div className="flex justify-between items-center mb-6">
+                    <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
                         <h2 className="text-xl font-bold flex items-center gap-2 text-white">
                             <User size={20} className="text-primary" /> Usuários Cadastrados
                         </h2>
-                        <button
-                            onClick={openCreateModal}
-                            className="bg-primary hover:bg-primary-hover text-white px-4 py-2 rounded-lg shadow-lg shadow-primary/20 transition-all flex items-center gap-2"
-                        >
-                            <Plus size={18} /> Adicionar Professor
-                        </button>
+
+                        <div className="flex gap-4 w-full md:w-auto">
+                            <div className="relative flex-1 md:w-64">
+                                <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" />
+                                <input
+                                    type="text"
+                                    placeholder="Buscar por nome, email..."
+                                    className="w-full pl-10 pr-4 py-2 bg-bg-dark/50 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary/50 transition-all placeholder:text-text-muted/50"
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                />
+                            </div>
+                            <button
+                                onClick={openCreateModal}
+                                className="bg-primary hover:bg-primary-hover text-white px-4 py-2 rounded-lg shadow-lg shadow-primary/20 transition-all flex items-center gap-2 whitespace-nowrap"
+                            >
+                                <Plus size={18} /> <span className="hidden md:inline">Adicionar Professor</span><span className="md:hidden">Add</span>
+                            </button>
+                        </div>
                     </div>
 
-                    <div className="overflow-y-auto max-h-[500px] pr-2 custom-scrollbar">
-                        <div className="space-y-3">
-                            {users.map(user => (
-                                <div key={user.id} className="p-4 rounded-lg bg-bg-dark/50 border border-white/5 flex justify-between items-center group hover:border-primary/30 transition-all">
-                                    <div>
-                                        <p className="font-medium text-text-main">{user.email}</p>
-                                        <p className="text-xs text-text-muted">ID: {user.id} • {user.is_active ? 'Ativo' : 'Inativo'}</p>
-                                    </div>
-                                    <div className="flex gap-2">
-                                        <button
-                                            onClick={() => openEditModal(user)}
-                                            className="p-2 hover:bg-white/10 rounded-lg text-text-muted hover:text-white transition-colors"
-                                            title="Editar"
-                                        >
-                                            <Edit size={18} />
-                                        </button>
-                                        <button
-                                            onClick={() => openResetModal(user)}
-                                            className="p-2 hover:bg-white/10 rounded-lg text-text-muted hover:text-white transition-colors"
-                                            title="Resetar Senha"
-                                        >
-                                            <Key size={18} />
-                                        </button>
-                                        <button
-                                            onClick={() => openDeleteModal(user)}
-                                            className="p-2 hover:bg-danger/20 rounded-lg text-text-muted hover:text-danger transition-colors"
-                                            title="Remover"
-                                        >
-                                            <Trash2 size={18} />
-                                        </button>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
+                    <div className="overflow-x-auto custom-scrollbar rounded-lg border border-white/5">
+                        <table className="w-full text-left border-collapse">
+                            <thead>
+                                <tr className="bg-white/5 border-b border-white/10 text-text-muted text-sm uppercase tracking-wider">
+                                    <th className="p-4 font-medium sticky top-0 bg-bg-card z-10 w-[25%]">
+                                        <div className="flex items-center gap-2">Nome</div>
+                                    </th>
+                                    <th className="p-4 font-medium sticky top-0 bg-bg-card z-10 w-[20%]">
+                                        <div className="flex items-center gap-2">Apelido</div>
+                                    </th>
+                                    <th className="p-4 font-medium sticky top-0 bg-bg-card z-10 w-[25%]">
+                                        <div className="flex items-center gap-2">Email</div>
+                                    </th>
+                                    <th className="p-4 font-medium text-center">Status</th>
+                                    <th className="p-4 font-medium text-right">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody className="text-sm">
+                                {users.map(user => (
+                                    <tr key={user.id} className="border-b border-white/5 hover:bg-white/5 transition-colors">
+                                        <td className="p-4 font-medium text-white">{user.full_name || '-'}</td>
+                                        <td className="p-4 text-text-muted">{user.nickname || '-'}</td>
+                                        <td className="p-4 text-text-muted">{user.email}</td>
+                                        <td className="p-4 text-center">
+                                            <select
+                                                className={`px-3 py-1.5 rounded-lg text-xs font-medium border-none focus:ring-2 focus:ring-primary outline-none transition-colors cursor-pointer ${user.is_active
+                                                    ? 'bg-success/20 text-success'
+                                                    : 'bg-text-muted/20 text-text-muted'}`}
+                                                value={user.is_active ? 'true' : 'false'}
+                                                onChange={(e) => handleUpdateStatus(user, e.target.value === 'true')}
+                                            >
+                                                <option value="true" className="bg-bg-card text-white">Ativo</option>
+                                                <option value="false" className="bg-bg-card text-white">Inativo</option>
+                                            </select>
+                                        </td>
+                                        <td className="p-4 text-right">
+                                            <div className="flex justify-end gap-2">
+                                                <button
+                                                    onClick={() => openEditModal(user)}
+                                                    className="p-1.5 hover:bg-primary/20 rounded-lg text-text-muted hover:text-primary transition-colors"
+                                                    title="Editar"
+                                                >
+                                                    <Edit size={16} />
+                                                </button>
+                                                <button
+                                                    onClick={() => openResetModal(user)}
+                                                    className="p-1.5 hover:bg-warning/20 rounded-lg text-text-muted hover:text-warning transition-colors"
+                                                    title="Resetar Senha"
+                                                >
+                                                    <Key size={16} />
+                                                </button>
+                                                <button
+                                                    onClick={() => openDeleteModal(user)}
+                                                    className="p-1.5 hover:bg-danger/20 rounded-lg text-text-muted hover:text-danger transition-colors"
+                                                    title="Remover"
+                                                >
+                                                    <Trash2 size={16} />
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))}
+                                {users.length === 0 && (
+                                    <tr>
+                                        <td colSpan={5} className="p-8 text-center text-text-muted">
+                                            Nenhum usuário encontrado.
+                                        </td>
+                                    </tr>
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div className="flex justify-between items-center p-4 border-t border-white/5 bg-black/20 mt-4 rounded-b-lg">
+                        <button
+                            onClick={() => setPage(p => Math.max(0, p - 1))}
+                            disabled={page === 0}
+                            className="px-4 py-2 bg-white/5 hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg text-sm text-white transition-colors"
+                        >
+                            Anterior
+                        </button>
+                        <span className="text-text-muted text-sm">Página {page + 1}</span>
+                        <button
+                            onClick={() => setPage(p => p + 1)}
+                            disabled={users.length < limit}
+                            className="px-4 py-2 bg-white/5 hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg text-sm text-white transition-colors"
+                        >
+                            Próxima
+                        </button>
                     </div>
                 </div>
             </div>
