@@ -58,3 +58,13 @@ def update_password(user_id: int, password_data: PasswordUpdate, db: Session = D
     if not user:
         raise HTTPException(status_code=404, detail="Usuário não encontrado.")
     return {"detail": "Senha atualizada com sucesso"}
+
+@router.put("/users/{user_id}", response_model=user_schemas.User)
+def update_user(user_id: int, user: user_schemas.UserUpdate, db: Session = Depends(database.get_db), current_user: user_schemas.User = Depends(security.get_current_user)):
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Acesso restrito a administradores.")
+    
+    updated_user = user_crud.update_user(db, user_id=user_id, user_update=user)
+    if not updated_user:
+        raise HTTPException(status_code=404, detail="Usuário não encontrado")
+    return updated_user

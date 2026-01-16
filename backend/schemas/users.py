@@ -11,6 +11,10 @@ class UserBase(BaseModel):
 class UserCreate(UserBase):
     password: str
 
+class UserUpdate(UserBase):
+    password: Optional[str] = None
+    is_active: Optional[bool] = None
+
 class User(UserBase):
     id: int
     is_active: bool

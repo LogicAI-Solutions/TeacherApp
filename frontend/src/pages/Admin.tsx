@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import api from '../api';
-import { User, Plus, Trash2, Key, X, AlertTriangle } from 'lucide-react';
+import { User, Plus, Trash2, Key, X, AlertTriangle, Edit } from 'lucide-react';
 
 interface UserData {
     id: number;
@@ -21,6 +21,7 @@ const Admin = () => {
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [isResetModalOpen, setIsResetModalOpen] = useState(false);
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [selectedUser, setSelectedUser] = useState<UserData | null>(null);
 
     // Form states
@@ -30,6 +31,13 @@ const Admin = () => {
     const [newUserBirthDate, setNewUserBirthDate] = useState('');
     const [newUserNickname, setNewUserNickname] = useState('');
     const [newPassword, setNewPassword] = useState('');
+
+    // Edit form states
+    const [editUserEmail, setEditUserEmail] = useState('');
+    const [editUserName, setEditUserName] = useState('');
+    const [editUserBirthDate, setEditUserBirthDate] = useState('');
+    const [editUserNickname, setEditUserNickname] = useState('');
+    const [editUserIsActive, setEditUserIsActive] = useState(true);
 
     useEffect(() => {
         loadUsers();
@@ -73,6 +81,33 @@ const Admin = () => {
             loadUsers();
         } catch (err: any) {
             setError(err.response?.data?.detail || 'Erro ao criar usuário');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleEditUser = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!selectedUser) return;
+
+        setError('');
+        setSuccess('');
+        setLoading(true);
+
+        try {
+            await api.put(`/users/${selectedUser.id}`, {
+                email: editUserEmail,
+                full_name: editUserName,
+                birth_date: editUserBirthDate || null,
+                nickname: editUserNickname,
+                is_active: editUserIsActive
+            });
+            setSuccess('Usuário atualizado com sucesso!');
+            setIsEditModalOpen(false);
+            setSelectedUser(null);
+            loadUsers();
+        } catch (err: any) {
+            setError(err.response?.data?.detail || 'Erro ao atualizar usuário');
         } finally {
             setLoading(false);
         }
@@ -146,6 +181,18 @@ const Admin = () => {
         setSuccess('');
     };
 
+    const openEditModal = (user: UserData) => {
+        setSelectedUser(user);
+        setEditUserEmail(user.email);
+        setEditUserName(user.full_name || '');
+        setEditUserBirthDate(user.birth_date || '');
+        setEditUserNickname(user.nickname || '');
+        setEditUserIsActive(user.is_active);
+        setIsEditModalOpen(true);
+        setError('');
+        setSuccess('');
+    };
+
     return (
         <div className="p-6 md:p-10 animate-fade-in relative">
             <h1 className="text-3xl font-bold mb-8 bg-clip-text text-transparent bg-gradient-to-r from-primary-light to-primary">Painel do Administrador</h1>
@@ -177,6 +224,13 @@ const Admin = () => {
                                         <p className="text-xs text-text-muted">ID: {user.id} • {user.is_active ? 'Ativo' : 'Inativo'}</p>
                                     </div>
                                     <div className="flex gap-2">
+                                        <button
+                                            onClick={() => openEditModal(user)}
+                                            className="p-2 hover:bg-white/10 rounded-lg text-text-muted hover:text-white transition-colors"
+                                            title="Editar"
+                                        >
+                                            <Edit size={18} />
+                                        </button>
                                         <button
                                             onClick={() => openResetModal(user)}
                                             className="p-2 hover:bg-white/10 rounded-lg text-text-muted hover:text-white transition-colors"
@@ -354,6 +408,92 @@ const Admin = () => {
                                     className="bg-primary hover:bg-primary-hover text-white font-bold py-2 px-6 rounded-lg shadow-lg shadow-primary/20 transition-all cursor-pointer disabled:opacity-50"
                                 >
                                     {loading ? 'Salvar' : 'Salvar Senha'}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
+
+            {/* Edit User Modal */}
+            {isEditModalOpen && selectedUser && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
+                    <div className="glass-card w-full max-w-md p-6 relative animate-slide-up">
+                        <button onClick={() => setIsEditModalOpen(false)} className="absolute top-4 right-4 text-text-muted hover:text-white">
+                            <X size={20} />
+                        </button>
+                        <h2 className="text-xl font-bold mb-6 text-white flex items-center gap-2">
+                            <Edit size={20} className="text-primary" /> Editar Professor
+                        </h2>
+                        <form onSubmit={handleEditUser} className="space-y-4">
+                            <div>
+                                <label className="text-xs font-medium text-text-muted uppercase tracking-wider ml-1">Nome Completo</label>
+                                <input
+                                    type="text"
+                                    className="w-full p-3 bg-bg-dark/50 border border-border rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                                    value={editUserName}
+                                    onChange={e => setEditUserName(e.target.value)}
+                                    placeholder="João da Silva"
+                                />
+                            </div>
+                            <div>
+                                <label className="text-xs font-medium text-text-muted uppercase tracking-wider ml-1">Data de Nascimento</label>
+                                <input
+                                    type="date"
+                                    className="w-full p-3 bg-bg-dark/50 border border-border rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                                    value={editUserBirthDate}
+                                    onChange={e => setEditUserBirthDate(e.target.value)}
+                                />
+                            </div>
+                            <div>
+                                <label className="text-xs font-medium text-text-muted uppercase tracking-wider ml-1">Nickname (Apelido)</label>
+                                <input
+                                    type="text"
+                                    className="w-full p-3 bg-bg-dark/50 border border-border rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                                    value={editUserNickname}
+                                    onChange={e => setEditUserNickname(e.target.value)}
+                                    placeholder="Prof. João"
+                                />
+                            </div>
+                            <div>
+                                <label className="text-xs font-medium text-text-muted uppercase tracking-wider ml-1">Email</label>
+                                <input
+                                    type="email"
+                                    className="w-full p-3 bg-bg-dark/50 border border-border rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                                    value={editUserEmail}
+                                    onChange={e => setEditUserEmail(e.target.value)}
+                                    required
+                                    placeholder="professor@escola.com"
+                                />
+                            </div>
+
+                            <div className="flex items-center gap-2 pt-2">
+                                <label className="relative inline-flex items-center cursor-pointer">
+                                    <input
+                                        type="checkbox"
+                                        className="sr-only peer"
+                                        checked={editUserIsActive}
+                                        onChange={e => setEditUserIsActive(e.target.checked)}
+                                    />
+                                    <div className="w-11 h-6 bg-bg-dark rounded-full peer peer-focus:ring-2 peer-focus:ring-primary peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                                    <span className="ml-3 text-sm font-medium text-white">Usuário Ativo</span>
+                                </label>
+                            </div>
+
+                            <div className="flex justify-end gap-3 mt-6">
+                                <button
+                                    type="button"
+                                    onClick={() => setIsEditModalOpen(false)}
+                                    className="px-4 py-2 rounded-lg text-text-muted hover:bg-white/5 transition-colors"
+                                >
+                                    Cancelar
+                                </button>
+                                <button
+                                    type="submit"
+                                    disabled={loading}
+                                    className="bg-primary hover:bg-primary-hover text-white font-bold py-2 px-6 rounded-lg shadow-lg shadow-primary/20 transition-all cursor-pointer disabled:opacity-50"
+                                >
+                                    {loading ? 'Salvando...' : 'Salvar Alterações'}
                                 </button>
                             </div>
                         </form>
