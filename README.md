@@ -175,4 +175,4 @@ pytest
 
 Após iniciar o backend, acesse:
 - **Swagger UI**: http://localhost:8001/docs
-- **ReDoc**: http://localhost:8001/redoc 
+- **ReDoc**: http://localhost:8001/redoc
