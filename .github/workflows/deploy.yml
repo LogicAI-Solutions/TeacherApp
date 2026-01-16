@@ -26,4 +26,4 @@ jobs:
             git fetch --all
             git pull origin main
             docker compose up --build -d
-            docker compose exec -T backend python3 backend/database/migrate.py
+            docker compose exec -T backend python3 database/migrate.py
