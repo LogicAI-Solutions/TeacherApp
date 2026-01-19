@@ -48,7 +48,7 @@ export const Login = () => {
             <div className="glass-card w-full max-w-sm p-8 relative z-10 animate-fade-in">
                 <div className="mb-8 text-center">
                     <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary-light to-primary mb-2">
-                        Bem-vindo
+                        Bem-vinda
                     </h1>
                     <p className="text-text-muted text-sm">
                         Acesse o sistema de gestão escolar.
@@ -89,7 +89,7 @@ export const Login = () => {
                     Esqueceu a senha?
                     <button
                         className="text-primary-light ml-2 hover:text-white transition-colors cursor-pointer font-medium hover:underline"
-                        onClick={() => window.open('https://wa.me/5521994152560?text=Olá,+esqueci+minha+senha+do+sistema+de+gestão.', '_blank')}
+                        onClick={() => window.open('https://wa.me/5521974546156?text=Olá,+esqueci+minha+senha+do+sistema+de+gestão.', '_blank')}
                     >
                         Falar com Suporte
                     </button>
