@@ -9,7 +9,7 @@ export default defineConfig({
     allowedHosts: ['redacaoyana.com.br'],
     proxy: {
       '/api': {
-        target: 'http://backend:8000',
+        target: 'http://backend:8001',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ''),
       },
