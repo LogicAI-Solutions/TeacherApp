@@ -55,7 +55,7 @@ export const Layout = () => {
             {/* Mobile Header */}
             <header className="md:hidden flex items-center justify-between px-3 py-2 bg-bg-card border-b border-border w-full fixed top-0 left-0 z-50">
                 <h1 className="text-base font-bold flex items-center gap-1.5 text-primary">
-                    <GraduationCap size={20} /> TeacherApp
+                    <GraduationCap size={20} /> YanaGestão
                 </h1>
                 <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="p-1.5 text-text-muted hover:text-white">
                     {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
@@ -83,7 +83,7 @@ export const Layout = () => {
                     <div className={`flex items-center gap-2 text-primary font-bold text-xl transition-all duration-300 ${isSidebarCollapsed ? 'justify-center w-full' : ''}`}>
                         <GraduationCap className="shrink-0" />
                         <span className={`whitespace-nowrap overflow-hidden transition-all duration-300 ${isSidebarCollapsed ? 'w-0 opacity-0' : 'w-auto opacity-100'}`}>
-                            TeacherApp
+                            YanaGestão
                         </span>
                     </div>
 
