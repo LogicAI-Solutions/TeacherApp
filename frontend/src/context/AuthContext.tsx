@@ -10,7 +10,7 @@ interface User {
 
 interface AuthContextType {
     user: User | null;
-    login: (email: string, password: string) => Promise<void>;
+    login: (nickname: string, password: string) => Promise<void>;
     logout: () => void;
     isLoading: boolean;
 }
@@ -39,10 +39,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         }
     }, []);
 
-    const login = async (email: string, password: string) => {
+    const login = async (nickname: string, password: string) => {
         try {
             const params = new URLSearchParams();
-            params.append('username', email);
+            params.append('username', nickname);
             params.append('password', password);
 
             const res = await api.post('/token', params);

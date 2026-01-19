@@ -3,7 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
 export const Login = () => {
-    const [email, setEmail] = useState('');
+    const [nickname, setNickname] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
 
@@ -23,7 +23,7 @@ export const Login = () => {
 
         try {
             // Assuming the login function in AuthContext now handles the API call and token storage
-            await login(email, password);
+            await login(nickname, password);
             navigate('/');
         } catch (err: any) {
             console.error(err);
@@ -32,7 +32,7 @@ export const Login = () => {
             } else if (err.response?.data?.detail) {
                 setError(err.response.data.detail);
             } else if (err.response?.status === 401) {
-                setError('Email ou senha incorretos. Tente novamente.');
+                setError('Usuário ou senha incorretos. Tente novamente.');
             } else {
                 setError('Ocorreu um erro inesperado. Tente novamente.');
             }
@@ -59,14 +59,14 @@ export const Login = () => {
 
                 <form onSubmit={handleSubmit} className="flex flex-col gap-5">
                     <div className="space-y-1">
-                        <label className="text-xs font-medium text-text-muted uppercase tracking-wider ml-1">Email</label>
+                        <label className="text-xs font-medium text-text-muted uppercase tracking-wider ml-1">Usuário</label>
                         <input
-                            type="email"
+                            type="text"
                             className="w-full p-3 bg-bg-dark/50 border border-border rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all placeholder:text-text-muted/50"
-                            value={email}
-                            onChange={e => setEmail(e.target.value)}
+                            value={nickname}
+                            onChange={e => setNickname(e.target.value)}
                             required
-                            placeholder="seu@email.com"
+                            placeholder="seu_usuario"
                         />
                     </div>
                     <div className="space-y-1">
