@@ -42,6 +42,7 @@ export const Payments = () => {
     const [search, setSearch] = useState('');
     const [page, setPage] = useState(0);
     const [limit] = useState(10);
+    const [totalStudents, setTotalStudents] = useState(0);
 
     // Local State for Batch Edits
     const [localPayments, setLocalPayments] = useState<Record<number, PaymentInput>>({});
@@ -49,6 +50,11 @@ export const Payments = () => {
 
     // Notification
     const [toast, setToast] = useState<{ msg: string, type: 'success' | 'error' } | null>(null);
+
+    // Reset page when search changes
+    useEffect(() => {
+        setPage(0);
+    }, [search]);
 
     // Debounce search
     useEffect(() => {
@@ -73,13 +79,14 @@ export const Payments = () => {
             // 3. Fetch ALL payments for the month (limit 1000)
             const paymentsRes = await api.get(`/payments/?year=${selectedYear}&month=${selectedMonth}&limit=1000`);
 
-            setStudents(studentsRes.data);
-            setAllStudentIds(allStudentsRes.data.map((s: Student) => s.id));
+            setStudents(studentsRes.data.items);
+            setTotalStudents(studentsRes.data.total);
+            setAllStudentIds(allStudentsRes.data.items.map((s: Student) => s.id));
             setPayments(paymentsRes.data);
 
             // Initialize Local State for current page students
             const initialPayments: Record<number, PaymentInput> = {};
-            studentsRes.data.forEach((s: Student) => {
+            studentsRes.data.items.forEach((s: Student) => {
                 const existing = paymentsRes.data.find((p: Payment) => p.student_id === s.id);
                 initialPayments[s.id] = existing ? {
                     ...existing,
@@ -138,14 +145,14 @@ export const Payments = () => {
     };
 
     // Calculate stats (based on ALL students, not just current page)
-    const totalStudents = allStudentIds.length;
+    const totalStudentsCount = allStudentIds.length;
 
     // Paid Count: Payment is PAID AND belongs to a valid student
     const actualPaidCount = payments.filter(p =>
         p.status === 'PAID' && allStudentIds.includes(p.student_id)
     ).length;
 
-    const pendingCount = totalStudents - actualPaidCount;
+    const pendingCount = totalStudentsCount - actualPaidCount;
 
     // Total recebido: soma dos valores de todos os pagamentos pagos
     const totalReceived = payments
@@ -227,7 +234,7 @@ export const Payments = () => {
                         </div>
                         <span className="text-text-muted text-xs sm:text-sm font-medium hidden sm:inline">Total Alunos</span>
                     </div>
-                    <p className="text-xl sm:text-2xl md:text-3xl font-bold text-white">{totalStudents}</p>
+                    <p className="text-xl sm:text-2xl md:text-3xl font-bold text-white">{totalStudentsCount}</p>
                     <p className="text-xs text-indigo-400 mt-0.5 sm:mt-1 font-medium truncate">Alunos</p>
                 </div>
 
@@ -288,13 +295,13 @@ export const Payments = () => {
             </div>
 
             {/* Table */}
-            <div className="glass-card overflow-hidden relative min-h-[400px] flex flex-col justify-between">
+            <div className="glass-card overflow-hidden relative h-[500px] flex flex-col">
                 {loading && (
                     <div className="absolute inset-0 z-50 flex items-center justify-center bg-bg-card/60 backdrop-blur-sm rounded-xl">
                         <Loading text="Carregando financeiro..." />
                     </div>
                 )}
-                <div className="p-4 border-b border-white/5 bg-white/5 flex items-center justify-between">
+                <div className="p-4 border-b border-white/5 bg-white/5 flex items-center justify-between shrink-0">
                     <h3 className="font-bold text-white">Relatório de {selectedMonth}/{selectedYear}</h3>
                     <button
                         onClick={handleSavePayments}
@@ -307,7 +314,7 @@ export const Payments = () => {
                         {saving ? 'Salvando...' : <><DollarSign size={16} /> Salvar Alterações</>}
                     </button>
                 </div>
-                <div className="overflow-x-auto flex-1">
+                <div className="overflow-x-auto flex-1 overflow-y-auto">
                     <table className="w-full">
                         <thead className="bg-black/20">
                             <tr>
@@ -367,7 +374,7 @@ export const Payments = () => {
                 </div>
 
                 {/* Pagination Controls */}
-                <div className="flex justify-between items-center p-4 border-t border-white/5 bg-black/20">
+                <div className="flex justify-between items-center p-4 border-t border-white/5 bg-black/20 mt-auto shrink-0">
                     <button
                         onClick={() => setPage(p => Math.max(0, p - 1))}
                         disabled={page === 0}
@@ -375,10 +382,12 @@ export const Payments = () => {
                     >
                         Anterior
                     </button>
-                    <span className="text-text-muted text-sm">Página {page + 1}</span>
+                    <span className="text-text-muted text-sm">
+                        Página {page + 1} de {Math.max(1, Math.ceil(totalStudents / limit))}
+                    </span>
                     <button
                         onClick={() => setPage(p => p + 1)}
-                        disabled={students.length < limit}
+                        disabled={(page + 1) * limit >= totalStudents}
                         className="px-4 py-2 bg-white/5 hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg text-sm text-white transition-colors"
                     >
                         Próxima

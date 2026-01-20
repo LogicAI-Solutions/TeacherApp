@@ -12,7 +12,7 @@ from backend.core import database, security
 
 router = APIRouter()
 
-@router.get("/students/", response_model=List[student_schemas.Student])
+@router.get("/students/", response_model=student_schemas.StudentListResponse)
 def read_students(
     skip: int = 0, 
     limit: int = 100, 
@@ -20,7 +20,9 @@ def read_students(
     db: Session = Depends(database.get_db), 
     current_user: user_schemas.User = Depends(security.get_current_user)
 ):
-    return student_crud.get_students(db, user_id=current_user.id, skip=skip, limit=limit, search=search)
+    students = student_crud.get_students(db, user_id=current_user.id, skip=skip, limit=limit, search=search)
+    total = student_crud.count_students(db, user_id=current_user.id, search=search)
+    return {"items": students, "total": total}
 
 @router.post("/students/", response_model=student_schemas.Student)
 def create_student(student: student_schemas.StudentCreate, db: Session = Depends(database.get_db), current_user: user_schemas.User = Depends(security.get_current_user)):

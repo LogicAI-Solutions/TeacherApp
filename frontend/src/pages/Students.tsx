@@ -36,6 +36,7 @@ export const Students = () => {
     const [search, setSearch] = useState('');
     const [page, setPage] = useState(0);
     const [limit] = useState(8); // Diminuir para nao ter que ficar scrollando a pagina para baixo para ver mais alunos
+    const [totalStudents, setTotalStudents] = useState(0);
     const [isLoading, setIsLoading] = useState(true);
 
     // Modal States
@@ -75,6 +76,11 @@ export const Students = () => {
         fetchClasses();
     }, []);
 
+    // Reset page when search changes
+    useEffect(() => {
+        setPage(0);
+    }, [search]);
+
     // Debounce search and fetch
     useEffect(() => {
         const timeoutId = setTimeout(() => {
@@ -88,7 +94,8 @@ export const Students = () => {
         try {
             const skip = page * limit;
             const res = await api.get(`/students/?skip=${skip}&limit=${limit}&search=${search}`);
-            setStudents(res.data);
+            setStudents(res.data.items);
+            setTotalStudents(res.data.total);
         } catch (e) { console.error(e); }
         finally { setIsLoading(false); }
     };
@@ -265,13 +272,13 @@ export const Students = () => {
             </div>
 
             {/* Table */}
-            <div className="glass-card overflow-hidden relative min-h-[400px] flex flex-col justify-between">
+            <div className="glass-card overflow-hidden relative h-[calc(100vh-280px)] min-h-[400px] flex flex-col">
                 {isLoading && (
                     <div className="absolute inset-0 z-50 flex items-center justify-center bg-bg-card/60 backdrop-blur-sm rounded-xl">
                         <Loading text="Carregando alunos..." />
                     </div>
                 )}
-                <div className="overflow-x-auto flex-1">
+                <div className="overflow-x-auto flex-1 overflow-y-auto">
                     <table className="w-full">
                         <thead className="bg-black/20">
                             <tr>
@@ -389,7 +396,7 @@ export const Students = () => {
                 </div>
 
                 {/* Pagination Controls */}
-                <div className="flex justify-between items-center p-4 border-t border-white/5 bg-black/20">
+                <div className="flex justify-between items-center p-4 border-t border-white/5 bg-black/20 mt-auto">
                     <button
                         onClick={() => setPage(p => Math.max(0, p - 1))}
                         disabled={page === 0}
@@ -397,10 +404,12 @@ export const Students = () => {
                     >
                         Anterior
                     </button>
-                    <span className="text-text-muted text-sm">Página {page + 1}</span>
+                    <span className="text-text-muted text-sm">
+                        Página {page + 1} de {Math.max(1, Math.ceil(totalStudents / limit))}
+                    </span>
                     <button
                         onClick={() => setPage(p => p + 1)}
-                        disabled={students.length < limit}
+                        disabled={(page + 1) * limit >= totalStudents}
                         className="px-4 py-2 bg-white/5 hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg text-sm text-white transition-colors"
                     >
                         Próxima
