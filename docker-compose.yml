@@ -63,8 +63,8 @@ services:
       - "127.0.0.1:5050:80"
     depends_on:
       - db
-    # profiles:
-    #   - tools
+    profiles:
+      - tools
 
 volumes:
   postgres_data:
