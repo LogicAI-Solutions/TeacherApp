@@ -32,9 +32,9 @@ export const ManageStudentsModal: React.FC<ManageStudentsModalProps> = ({ isOpen
 
     return (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in">
-            <div className="glass-card w-full max-w-md flex flex-col max-h-[85vh] animate-slide-up relative shadow-2xl">
+            <div className="bg-bg-card w-full max-w-md flex flex-col max-h-[85vh] animate-slide-up relative shadow-2xl rounded-2xl overflow-hidden">
                 {/* Header */}
-                <div className="p-6 border-b border-white/5 bg-bg-card rounded-t-2xl z-10">
+                <div className="p-6 border-b border-white/5 bg-bg-card z-10">
                     <button onClick={onClose} className="absolute top-4 right-4 text-text-muted hover:text-white transition-colors p-1 rounded-full hover:bg-white/5">
                         <X size={20} />
                     </button>
@@ -46,7 +46,7 @@ export const ManageStudentsModal: React.FC<ManageStudentsModalProps> = ({ isOpen
                 </div>
 
                 {/* Content */}
-                <div className="p-6 space-y-4 overflow-y-auto custom-scrollbar bg-bg-dark/30 flex-1">
+                <div className="p-6 space-y-4 overflow-y-auto custom-scrollbar bg-bg-card flex-1">
                     <div className="relative sticky top-0 z-20">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" size={18} />
                         <input
@@ -100,7 +100,7 @@ export const ManageStudentsModal: React.FC<ManageStudentsModalProps> = ({ isOpen
                 </div>
 
                 {/* Footer */}
-                <div className="p-4 border-t border-white/5 bg-bg-card rounded-b-2xl flex justify-end">
+                <div className="p-4 border-t border-white/5 bg-bg-card flex justify-end">
                     <button onClick={onClose} className="px-4 py-2 text-sm text-text-muted hover:text-white transition-colors font-medium">
                         Fechar
                     </button>

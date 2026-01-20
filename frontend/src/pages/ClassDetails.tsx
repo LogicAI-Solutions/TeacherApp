@@ -269,8 +269,8 @@ export const ClassDetails = () => {
 
     const loadAllStudents = async () => {
         try {
-            const res = await api.get('/students/');
-            setAllStudents(res.data);
+            const res = await api.get('/students/?limit=1000');
+            setAllStudents(res.data.items);
             setShowEnrollModal(true);
         } catch (e) { console.error(e); }
     };
@@ -575,8 +575,8 @@ export const ClassDetails = () => {
                         <div className="flex flex-col sm:flex-row justify-between mb-6 gap-4 border-b border-white/5 pb-4">
                             <h2 className="text-xl font-bold flex items-center gap-2"><Users className="text-primary" size={20} /> Alunos Matriculados <span className="bg-bg-dark px-2 py-0.5 rounded-full text-xs text-text-muted">{students.length}</span></h2>
                             <div className="flex flex-col sm:flex-row gap-3">
-                                <button onClick={loadAllStudents} className="btn-outline text-sm px-3 py-1.5"><Users size={16} /> Gerenciar Alunos</button>
-                                <button onClick={() => setShowCreateStudentModal(true)} className="bg-primary hover:bg-primary-hover text-white px-3 py-1.5 rounded-lg text-sm font-medium flex items-center gap-2 shadow-lg shadow-primary/20"><Plus size={16} /> Novo Aluno</button>
+                                <button onClick={loadAllStudents} className="btn btn-outline"><Users size={16} /> Gerenciar Alunos</button>
+                                <button onClick={() => setShowCreateStudentModal(true)} className="btn btn-primary shadow-lg shadow-primary/20"><Plus size={16} /> Novo Aluno</button>
                             </div>
                         </div>
                         <div className="table-container bg-transparent border-none">
@@ -633,7 +633,7 @@ export const ClassDetails = () => {
                                 <span className="w-2 h-8 bg-primary rounded-full"></span> Nova Chamada
                             </h2>
                             <div className="flex items-center gap-3">
-                                <button onClick={loadAllStudents} className="btn-outline text-sm px-3 py-1.5 border-white/10 hover:bg-white/5">
+                                <button onClick={loadAllStudents} className="btn btn-outline">
                                     <Users size={16} /> Gerenciar Alunos
                                 </button>
                                 <div className="text-sm text-text-muted bg-bg-dark px-3 py-1 rounded-lg border border-white/5">

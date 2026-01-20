@@ -21,6 +21,10 @@ class Student(StudentBase):
     class Config:
         from_attributes = True
 
+class StudentListResponse(BaseModel):
+    items: List['Student']
+    total: int
+
 class StudentEvolutionPoint(BaseModel):
     date: datetime.date
     grade: Optional[float] = None

@@ -16,6 +16,16 @@ def get_students(db: Session, user_id: int, skip: int = 0, limit: int = 100, sea
         ))
     return query.offset(skip).limit(limit).all()
 
+def count_students(db: Session, user_id: int, search: str = None):
+    query = db.query(Student).filter(Student.owner_id == user_id)
+    if search:
+        search_filter = f"%{search}%"
+        query = query.filter(or_(
+            Student.name.ilike(search_filter),
+            Student.parent_name.ilike(search_filter)
+        ))
+    return query.count()
+
 def create_student(db: Session, student: StudentCreate, user_id: int):
     db_student = Student(**student.model_dump(), owner_id=user_id)
     db.add(db_student)
