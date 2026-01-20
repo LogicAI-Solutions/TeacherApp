@@ -30,6 +30,7 @@ services:
       - PYTHONUNBUFFERED=1
     volumes:
       - ./backend:/app/backend:rw
+      - ./database:/app/database:ro
     command: uvicorn backend.server:app --host 0.0.0.0 --port 8001
     ports:
       - "127.0.0.1:${PORT_BACKEND:-8001}:8001"
