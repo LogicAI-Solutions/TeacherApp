@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import api from '../api';
-import { User, Plus, Trash2, Key, X, AlertTriangle, Edit, Search, Check, Ban } from 'lucide-react';
+import { User, Plus, Trash2, Key, X, AlertTriangle, Edit, Search } from 'lucide-react';
 
 interface UserData {
     id: number;
