@@ -54,7 +54,7 @@ services:
       backend:
         condition: service_healthy
     ports:
-      - "${PORT_FRONTEND:-5173}:5173"
+      - "127.0.0.1:5173:5173"
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:5173/health"]
       interval: 30s
