@@ -1,220 +1,198 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import api from '../api';
-import { Plus, Calendar, Pencil, Trash, X, AlertTriangle } from 'lucide-react';
-import { Link } from 'react-router-dom';
 import { Loading } from '../components/Loading';
+import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Legend } from 'recharts';
+import { Users, DollarSign, TrendingUp, AlertCircle } from 'lucide-react';
 
-interface ClassModel {
-    id: number;
-    name: string;
-    schedule: string;
+interface DashboardStats {
+    students: {
+        active: number;
+        inactive: number;
+        total: number;
+    };
+    payments: {
+        current_month: number;
+        current_year: number;
+        paid: number;
+        total_expected: number;
+        pending: number;
+    };
 }
 
+const COLORS = ['#8b5cf6', '#e9ef44ff']; // Primary (Purple) & Danger (Red) for Active/Inactive
+
+
 export const Dashboard = () => {
-    const [classes, setClasses] = useState<ClassModel[]>([]);
-    const [showModal, setShowModal] = useState(false);
-    const [newClass, setNewClass] = useState({ name: '', schedule: '' });
+    const [stats, setStats] = useState<DashboardStats | null>(null);
     const [isLoading, setIsLoading] = useState(true);
-
-    // Edit/Delete State
-    const [editingClass, setEditingClass] = useState<ClassModel | null>(null);
-    const [editClassName, setEditClassName] = useState('');
-    const [editClassSchedule, setEditClassSchedule] = useState('');
-    const [deletingClass, setDeletingClass] = useState<ClassModel | null>(null);
-
-    const fetchClasses = async () => {
-        setIsLoading(true);
-        try {
-            const res = await api.get('/classes/');
-            setClasses(res.data);
-        } catch (error) {
-            console.error(error);
-        } finally {
-            setIsLoading(false);
-        }
-    };
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        fetchClasses();
+        const fetchStats = async () => {
+            try {
+                const res = await api.get('/dashboard/stats');
+                setStats(res.data);
+            } catch (err: any) {
+                console.error("Error fetching dashboard stats:", err);
+                setError(err.message || 'Erro ao carregar dados');
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchStats();
     }, []);
 
-    const handleCreateClass = async (e: React.FormEvent) => {
-        e.preventDefault();
-        try {
-            await api.post('/classes/', newClass);
-            setShowModal(false);
-            setNewClass({ name: '', schedule: '' });
-            fetchClasses();
-        } catch (error) {
-            alert('Error creating class');
-        }
-    };
+    if (isLoading) {
+        return (
+            <div className="h-[50vh] flex items-center justify-center">
+                <Loading text="Carregando dashboard..." />
+            </div>
+        );
+    }
 
-    const handleUpdateClass = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!editingClass) return;
-        try {
-            await api.put(`/classes/${editingClass.id}`, { name: editClassName, schedule: editClassSchedule });
-            setEditingClass(null);
-            fetchClasses();
-        } catch (error) {
-            alert('Erro ao atualizar turma');
-        }
-    };
+    if (error) {
+        return (
+            <div className="h-[50vh] flex flex-col items-center justify-center text-danger gap-4">
+                <AlertCircle size={48} />
+                <p className="text-xl">Erro ao carregar dashboard</p>
+                <p className="text-text-muted">{error}</p>
+                <button onClick={() => window.location.reload()} className="glass-button px-4 py-2 text-white">Tentar Novamente</button>
+            </div>
+        );
+    }
 
-    const handleDeleteClass = async () => {
-        if (!deletingClass) return;
-        try {
-            await api.delete(`/classes/${deletingClass.id}`);
-            setDeletingClass(null);
-            fetchClasses();
-        } catch (error) {
-            alert('Erro ao excluir turma');
-        }
-    };
+    // Fallback seguro se stats for null por algum motivo estranho, mas sem erro
+    if (!stats) return null;
 
-    const openEditModal = (e: React.MouseEvent, cls: ClassModel) => {
-        e.preventDefault(); // Prevent Link navigation
-        setEditingClass(cls);
-        setEditClassName(cls.name);
-        setEditClassSchedule(cls.schedule);
-    };
+    // Data handling for charts
+    const studentData = [
+        { name: 'Ativos', value: stats.students.active },
+        { name: 'Inativos', value: stats.students.inactive },
+    ];
 
-    const openDeleteModal = (e: React.MouseEvent, cls: ClassModel) => {
-        e.preventDefault(); // Prevent Link navigation
-        setDeletingClass(cls);
-    };
+    const paymentData = [
+        { name: 'Pagos', value: stats.payments.paid, fill: '#10b981' },
+        { name: 'Pendentes', value: stats.payments.pending, fill: '#fbbf24' }, // Usando o calculado no backend ou deduzindo
+    ];
 
     return (
-        <div>
-            {isLoading ? (
-                <div className="h-[50vh] flex items-center justify-center">
-                    <Loading text="Carregando turmas..." />
+        <div className="animate-slide-up space-y-8">
+            <div className="mb-8">
+                <h2 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-white/70">
+                    Visão Geral
+                </h2>
+                <p className="text-text-muted mt-2">Acompanhe o desempenho da sua escola em tempo real.</p>
+            </div>
+
+            {/* Quick Stats Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div className="glass-card p-6 flex items-center gap-4 border-l-4 border-l-primary">
+                    <div className="p-3 rounded-full bg-primary/20 text-primary">
+                        <Users size={24} />
+                    </div>
+                    <div>
+                        <p className="text-text-muted text-sm">Total de Alunos</p>
+                        <h3 className="text-2xl font-bold text-white">{stats.students.total}</h3>
+                    </div>
                 </div>
-            ) : (
-                <div className="animate-slide-up space-y-8">
-                    <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-                        {classes.map((cls, index) => (
-                            <Link
-                                key={cls.id}
-                                to={`/class/${cls.id}`}
-                                className="glass-card group hover:translate-y-[-5px] transition-all duration-300 block no-underline text-inherit relative overflow-hidden"
-                                style={{ animationDelay: `${index * 100}ms` }}
+
+                <div className="glass-card p-6 flex items-center gap-4 border-l-4 border-l-success">
+                    <div className="p-3 rounded-full bg-success/20 text-success">
+                        <TrendingUp size={24} />
+                    </div>
+                    <div>
+                        <p className="text-text-muted text-sm">Alunos Ativos</p>
+                        <h3 className="text-2xl font-bold text-white">{stats.students.active}</h3>
+                    </div>
+                </div>
+
+                <div className="glass-card p-6 flex items-center gap-4 border-l-4 border-l-success">
+                    <div className="p-3 rounded-full bg-success/20 text-success">
+                        <DollarSign size={24} />
+                    </div>
+                    <div>
+                        <p className="text-text-muted text-sm">Pagamentos (Mês)</p>
+                        <h3 className="text-2xl font-bold text-white">{stats.payments.paid}</h3>
+                    </div>
+                </div>
+
+                <div className="glass-card p-6 flex items-center gap-4 border-l-4 border-l-warning">
+                    <div className="p-3 rounded-full bg-warning/20 text-warning">
+                        <AlertCircle size={24} />
+                    </div>
+                    <div>
+                        <p className="text-text-muted text-sm">Pendentes (Mês)</p>
+                        <h3 className="text-2xl font-bold text-white">{stats.payments.pending}</h3>
+                    </div>
+                </div>
+            </div>
+
+            {/* Charts Section */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                {/* Students Chart */}
+                <div className="glass-card p-6 min-h-[350px] sm:min-h-[400px] flex flex-col">
+                    <h3 className="text-xl font-bold text-white mb-6 pl-2 border-l-4 border-primary">Alunos: Ativos vs Inativos</h3>
+                    <div className="flex-1 w-full min-h-[300px]">
+                        <ResponsiveContainer width="100%" height="100%">
+                            <PieChart>
+                                <Pie
+                                    data={studentData}
+                                    cx="50%"
+                                    cy="50%"
+                                    innerRadius={60}
+                                    outerRadius={100}
+                                    fill="#8884d8"
+                                    paddingAngle={5}
+                                    dataKey="value"
+                                >
+                                    {studentData.map((_, index) => (
+                                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} stroke="rgba(255,255,255,0.1)" />
+                                    ))}
+                                </Pie>
+                                <Tooltip
+                                    contentStyle={{ backgroundColor: 'rgba(23, 23, 23, 0.9)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.1)', color: '#fff' }}
+                                    itemStyle={{ color: '#fff' }}
+                                    formatter={(value: number) => [value, 'Quantidade']}
+                                />
+                                <Legend verticalAlign="bottom" height={36} wrapperStyle={{ paddingTop: '20px' }} />
+                            </PieChart>
+                        </ResponsiveContainer>
+                    </div>
+                </div>
+
+                {/* Payments Chart */}
+                <div className="glass-card p-6 min-h-[350px] sm:min-h-[400px] flex flex-col">
+                    <h3 className="text-xl font-bold text-white mb-6 pl-2 border-l-4 border-success">Pagamentos do Mês Atual</h3>
+                    <div className="flex-1 w-full min-h-[300px]">
+                        <ResponsiveContainer width="100%" height="100%">
+                            <BarChart
+                                data={paymentData}
+                                margin={{
+                                    top: 20,
+                                    right: 30,
+                                    left: 20,
+                                    bottom: 5,
+                                }}
                             >
-                                {/* Gradient accent line */}
-                                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary/0 via-primary to-primary/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                                
-                                <div className="flex justify-between items-start p-6">
-                                    <div>
-                                        <h3 className="text-xl font-bold mb-2 text-text-main group-hover:text-gradient transition-all duration-300">{cls.name}</h3>
-                                        <p className="text-text-muted text-sm flex items-center gap-2">
-                                            <Calendar size={14} className="text-primary" /> {cls.schedule}
-                                        </p>
-                                    </div>
-                                    <div className="flex gap-2">
-                                        <button onClick={(e) => openEditModal(e, cls)} className="bg-white/5 backdrop-blur-sm p-2 rounded-xl hover:bg-primary/20 text-text-muted hover:text-primary transition-all duration-300 border border-white/5 hover:border-primary/30">
-                                            <Pencil size={18} />
-                                        </button>
-                                        <button onClick={(e) => openDeleteModal(e, cls)} className="bg-white/5 backdrop-blur-sm p-2 rounded-xl hover:bg-danger/20 text-text-muted hover:text-danger transition-all duration-300 border border-white/5 hover:border-danger/30">
-                                            <Trash size={18} />
-                                        </button>
-                                    </div>
-                                </div>
-                            </Link>
-                        ))}
-
-                        {/* Add Class Card Button */}
-                        <button
-                            onClick={() => setShowModal(true)}
-                            className="glass-card flex flex-col items-center justify-center gap-4 group hover:bg-white/10 transition-all border-dashed border-2 border-white/10 hover:border-primary/50 cursor-pointer min-h-[150px]"
-                        >
-                            <div className="bg-primary/10 p-4 rounded-full group-hover:scale-110 group-hover:bg-primary/20 transition-all duration-300 border border-primary/20">
-                                <Plus size={32} className="text-primary" />
-                            </div>
-                            <span className="font-medium text-text-muted group-hover:text-white transition-colors">Criar Nova Turma</span>
-                        </button>
+                                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
+                                <XAxis dataKey="name" stroke="#9ca3af" tick={{ fill: '#9ca3af' }} axisLine={{ stroke: 'rgba(255,255,255,0.1)' }} />
+                                <YAxis stroke="#9ca3af" tick={{ fill: '#9ca3af' }} axisLine={{ stroke: 'rgba(255,255,255,0.1)' }} />
+                                <Tooltip
+                                    cursor={{ fill: 'rgba(255,255,255,0.05)' }}
+                                    contentStyle={{ backgroundColor: 'rgba(23, 23, 23, 0.9)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.1)', color: '#fff' }}
+                                    formatter={(value: number) => [value, 'Quantidade']}
+                                />
+                                <Bar dataKey="value" radius={[8, 8, 0, 0]}>
+                                    {paymentData.map((entry, index) => (
+                                        <Cell key={`cell-${index}`} fill={entry.fill} />
+                                    ))}
+                                </Bar>
+                            </BarChart>
+                        </ResponsiveContainer>
                     </div>
                 </div>
-            )}
-
-            {classes.length === 0 && !isLoading && (
-                <div className="text-center mt-12 animate-fade-in">
-                    <p className="text-text-muted text-lg">Comece criando sua primeira turma acima.</p>
-                </div>
-            )}
-
-            {/* Modern Modal */}
-            {showModal && (
-                <div className="modal-overlay animate-fade-in">
-                    <div className="glass-modal w-full max-w-md p-8 animate-slide-up relative overflow-hidden">
-                        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary/0 via-primary to-primary/0"></div>
-                        <h3 className="text-2xl mb-6 font-bold text-white">Nova Turma</h3>
-                        <form onSubmit={handleCreateClass} className="flex flex-col gap-5">
-                            <div className="space-y-1">
-                                <label className="text-xs font-medium text-text-muted uppercase tracking-wider ml-1">Nome da Turma</label>
-                                <input className="glass-input" value={newClass.name} onChange={e => setNewClass({ ...newClass, name: e.target.value })} required placeholder="Ex: Matemática Avançada" />
-                            </div>
-                            <div className="space-y-1">
-                                <label className="text-xs font-medium text-text-muted uppercase tracking-wider ml-1">Horário</label>
-                                <input className="glass-input" value={newClass.schedule} onChange={e => setNewClass({ ...newClass, schedule: e.target.value })} required placeholder="Ex: Segundas e Quartas, 19h" />
-                            </div>
-                            <div className="flex justify-end gap-3 mt-4">
-                                <button type="button" onClick={() => setShowModal(false)} className="px-4 py-2 text-text-muted hover:text-white hover:bg-white/10 rounded-xl transition-all">Cancelar</button>
-                                <button type="submit" className="glass-button px-6 py-2 text-white rounded-xl font-medium">Criar Turma</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            )}
-            {/* Edit Class Modal */}
-            {editingClass && (
-                <div className="modal-overlay animate-fade-in">
-                    <div className="glass-modal w-full max-w-md p-8 animate-slide-up relative overflow-hidden">
-                        <button onClick={() => setEditingClass(null)} className="absolute top-4 right-4 text-text-muted hover:text-white p-2 rounded-xl hover:bg-white/10 transition-all">
-                            <X size={20} />
-                        </button>
-                        <h3 className="text-2xl mb-6 font-bold text-white flex items-center gap-2">
-                            <Pencil size={24} className="text-primary" /> Editar Turma
-                        </h3>
-                        <form onSubmit={handleUpdateClass} className="flex flex-col gap-5">
-                            <div className="space-y-1">
-                                <label className="text-xs font-medium text-text-muted uppercase tracking-wider ml-1">Nome da Turma</label>
-                                <input className="glass-input" value={editClassName} onChange={e => setEditClassName(e.target.value)} required />
-                            </div>
-                            <div className="space-y-1">
-                                <label className="text-xs font-medium text-text-muted uppercase tracking-wider ml-1">Horário</label>
-                                <input className="glass-input" value={editClassSchedule} onChange={e => setEditClassSchedule(e.target.value)} required />
-                            </div>
-                            <div className="flex justify-end gap-3 mt-4">
-                                <button type="button" onClick={() => setEditingClass(null)} className="px-4 py-2 text-text-muted hover:text-white hover:bg-white/10 rounded-xl transition-all">Cancelar</button>
-                                <button type="submit" className="glass-button px-6 py-2 text-white rounded-xl font-medium">Salvar</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            )}
-
-            {/* Delete Class Modal */}
-            {deletingClass && (
-                <div className="modal-overlay animate-fade-in">
-                    <div className="glass-modal w-full max-w-sm p-6 relative animate-slide-up overflow-hidden">
-                        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-danger/0 via-danger to-danger/0"></div>
-                        <div className="flex flex-col items-center text-center pt-2">
-                            <div className="w-14 h-14 rounded-2xl bg-danger/20 flex items-center justify-center mb-4 text-danger border border-danger/30">
-                                <AlertTriangle size={28} />
-                            </div>
-                            <h3 className="text-xl font-bold text-white mb-2">Excluir Turma?</h3>
-                            <p className="text-text-muted mb-6">
-                                Tem certeza que deseja excluir <strong className="text-white">{deletingClass.name}</strong>? Esta ação removerá todos os alunos e chamadas associados.
-                            </p>
-                            <div className="flex gap-3 w-full">
-                                <button onClick={() => setDeletingClass(null)} className="flex-1 py-2 text-text-muted hover:bg-white/10 transition-all rounded-xl">Cancelar</button>
-                                <button onClick={handleDeleteClass} className="flex-1 py-2 bg-danger/90 hover:bg-danger text-white rounded-xl shadow-lg shadow-danger/30 transition-all font-medium">Excluir</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            )}
+            </div>
         </div>
     );
 };

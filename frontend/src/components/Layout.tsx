@@ -55,7 +55,7 @@ export const Layout = () => {
             {/* Background Orbs for Glass Effect */}
             <div className="orb orb-primary w-96 h-96 -top-48 -left-48 hidden md:block" style={{ animationDelay: '0s' }}></div>
             <div className="orb orb-purple w-64 h-64 bottom-20 right-20 hidden md:block" style={{ animationDelay: '3s' }}></div>
-            
+
             {/* Mobile Header */}
             <header className="md:hidden flex items-center justify-between px-4 py-3 glass-header w-full fixed top-0 left-0 z-50">
                 <h1 className="text-base font-bold flex items-center gap-2 text-gradient">
@@ -110,6 +110,16 @@ export const Layout = () => {
                     >
                         <LayoutDashboard size={20} className={`shrink-0 ${location.pathname === '/' ? '' : ''}`} />
                         <span className={`whitespace-nowrap transition-all duration-300 ${isSidebarCollapsed ? 'opacity-0 w-0 overflow-hidden' : 'opacity-100 w-auto'}`}>Dashboard</span>
+                    </Link>
+
+                    <Link
+                        to="/classes"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        className={`nav-link-glass ${location.pathname === '/classes' ? 'active text-white shadow-lg shadow-primary/25' : 'text-text-muted hover:text-white'} ${isSidebarCollapsed ? 'justify-center gap-0' : 'gap-3'}`}
+                        title="Turmas"
+                    >
+                        <GraduationCap size={20} className={`shrink-0 ${location.pathname === '/classes' ? '' : ''}`} />
+                        <span className={`whitespace-nowrap transition-all duration-300 ${isSidebarCollapsed ? 'opacity-0 w-0 overflow-hidden' : 'opacity-100 w-auto'}`}>Turmas</span>
                     </Link>
 
                     <Link

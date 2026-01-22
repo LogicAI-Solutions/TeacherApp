@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { Login } from './pages/Login';
 import { Dashboard } from './pages/Dashboard';
+import { Classes } from './pages/Classes';
 import { ClassDetails } from './pages/ClassDetails';
 import { Students } from './pages/Students';
 import { Payments } from './pages/Payments';
@@ -28,6 +29,7 @@ function AppRoutes() {
         </ProtectedRoute>
       }>
         <Route index element={<Dashboard />} />
+        <Route path="classes" element={<Classes />} />
         <Route path="class/:id" element={<ClassDetails />} />
         <Route path="students" element={<Students />} />
         <Route path="payments" element={<Payments />} />

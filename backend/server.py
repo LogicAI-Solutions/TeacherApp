@@ -13,7 +13,7 @@ init_db()
 app = FastAPI(
     title="TeacherApp API",
     description="API para gerenciamento de alunos e turmas",
-    version="1.0.0"
+    version="1.0.1"
 )
 
 cors_origins_env = os.getenv("CORS_ORIGINS", "")
