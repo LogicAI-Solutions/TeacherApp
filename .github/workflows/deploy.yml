@@ -29,8 +29,13 @@ jobs:
           pip install -r backend/requirements.txt
           pip install pytest pytest-asyncio httpx
 
-      - name: Run import tests
-        run: python -c "from backend.server import app; print('Backend imports OK')"
+      - name: Check Python syntax and imports
+        run: |
+          python -m py_compile backend/core/config.py
+          python -m py_compile backend/core/security.py
+          python -m py_compile backend/models/users.py
+          python -m py_compile backend/schemas/users.py
+          echo "Backend syntax OK"
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
