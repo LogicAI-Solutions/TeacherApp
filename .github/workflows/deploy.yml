@@ -71,6 +71,8 @@ jobs:
           username: root
           key: ${{ secrets.HOSTINGER_API_KEY }}
           port: 22
+          timeout: 60s
+          command_timeout: 30m
           script_stop: true
           script: |
             set -e
