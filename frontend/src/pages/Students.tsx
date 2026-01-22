@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import api from '../api';
-import { Plus, Search, Pencil, Trash, X, AlertTriangle, UserCircle, LineChart as LineChartIcon, Download, MoreVertical, CheckCircle, XCircle } from 'lucide-react';
+import { Plus, Search, Pencil, Trash, X, AlertTriangle, UserCircle, LineChart as LineChartIcon, Download, MoreVertical } from 'lucide-react';
 import html2canvas from 'html2canvas';
 import { formatPhone, unmaskPhone } from '../utils/masks';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
@@ -241,7 +241,7 @@ export const Students = () => {
                 </div>
                 <button
                     onClick={() => setShowCreateModal(true)}
-                    className="bg-primary hover:bg-primary-hover text-white px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg shadow-lg shadow-primary/20 flex items-center gap-1.5 transition-all text-xs sm:text-sm w-full sm:w-auto justify-center"
+                    className="glass-button text-white px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl flex items-center gap-1.5 transition-all text-xs sm:text-sm w-full sm:w-auto justify-center"
                 >
                     <Plus size={16} /> Novo Aluno
                 </button>
@@ -249,9 +249,9 @@ export const Students = () => {
 
             {/* Search Bar */}
             <div className={`transition-all duration-500 mb-6 sticky top-0 z-10 ${search.length > 0 ? '-translate-y-2 opacity-95' : ''}`}>
-                <div className="relative group max-w-2xl mx-auto shadow-2xl rounded-2xl">
-                    <div className="absolute inset-0 bg-primary/10 rounded-2xl blur-lg group-hover:bg-primary/30 transition-all duration-500"></div>
-                    <div className="relative bg-bg-card border border-white/5 rounded-2xl flex items-center p-1">
+                <div className="relative group max-w-2xl mx-auto">
+                    <div className="absolute inset-0 bg-primary/10 rounded-2xl blur-xl group-hover:bg-primary/20 transition-all duration-500"></div>
+                    <div className="relative glass border border-white/10 rounded-2xl flex items-center p-1">
                         <div className="pl-4 pr-3 text-text-muted group-focus-within:text-primary transition-colors">
                             <Search size={24} />
                         </div>
@@ -274,13 +274,13 @@ export const Students = () => {
             {/* Table */}
             <div className="glass-card overflow-hidden relative h-[calc(100vh-280px)] min-h-[400px] flex flex-col">
                 {isLoading && (
-                    <div className="absolute inset-0 z-50 flex items-center justify-center bg-bg-card/60 backdrop-blur-sm rounded-xl">
+                    <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm rounded-2xl">
                         <Loading text="Carregando alunos..." />
                     </div>
                 )}
                 <div className="overflow-x-auto flex-1 overflow-y-auto">
                     <table className="w-full">
-                        <thead className="bg-black/20">
+                        <thead className="bg-white/5 sticky top-0 backdrop-blur-xl">
                             <tr>
                                 <th className="text-left p-3 sm:p-4 text-xs font-bold text-text-muted uppercase tracking-wider">Nome</th>
                                 <th className="text-left p-3 sm:p-4 text-xs font-bold text-text-muted uppercase tracking-wider hidden md:table-cell">Contato</th>
@@ -309,9 +309,9 @@ export const Students = () => {
                                         <td className="p-3 sm:p-4 text-text-muted text-sm hidden xl:table-cell">{student.class_type || '-'}</td>
                                         <td className="p-3 sm:p-4 text-center">
                                             <select
-                                                className={`px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg text-xs font-medium border-none focus:ring-2 focus:ring-primary outline-none transition-colors cursor-pointer ${student.active
-                                                    ? 'bg-success/20 text-success'
-                                                    : 'bg-text-muted/20 text-text-muted'}`}
+                                                className={`px-2 sm:px-3 py-1 sm:py-1.5 rounded-xl text-xs font-medium border focus:ring-2 focus:ring-primary/40 outline-none transition-all cursor-pointer backdrop-blur-sm ${student.active
+                                                    ? 'bg-success/10 text-success border-success/30'
+                                                    : 'bg-white/5 text-text-muted border-white/10'}`}
                                                 value={student.active ? 'true' : 'false'}
                                                 onClick={(e) => e.stopPropagation()}
                                                 onChange={async (e) => {
@@ -325,8 +325,8 @@ export const Students = () => {
                                                     }
                                                 }}
                                             >
-                                                <option value="true" className="bg-bg-card text-white">Ativo</option>
-                                                <option value="false" className="bg-bg-card text-white">Inativo</option>
+                                                <option value="true" className="bg-bg-dark text-white">Ativo</option>
+                                                <option value="false" className="bg-bg-dark text-white">Inativo</option>
                                             </select>
                                         </td>
                                         <td className="p-3 sm:p-4 text-right relative action-menu-container">
@@ -335,19 +335,19 @@ export const Students = () => {
                                                     e.stopPropagation();
                                                     setOpenMenuId(openMenuId === student.id ? null : student.id);
                                                 }}
-                                                className={`p-2 rounded-lg transition-colors ${openMenuId === student.id ? 'bg-white/10 text-white' : 'text-text-muted hover:text-white hover:bg-white/5'}`}
+                                                className={`p-2 rounded-xl transition-all ${openMenuId === student.id ? 'bg-white/10 text-white' : 'text-text-muted hover:text-white hover:bg-white/5'}`}
                                             >
                                                 <MoreVertical size={18} />
                                             </button>
 
                                             {openMenuId === student.id && (
-                                                <div className={`absolute right-4 z-50 w-48 bg-bg-card border border-white/10 rounded-xl shadow-xl overflow-hidden animate-fade-in ${isLastItems ? 'bottom-12 origin-bottom-right' : 'top-12 origin-top-right'}`}>
+                                                <div className={`absolute right-4 z-50 w-48 bg-slate-900/95 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl overflow-hidden animate-fade-in ${isLastItems ? 'bottom-12 origin-bottom-right' : 'top-12 origin-top-right'}`}>
                                                     <button
                                                         onClick={() => {
                                                             handleViewEvolution(student);
                                                             setOpenMenuId(null);
                                                         }}
-                                                        className="w-full text-left px-4 py-3 text-sm text-text-muted hover:text-white hover:bg-white/5 flex items-center gap-2 transition-colors"
+                                                        className="w-full text-left px-4 py-3 text-sm text-text-muted hover:text-white hover:bg-white/10 flex items-center gap-2 transition-colors"
                                                     >
                                                         <LineChartIcon size={16} /> Ver Evolução
                                                     </button>
@@ -396,11 +396,11 @@ export const Students = () => {
                 </div>
 
                 {/* Pagination Controls */}
-                <div className="flex justify-between items-center p-4 border-t border-white/5 bg-black/20 mt-auto">
+                <div className="flex justify-between items-center p-4 border-t border-white/5 bg-white/3 backdrop-blur-sm mt-auto">
                     <button
                         onClick={() => setPage(p => Math.max(0, p - 1))}
                         disabled={page === 0}
-                        className="px-4 py-2 bg-white/5 hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg text-sm text-white transition-colors"
+                        className="px-4 py-2 bg-white/5 hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl text-sm text-white transition-all border border-white/10"
                     >
                         Anterior
                     </button>
@@ -410,7 +410,7 @@ export const Students = () => {
                     <button
                         onClick={() => setPage(p => p + 1)}
                         disabled={(page + 1) * limit >= totalStudents}
-                        className="px-4 py-2 bg-white/5 hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg text-sm text-white transition-colors"
+                        className="px-4 py-2 bg-white/5 hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl text-sm text-white transition-all border border-white/10"
                     >
                         Próxima
                     </button>
@@ -419,19 +419,20 @@ export const Students = () => {
 
             {/* Create Modal */}
             {showCreateModal && (
-                <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in">
-                    <div className="glass-card w-full max-w-lg p-8 animate-slide-up relative">
-                        <button onClick={() => setShowCreateModal(false)} className="absolute top-4 right-4 text-text-muted hover:text-white"><X size={20} /></button>
+                <div className="modal-overlay animate-fade-in">
+                    <div className="glass-modal w-full max-w-lg p-8 animate-slide-up relative overflow-hidden">
+                        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary/0 via-primary to-primary/0"></div>
+                        <button onClick={() => setShowCreateModal(false)} className="absolute top-4 right-4 text-text-muted hover:text-white p-2 rounded-xl hover:bg-white/10 transition-all"><X size={20} /></button>
                         <h3 className="text-2xl font-bold text-white mb-6">Novo Aluno</h3>
                         <form onSubmit={handleCreateStudent} className="space-y-4">
                             <div>
                                 <label className="text-xs font-medium text-text-muted uppercase tracking-wider ml-1">Nome Completo</label>
-                                <input className="w-full p-3 bg-bg-dark/50 border border-border rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary"
+                                <input className="glass-input"
                                     value={newStudentData.name} onChange={e => setNewStudentData({ ...newStudentData, name: e.target.value })} required autoFocus />
                             </div>
                             <div>
                                 <label className="text-xs font-medium text-text-muted uppercase tracking-wider ml-1">Celular</label>
-                                <input className="w-full p-3 bg-bg-dark/50 border border-border rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary"
+                                <input className="glass-input"
                                     value={newStudentData.phone}
                                     onChange={e => setNewStudentData({ ...newStudentData, phone: formatPhone(e.target.value) })}
                                     maxLength={15}
@@ -440,12 +441,12 @@ export const Students = () => {
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
                                     <label className="text-xs font-medium text-text-muted uppercase tracking-wider ml-1">Responsável</label>
-                                    <input className="w-full p-3 bg-bg-dark/50 border border-border rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary"
+                                    <input className="glass-input"
                                         value={newStudentData.parent_name} onChange={e => setNewStudentData({ ...newStudentData, parent_name: e.target.value })} />
                                 </div>
                                 <div>
                                     <label className="text-xs font-medium text-text-muted uppercase tracking-wider ml-1">Cel. Responsável</label>
-                                    <input className="w-full p-3 bg-bg-dark/50 border border-border rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary"
+                                    <input className="glass-input"
                                         value={newStudentData.parent_phone}
                                         onChange={e => setNewStudentData({ ...newStudentData, parent_phone: formatPhone(e.target.value) })}
                                         maxLength={15}
@@ -454,20 +455,20 @@ export const Students = () => {
                             </div>
                             <div>
                                 <label className="text-xs font-medium text-text-muted uppercase tracking-wider ml-1">Email Responsável</label>
-                                <input type="email" className="w-full p-3 bg-bg-dark/50 border border-border rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary"
+                                <input type="email" className="glass-input"
                                     value={newStudentData.parent_email} onChange={e => setNewStudentData({ ...newStudentData, parent_email: e.target.value })} />
                             </div>
 
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
                                     <label className="text-xs font-medium text-text-muted uppercase tracking-wider ml-1">Ano Escolar</label>
-                                    <input className="w-full p-3 bg-bg-dark/50 border border-border rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary"
+                                    <input className="glass-input"
                                         value={newStudentData.school_year} onChange={e => setNewStudentData({ ...newStudentData, school_year: e.target.value })}
                                         placeholder="Ex: 5º Ano" />
                                 </div>
                                 <div>
                                     <label className="text-xs font-medium text-text-muted uppercase tracking-wider ml-1">Tipo de Turma</label>
-                                    <select className="w-full p-3 bg-bg-dark/50 border border-border rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary"
+                                    <select className="glass-input"
                                         value={newStudentData.class_type} onChange={e => setNewStudentData({ ...newStudentData, class_type: e.target.value as any })}>
                                         <option value="">-- Selecione --</option>
                                         <option value="Semanal">Semanal</option>
@@ -476,7 +477,7 @@ export const Students = () => {
                                 </div>
                             </div>
                             <div
-                                className="flex items-center gap-3 bg-bg-dark/30 p-3 rounded-lg border border-white/5 cursor-pointer hover:bg-bg-dark/50 transition-colors"
+                                className="flex items-center gap-3 bg-white/5 p-3 rounded-xl border border-white/10 cursor-pointer hover:bg-white/10 transition-all backdrop-blur-sm"
                                 onClick={() => setNewStudentData({ ...newStudentData, active: !newStudentData.active })}
                             >
                                 <div className={`w-10 h-5 rounded-full relative transition-colors duration-300 ${newStudentData.active ? 'bg-primary' : 'bg-white/10'}`}>
@@ -488,7 +489,7 @@ export const Students = () => {
                             <div className="pt-2 border-t border-white/10 mt-2">
                                 <label className="text-xs font-medium text-text-muted uppercase tracking-wider ml-1">Matricular na Turma (Opcional)</label>
                                 <select
-                                    className="w-full p-3 bg-bg-dark/50 border border-border rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary"
+                                    className="glass-input"
                                     value={selectedClassId}
                                     onChange={e => setSelectedClassId(Number(e.target.value) || '')}
                                 >
@@ -498,8 +499,8 @@ export const Students = () => {
                             </div>
 
                             <div className="flex justify-end gap-3 mt-6">
-                                <button type="button" onClick={() => setShowCreateModal(false)} className="px-4 py-2 text-text-muted hover:text-white">Cancelar</button>
-                                <button type="submit" className="bg-primary hover:bg-primary-hover text-white px-6 py-2 rounded-lg">Salvar</button>
+                                <button type="button" onClick={() => setShowCreateModal(false)} className="px-4 py-2 text-text-muted hover:text-white hover:bg-white/10 rounded-xl transition-all">Cancelar</button>
+                                <button type="submit" className="glass-button text-white px-6 py-2 rounded-xl font-medium">Salvar</button>
                             </div>
                         </form>
                     </div>
@@ -508,19 +509,20 @@ export const Students = () => {
 
             {/* Edit Modal */}
             {editingStudent && (
-                <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in">
-                    <div className="glass-card w-full max-w-lg p-8 animate-slide-up relative">
-                        <button onClick={() => setEditingStudent(null)} className="absolute top-4 right-4 text-text-muted hover:text-white"><X size={20} /></button>
+                <div className="modal-overlay animate-fade-in">
+                    <div className="glass-modal w-full max-w-lg p-8 animate-slide-up relative overflow-hidden">
+                        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary/0 via-primary to-primary/0"></div>
+                        <button onClick={() => setEditingStudent(null)} className="absolute top-4 right-4 text-text-muted hover:text-white p-2 rounded-xl hover:bg-white/10 transition-all"><X size={20} /></button>
                         <h3 className="text-2xl font-bold text-white mb-6">Editar Aluno</h3>
                         <form onSubmit={handleUpdateStudent} className="space-y-4">
                             <div>
                                 <label className="text-xs font-medium text-text-muted uppercase tracking-wider ml-1">Nome Completo</label>
-                                <input className="w-full p-3 bg-bg-dark/50 border border-border rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary"
+                                <input className="glass-input"
                                     value={editStudentData.name} onChange={e => setEditStudentData({ ...editStudentData, name: e.target.value })} required />
                             </div>
                             <div>
                                 <label className="text-xs font-medium text-text-muted uppercase tracking-wider ml-1">Celular</label>
-                                <input className="w-full p-3 bg-bg-dark/50 border border-border rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary"
+                                <input className="glass-input"
                                     value={editStudentData.phone}
                                     onChange={e => setEditStudentData({ ...editStudentData, phone: formatPhone(e.target.value) })}
                                     maxLength={15}
@@ -529,12 +531,12 @@ export const Students = () => {
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
                                     <label className="text-xs font-medium text-text-muted uppercase tracking-wider ml-1">Responsável</label>
-                                    <input className="w-full p-3 bg-bg-dark/50 border border-border rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary"
+                                    <input className="glass-input"
                                         value={editStudentData.parent_name} onChange={e => setEditStudentData({ ...editStudentData, parent_name: e.target.value })} />
                                 </div>
                                 <div>
                                     <label className="text-xs font-medium text-text-muted uppercase tracking-wider ml-1">Cel. Responsável</label>
-                                    <input className="w-full p-3 bg-bg-dark/50 border border-border rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary"
+                                    <input className="glass-input"
                                         value={editStudentData.parent_phone}
                                         onChange={e => setEditStudentData({ ...editStudentData, parent_phone: formatPhone(e.target.value) })}
                                         maxLength={15}
@@ -543,20 +545,20 @@ export const Students = () => {
                             </div>
                             <div>
                                 <label className="text-xs font-medium text-text-muted uppercase tracking-wider ml-1">Email Responsável</label>
-                                <input type="email" className="w-full p-3 bg-bg-dark/50 border border-border rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary"
+                                <input type="email" className="glass-input"
                                     value={editStudentData.parent_email} onChange={e => setEditStudentData({ ...editStudentData, parent_email: e.target.value })} />
                             </div>
 
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
                                     <label className="text-xs font-medium text-text-muted uppercase tracking-wider ml-1">Ano Escolar</label>
-                                    <input className="w-full p-3 bg-bg-dark/50 border border-border rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary"
+                                    <input className="glass-input"
                                         value={editStudentData.school_year} onChange={e => setEditStudentData({ ...editStudentData, school_year: e.target.value })}
                                         placeholder="Ex: 5º Ano" />
                                 </div>
                                 <div>
                                     <label className="text-xs font-medium text-text-muted uppercase tracking-wider ml-1">Tipo de Turma</label>
-                                    <select className="w-full p-3 bg-bg-dark/50 border border-border rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary"
+                                    <select className="glass-input"
                                         value={editStudentData.class_type} onChange={e => setEditStudentData({ ...editStudentData, class_type: e.target.value as any })}>
                                         <option value="">-- Selecione --</option>
                                         <option value="Semanal">Semanal</option>
@@ -565,7 +567,7 @@ export const Students = () => {
                                 </div>
                             </div>
                             <div
-                                className="flex items-center gap-3 bg-bg-dark/30 p-3 rounded-lg border border-white/5 cursor-pointer hover:bg-bg-dark/50 transition-colors"
+                                className="flex items-center gap-3 bg-white/5 p-3 rounded-xl border border-white/10 cursor-pointer hover:bg-white/10 transition-all backdrop-blur-sm"
                                 onClick={() => setEditStudentData({ ...editStudentData, active: !editStudentData.active })}
                             >
                                 <div className={`w-10 h-5 rounded-full relative transition-colors duration-300 ${editStudentData.active ? 'bg-primary' : 'bg-white/10'}`}>
@@ -574,8 +576,8 @@ export const Students = () => {
                                 <span className="text-sm font-medium text-white select-none">Aluno Ativo</span>
                             </div>
                             <div className="flex justify-end gap-3 mt-6">
-                                <button type="button" onClick={() => setEditingStudent(null)} className="px-4 py-2 text-text-muted hover:text-white">Cancelar</button>
-                                <button type="submit" className="bg-primary hover:bg-primary-hover text-white px-6 py-2 rounded-lg">Salvar</button>
+                                <button type="button" onClick={() => setEditingStudent(null)} className="px-4 py-2 text-text-muted hover:text-white hover:bg-white/10 rounded-xl transition-all">Cancelar</button>
+                                <button type="submit" className="glass-button text-white px-6 py-2 rounded-xl font-medium">Salvar</button>
                             </div>
                         </form>
                     </div>
@@ -584,27 +586,28 @@ export const Students = () => {
 
             {/* Evolution Modal */}
             {viewingEvolution && (
-                <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in">
-                    <div className="glass-card w-full max-w-4xl p-8 animate-slide-up relative">
-                        <button onClick={() => setViewingEvolution(null)} className="absolute top-4 right-4 text-text-muted hover:text-white"><X size={20} /></button>
+                <div className="modal-overlay animate-fade-in">
+                    <div className="glass-modal w-full max-w-4xl p-8 animate-slide-up relative overflow-hidden">
+                        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-purple-500/0 via-purple-500 to-purple-500/0"></div>
+                        <button onClick={() => setViewingEvolution(null)} className="absolute top-4 right-4 text-text-muted hover:text-white p-2 rounded-xl hover:bg-white/10 transition-all"><X size={20} /></button>
 
-                        <div className="flex justify-between items-center mb-6">
-                            <h3 className="text-2xl font-bold text-white">Evolução: {viewingEvolution.name}</h3>
-                            <div className="flex gap-2">
+                        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-3">
+                            <h3 className="text-xl sm:text-2xl font-bold text-white truncate max-w-[200px] sm:max-w-none">Evolução: {viewingEvolution.name}</h3>
+                            <div className="flex items-center gap-2">
                                 <select
                                     value={reportMonth}
                                     onChange={e => setReportMonth(e.target.value === '' ? '' : Number(e.target.value))}
-                                    className="bg-bg-dark border border-white/10 rounded-lg px-3 py-1 text-white text-sm"
+                                    className="bg-white/5 border border-white/10 rounded-lg py-1.5 px-2 text-xs text-white focus:outline-none focus:ring-1 focus:ring-primary/40"
                                 >
-                                    <option value="">Todos os Meses</option>
+                                    <option value="">Todos</option>
                                     {Array.from({ length: 12 }, (_, i) => i + 1).map(m => (
-                                        <option key={m} value={m}>{new Date(0, m - 1).toLocaleString('pt-BR', { month: 'long' })}</option>
+                                        <option key={m} value={m}>{new Date(0, m - 1).toLocaleString('pt-BR', { month: 'short' })}</option>
                                     ))}
                                 </select>
                                 <select
                                     value={reportYear}
                                     onChange={e => setReportYear(Number(e.target.value))}
-                                    className="bg-bg-dark border border-white/10 rounded-lg px-3 py-1 text-white text-sm"
+                                    className="bg-white/5 border border-white/10 rounded-lg py-1.5 px-2 text-xs text-white focus:outline-none focus:ring-1 focus:ring-primary/40"
                                     disabled={reportMonth === ''}
                                 >
                                     {Array.from({ length: 10 }, (_, i) => new Date().getFullYear() - 5 + i).map(y => (
@@ -613,23 +616,24 @@ export const Students = () => {
                                 </select>
                                 <button
                                     onClick={handleDownloadReport}
-                                    className="flex items-center gap-2 px-4 py-2 bg-success/20 text-success hover:bg-success hover:text-white rounded-lg transition-colors font-medium text-sm"
+                                    className="flex items-center gap-1.5 px-3 py-1.5 bg-white/5 text-success hover:bg-success/20 rounded-lg transition-all text-xs border border-white/10"
+                                    title="Baixar Relatório"
                                 >
-                                    <Download size={18} />
-                                    Baixar Relatório
+                                    <Download size={14} />
+                                    <span className="hidden sm:inline">Exportar</span>
                                 </button>
                             </div>
                         </div>
 
-                        <div id="evolution-chart-container" className="h-[400px] w-full bg-bg-card p-4 rounded-xl">
+                        <div id="evolution-chart-container" className="h-[400px] w-full bg-white/5 backdrop-blur-sm p-4 rounded-2xl border border-white/10">
                             {filteredEvolutionData.length > 0 ? (
                                 <ResponsiveContainer width="100%" height="100%">
                                     <LineChart data={filteredEvolutionData}>
-                                        <CartesianGrid strokeDasharray="3 3" stroke="#ffffff20" />
+                                        <CartesianGrid strokeDasharray="3 3" stroke="#ffffff10" />
                                         <XAxis dataKey="date" stroke="#9ca3af" />
                                         <YAxis stroke="#9ca3af" domain={[0, 10]} />
                                         <Tooltip
-                                            contentStyle={{ backgroundColor: '#1f2937', borderColor: '#374151', color: '#fff' }}
+                                            contentStyle={{ backgroundColor: 'rgba(15, 23, 42, 0.9)', borderColor: 'rgba(255,255,255,0.1)', color: '#fff', borderRadius: '12px', backdropFilter: 'blur(10px)' }}
                                             itemStyle={{ color: '#fff' }}
                                         />
                                         <Line type="monotone" dataKey="grade" stroke="#8b5cf6" strokeWidth={3} dot={{ r: 4, fill: '#8b5cf6' }} activeDot={{ r: 8 }} />
@@ -647,15 +651,16 @@ export const Students = () => {
 
             {/* Delete Modal */}
             {deletingStudent && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
-                    <div className="glass-card w-full max-w-sm p-6 relative animate-slide-up border-danger/30">
-                        <div className="flex flex-col items-center text-center">
-                            <div className="w-12 h-12 rounded-full bg-danger/20 flex items-center justify-center mb-4 text-danger"><AlertTriangle size={24} /></div>
+                <div className="modal-overlay animate-fade-in">
+                    <div className="glass-modal w-full max-w-sm p-6 relative animate-slide-up overflow-hidden">
+                        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-danger/0 via-danger to-danger/0"></div>
+                        <div className="flex flex-col items-center text-center pt-2">
+                            <div className="w-14 h-14 rounded-2xl bg-danger/20 flex items-center justify-center mb-4 text-danger border border-danger/30"><AlertTriangle size={28} /></div>
                             <h3 className="text-xl font-bold text-white mb-2">Excluir Aluno?</h3>
-                            <p className="text-text-muted mb-6">Tem certeza que deseja excluir <strong>{deletingStudent.name}</strong>? Esta ação é irreversível.</p>
+                            <p className="text-text-muted mb-6">Tem certeza que deseja excluir <strong className="text-white">{deletingStudent.name}</strong>? Esta ação é irreversível.</p>
                             <div className="flex gap-3 w-full">
-                                <button onClick={() => setDeletingStudent(null)} className="flex-1 py-2 text-text-muted hover:bg-white/5 rounded-lg">Cancelar</button>
-                                <button onClick={handleDeleteStudent} className="flex-1 py-2 bg-danger hover:bg-danger-hover text-white rounded-lg">Excluir</button>
+                                <button onClick={() => setDeletingStudent(null)} className="flex-1 py-2 text-text-muted hover:bg-white/10 rounded-xl transition-all">Cancelar</button>
+                                <button onClick={handleDeleteStudent} className="flex-1 py-2 bg-danger/90 hover:bg-danger text-white rounded-xl shadow-lg shadow-danger/30 transition-all font-medium">Excluir</button>
                             </div>
                         </div>
                     </div>

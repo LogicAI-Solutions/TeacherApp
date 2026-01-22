@@ -51,13 +51,17 @@ export const Layout = () => {
     };
 
     return (
-        <div className="flex h-screen bg-bg-dark overflow-hidden">
+        <div className="flex h-screen bg-bg-dark overflow-hidden relative">
+            {/* Background Orbs for Glass Effect */}
+            <div className="orb orb-primary w-96 h-96 -top-48 -left-48 hidden md:block" style={{ animationDelay: '0s' }}></div>
+            <div className="orb orb-purple w-64 h-64 bottom-20 right-20 hidden md:block" style={{ animationDelay: '3s' }}></div>
+            
             {/* Mobile Header */}
-            <header className="md:hidden flex items-center justify-between px-3 py-2 bg-bg-card border-b border-border w-full fixed top-0 left-0 z-50">
-                <h1 className="text-base font-bold flex items-center gap-1.5 text-primary">
-                    <GraduationCap size={20} /> YanaGestão
+            <header className="md:hidden flex items-center justify-between px-4 py-3 glass-header w-full fixed top-0 left-0 z-50">
+                <h1 className="text-base font-bold flex items-center gap-2 text-gradient">
+                    <GraduationCap size={22} className="text-primary" /> YanaGestão
                 </h1>
-                <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="p-1.5 text-text-muted hover:text-white">
+                <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="p-2 text-text-muted hover:text-white rounded-xl hover:bg-white/10 transition-all duration-300">
                     {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
                 </button>
             </header>
@@ -65,7 +69,7 @@ export const Layout = () => {
             {/* Sidebar Overlay */}
             {isMobileMenuOpen && (
                 <div
-                    className="fixed inset-0 bg-black/50 z-40 md:hidden"
+                    className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 md:hidden"
                     onClick={() => setIsMobileMenuOpen(false)}
                 />
             )}
@@ -73,23 +77,23 @@ export const Layout = () => {
             {/* Sidebar */}
             <aside
                 className={`
-                    fixed md:static inset-y-0 left-0 z-50 bg-bg-card border-r border-border flex flex-col transition-all duration-300 ease-in-out
+                    fixed md:static inset-y-0 left-0 z-50 glass-sidebar flex flex-col transition-all duration-300 ease-in-out
                     ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
-                    ${isSidebarCollapsed ? 'w-[70px]' : 'w-[250px]'}
+                    ${isSidebarCollapsed ? 'w-[70px]' : 'w-[260px]'}
                 `}
             >
                 {/* Desktop Logo & Toggle */}
-                <div className="h-[73px] flex items-center relative px-6 border-b border-border">
-                    <div className={`flex items-center gap-2 text-primary font-bold text-xl transition-all duration-300 ${isSidebarCollapsed ? 'justify-center w-full' : ''}`}>
-                        <GraduationCap className="shrink-0" />
-                        <span className={`whitespace-nowrap overflow-hidden transition-all duration-300 ${isSidebarCollapsed ? 'w-0 opacity-0' : 'w-auto opacity-100'}`}>
+                <div className="h-[73px] flex items-center relative px-6 border-b border-white/5">
+                    <div className={`flex items-center gap-2 font-bold text-xl transition-all duration-300 ${isSidebarCollapsed ? 'justify-center w-full' : ''}`}>
+                        <GraduationCap className="shrink-0 text-primary" />
+                        <span className={`whitespace-nowrap overflow-hidden transition-all duration-300 text-gradient ${isSidebarCollapsed ? 'w-0 opacity-0' : 'w-auto opacity-100'}`}>
                             YanaGestão
                         </span>
                     </div>
 
                     <button
                         onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
-                        className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 bg-bg-card border border-border rounded-full p-1.5 hidden md:flex text-text-muted hover:text-white hover:border-primary transition-all shadow-lg z-10"
+                        className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 bg-white/10 backdrop-blur-xl border border-white/20 rounded-full p-1.5 hidden md:flex text-text-muted hover:text-white hover:border-primary/50 transition-all shadow-lg z-10 hover:bg-white/15"
                     >
                         {isSidebarCollapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
                     </button>
@@ -101,30 +105,30 @@ export const Layout = () => {
                     <Link
                         to="/"
                         onClick={() => setIsMobileMenuOpen(false)}
-                        className={`flex items-center p-3 rounded-xl transition-all duration-300 group ${location.pathname === '/' ? 'bg-primary text-white shadow-lg shadow-primary/25' : 'text-text-muted hover:bg-white/5 hover:text-white'} ${isSidebarCollapsed ? 'justify-center gap-0' : 'gap-3'}`}
+                        className={`nav-link-glass ${location.pathname === '/' ? 'active text-white shadow-lg shadow-primary/25' : 'text-text-muted hover:text-white'} ${isSidebarCollapsed ? 'justify-center gap-0' : 'gap-3'}`}
                         title="Dashboard"
                     >
-                        <LayoutDashboard size={20} className={`shrink-0 ${location.pathname === '/' ? 'animate-pulse' : ''}`} />
+                        <LayoutDashboard size={20} className={`shrink-0 ${location.pathname === '/' ? '' : ''}`} />
                         <span className={`whitespace-nowrap transition-all duration-300 ${isSidebarCollapsed ? 'opacity-0 w-0 overflow-hidden' : 'opacity-100 w-auto'}`}>Dashboard</span>
                     </Link>
 
                     <Link
                         to="/students"
                         onClick={() => setIsMobileMenuOpen(false)}
-                        className={`flex items-center p-3 rounded-xl transition-all duration-300 group ${location.pathname === '/students' ? 'bg-primary text-white shadow-lg shadow-primary/25' : 'text-text-muted hover:bg-white/5 hover:text-white'} ${isSidebarCollapsed ? 'justify-center gap-0' : 'gap-3'}`}
+                        className={`nav-link-glass ${location.pathname === '/students' ? 'active text-white shadow-lg shadow-primary/25' : 'text-text-muted hover:text-white'} ${isSidebarCollapsed ? 'justify-center gap-0' : 'gap-3'}`}
                         title="Alunos"
                     >
-                        <Users size={20} className={`shrink-0 ${location.pathname === '/students' ? 'animate-pulse' : ''}`} />
+                        <Users size={20} className={`shrink-0 ${location.pathname === '/students' ? '' : ''}`} />
                         <span className={`whitespace-nowrap transition-all duration-300 ${isSidebarCollapsed ? 'opacity-0 w-0 overflow-hidden' : 'opacity-100 w-auto'}`}>Alunos</span>
                     </Link>
 
                     <Link
                         to="/payments"
                         onClick={() => setIsMobileMenuOpen(false)}
-                        className={`flex items-center p-3 rounded-xl transition-all duration-300 group ${location.pathname === '/payments' ? 'bg-primary text-white shadow-lg shadow-primary/25' : 'text-text-muted hover:bg-white/5 hover:text-white'} ${isSidebarCollapsed ? 'justify-center gap-0' : 'gap-3'}`}
+                        className={`nav-link-glass ${location.pathname === '/payments' ? 'active text-white shadow-lg shadow-primary/25' : 'text-text-muted hover:text-white'} ${isSidebarCollapsed ? 'justify-center gap-0' : 'gap-3'}`}
                         title="Financeiro"
                     >
-                        <DollarSign size={20} className={`shrink-0 ${location.pathname === '/payments' ? 'animate-pulse' : ''}`} />
+                        <DollarSign size={20} className={`shrink-0 ${location.pathname === '/payments' ? '' : ''}`} />
                         <span className={`whitespace-nowrap transition-all duration-300 ${isSidebarCollapsed ? 'opacity-0 w-0 overflow-hidden' : 'opacity-100 w-auto'}`}>Financeiro</span>
                     </Link>
 
@@ -132,7 +136,7 @@ export const Layout = () => {
                         <Link
                             to="/admin"
                             onClick={() => setIsMobileMenuOpen(false)}
-                            className={`flex items-center p-3 rounded-xl transition-all duration-300 group ${location.pathname === '/admin' ? 'bg-primary text-white shadow-lg shadow-primary/25' : 'text-text-muted hover:bg-white/5 hover:text-white'} ${isSidebarCollapsed ? 'justify-center gap-0' : 'gap-3'}`}
+                            className={`nav-link-glass ${location.pathname === '/admin' ? 'active text-white shadow-lg shadow-primary/25' : 'text-text-muted hover:text-white'} ${isSidebarCollapsed ? 'justify-center gap-0' : 'gap-3'}`}
                             title="Administração"
                         >
                             <Settings size={20} className={`shrink-0 ${location.pathname === '/admin' ? 'animate-spin-slow' : ''}`} />
@@ -142,7 +146,7 @@ export const Layout = () => {
 
                     <button
                         onClick={() => { setIsProfileModalOpen(true); setIsMobileMenuOpen(false); }}
-                        className={`flex items-center p-3 rounded-xl transition-all duration-300 text-text-muted hover:bg-white/5 hover:text-white w-full text-left ${isSidebarCollapsed ? 'justify-center gap-0' : 'gap-3'}`}
+                        className={`nav-link-glass text-text-muted hover:text-white w-full text-left ${isSidebarCollapsed ? 'justify-center gap-0' : 'gap-3'}`}
                         title="Meus Dados"
                     >
                         <UserCircle size={20} className="shrink-0" />
@@ -150,13 +154,13 @@ export const Layout = () => {
                     </button>
                 </nav>
 
-                <div className="p-4 border-t border-border">
+                <div className="p-4 border-t border-white/5">
                     {!isSidebarCollapsed && (
-                        <div className="text-sm text-text-muted mb-2 px-2 truncate">{user?.email}</div>
+                        <div className="text-sm text-text-muted mb-3 px-2 truncate">{user?.email}</div>
                     )}
                     <button
                         onClick={handleLogout}
-                        className={`btn btn-outline w-full text-danger border-danger hover:bg-red-500/10 ${isSidebarCollapsed ? 'justify-center px-2' : 'justify-start'}`}
+                        className={`btn w-full text-danger border-danger/30 bg-danger/10 hover:bg-danger/20 backdrop-blur-sm ${isSidebarCollapsed ? 'justify-center px-2' : 'justify-start'}`}
                         title="Sair"
                     >
                         <LogOut size={18} />
@@ -166,7 +170,7 @@ export const Layout = () => {
             </aside>
 
             {/* Main Content */}
-            <main className="flex-1 overflow-auto bg-bg-dark px-3 py-4 sm:p-4 md:p-6 lg:p-8 pt-14 md:pt-6 lg:pt-8 w-full h-screen">
+            <main className="flex-1 overflow-auto px-3 py-4 sm:p-4 md:p-6 lg:p-8 pt-16 md:pt-6 lg:pt-8 w-full h-screen">
                 <div className="container mx-auto max-w-6xl">
                     <Outlet />
                 </div>
@@ -174,18 +178,18 @@ export const Layout = () => {
 
             {/* Profile/Password Modal */}
             {isProfileModalOpen && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
-                    <div className="glass-card w-full max-w-md p-6 relative animate-slide-up">
-                        <button onClick={() => setIsProfileModalOpen(false)} className="absolute top-4 right-4 text-text-muted hover:text-white">
+                <div className="modal-overlay animate-fade-in">
+                    <div className="glass-modal w-full max-w-md p-8 relative animate-slide-up">
+                        <button onClick={() => setIsProfileModalOpen(false)} className="absolute top-4 right-4 text-text-muted hover:text-white p-2 rounded-xl hover:bg-white/10 transition-all">
                             <X size={20} />
                         </button>
                         <h2 className="text-xl font-bold mb-6 text-white flex items-center gap-2">
-                            <UserCircle size={20} className="text-primary" /> Meus Dados
+                            <UserCircle size={22} className="text-primary" /> Meus Dados
                         </h2>
 
-                        <div className="mb-6 p-4 bg-bg-dark/50 rounded-lg border border-white/5">
-                            <p className="text-xs text-text-muted uppercase">Email</p>
-                            <p className="text-white font-medium">{user?.email}</p>
+                        <div className="mb-6 p-4 bg-white/5 rounded-xl border border-white/10 backdrop-blur-sm">
+                            <p className="text-xs text-text-muted uppercase tracking-wider">Email</p>
+                            <p className="text-white font-medium mt-1">{user?.email}</p>
                         </div>
 
                         <form onSubmit={handleUpdatePassword} className="space-y-4">
@@ -193,14 +197,14 @@ export const Layout = () => {
                                 <Key size={16} className="text-primary" /> Alterar Senha
                             </h3>
 
-                            {error && <div className="text-danger text-sm bg-danger/10 p-2 rounded border border-danger/20">{error}</div>}
-                            {message && <div className="text-success text-sm bg-success/10 p-2 rounded border border-success/20">{message}</div>}
+                            {error && <div className="text-danger text-sm bg-danger/10 p-3 rounded-xl border border-danger/20 backdrop-blur-sm">{error}</div>}
+                            {message && <div className="text-success text-sm bg-success/10 p-3 rounded-xl border border-success/20 backdrop-blur-sm">{message}</div>}
 
                             <div>
                                 <label className="text-xs font-medium text-text-muted uppercase tracking-wider ml-1">Nova Senha</label>
                                 <input
                                     type="password"
-                                    className="w-full p-3 bg-bg-dark/50 border border-border rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                                    className="glass-input mt-2"
                                     value={newPassword}
                                     onChange={e => setNewPassword(e.target.value)}
                                     required
@@ -211,7 +215,7 @@ export const Layout = () => {
                                 <label className="text-xs font-medium text-text-muted uppercase tracking-wider ml-1">Confirmar Senha</label>
                                 <input
                                     type="password"
-                                    className="w-full p-3 bg-bg-dark/50 border border-border rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                                    className="glass-input mt-2"
                                     value={confirmPassword}
                                     onChange={e => setConfirmPassword(e.target.value)}
                                     required
@@ -222,14 +226,14 @@ export const Layout = () => {
                                 <button
                                     type="button"
                                     onClick={() => setIsProfileModalOpen(false)}
-                                    className="px-4 py-2 rounded-lg text-text-muted hover:bg-white/5 transition-colors"
+                                    className="px-4 py-2 rounded-xl text-text-muted hover:bg-white/10 transition-colors"
                                 >
                                     Cancelar
                                 </button>
                                 <button
                                     type="submit"
                                     disabled={loading}
-                                    className="bg-primary hover:bg-primary-hover text-white font-bold py-2 px-6 rounded-lg shadow-lg shadow-primary/20 transition-all cursor-pointer disabled:opacity-50"
+                                    className="glass-button text-white font-bold py-2 px-6 rounded-xl cursor-pointer disabled:opacity-50"
                                 >
                                     {loading ? 'Salvando...' : 'Salvar Senha'}
                                 </button>

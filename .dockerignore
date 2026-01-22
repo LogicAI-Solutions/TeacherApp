@@ -1,11 +1,56 @@
+# Python
 __pycache__
 *.py[cod]
 *$py.class
 .venv
+venv/
+.env.local
+*.db
+
+# Git
 .git
 .gitignore
-*.db
+.github
+
+# Node
 node_modules
 dist
-.env
+.npm
+*.log
+
+# Docker
+docker-compose*.yml
+!docker-compose.prod.yml
+Dockerfile*
+.dockerignore
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+
+# Sistema
 .DS_Store
+Thumbs.db
+
+# Testes
+tests/
+pytest.ini
+.pytest_cache
+.coverage
+htmlcov/
+
+# Documentação
+*.md
+!README.md
+LICENSE
+
+# Arquivos de ambiente
+.env
+.env.*
+!.env.prod.example
+
+# Cache
+.cache
+*.cache

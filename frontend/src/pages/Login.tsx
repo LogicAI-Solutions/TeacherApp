@@ -42,14 +42,19 @@ export const Login = () => {
     };
 
     return (
-        <div className="flex items-center justify-center min-h-screen p-4 bg-bg-dark relative overflow-hidden">
-            {/* Background Gradients */}
-            <div className="absolute top-[-20%] left-[-10%] w-[500px] h-[500px] bg-primary/20 rounded-full blur-[100px] animate-pulse"></div>
-            <div className="absolute bottom-[-20%] right-[-10%] w-[500px] h-[500px] bg-purple-500/10 rounded-full blur-[100px] animate-pulse"></div>
+        <div className="flex items-center justify-center min-h-screen p-4 relative overflow-hidden">
+            {/* Background Gradients - Enhanced Glass Style */}
+            <div className="absolute inset-0 bg-gradient-to-br from-bg-dark via-slate-900 to-bg-dark"></div>
+            <div className="absolute top-[-30%] left-[-20%] w-[600px] h-[600px] bg-primary/10 rounded-full blur-[120px] animate-pulse"></div>
+            <div className="absolute bottom-[-30%] right-[-20%] w-[600px] h-[600px] bg-purple-500/8 rounded-full blur-[120px] animate-pulse" style={{ animationDelay: '2s' }}></div>
+            <div className="absolute top-[40%] left-[60%] w-[300px] h-[300px] bg-indigo-500/5 rounded-full blur-[80px] animate-pulse" style={{ animationDelay: '4s' }}></div>
 
-            <div className="glass-card w-full max-w-sm p-8 relative z-10 animate-fade-in">
+            <div className="glass-modal w-full max-w-sm p-8 relative z-10 animate-fade-in">
+                {/* Top Glow Line */}
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1/2 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent"></div>
+                
                 <div className="mb-8 text-center">
-                    <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary-light to-primary mb-2">
+                    <h1 className="text-3xl font-bold text-gradient mb-2">
                         Bem-vinda
                     </h1>
                     <p className="text-text-muted text-sm">
@@ -57,14 +62,14 @@ export const Login = () => {
                     </p>
                 </div>
 
-                {error && <div className="text-danger mb-4 text-center text-sm bg-danger/10 p-3 rounded-lg border border-danger/20 animate-slide-up">{error}</div>}
+                {error && <div className="text-danger mb-4 text-center text-sm bg-danger/10 p-3 rounded-xl border border-danger/20 backdrop-blur-sm animate-slide-up">{error}</div>}
 
                 <form onSubmit={handleSubmit} className="flex flex-col gap-5">
                     <div className="space-y-1">
                         <label className="text-xs font-medium text-text-muted uppercase tracking-wider ml-1">Usuário</label>
                         <input
                             type="text"
-                            className="w-full p-3 bg-bg-dark/50 border border-border rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all placeholder:text-text-muted/50"
+                            className="glass-input"
                             value={nickname}
                             onChange={e => setNickname(e.target.value)}
                             required
@@ -76,7 +81,7 @@ export const Login = () => {
                         <div className="relative">
                             <input
                                 type={showPassword ? "text" : "password"}
-                                className="w-full p-3 bg-bg-dark/50 border border-border rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all placeholder:text-text-muted/50 pr-10"
+                                className="glass-input pr-12"
                                 value={password}
                                 onChange={e => setPassword(e.target.value)}
                                 required
@@ -84,14 +89,14 @@ export const Login = () => {
                             />
                             <button
                                 type="button"
-                                className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-white transition-colors cursor-pointer"
+                                className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-white transition-colors cursor-pointer p-1 rounded-lg hover:bg-white/10"
                                 onClick={() => setShowPassword(!showPassword)}
                             >
                                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                             </button>
                         </div>
                     </div>
-                    <button type="submit" className="w-full bg-gradient-to-r from-primary to-primary-hover text-white font-bold py-3 rounded-lg shadow-lg shadow-primary/30 hover:shadow-primary/50 transition-all hover:scale-[1.02] active:scale-[0.98] mt-2">
+                    <button type="submit" className="glass-button w-full text-white font-bold py-3 rounded-xl mt-2">
                         Entrar
                     </button>
                 </form>

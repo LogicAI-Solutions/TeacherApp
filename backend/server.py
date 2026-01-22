@@ -1,10 +1,8 @@
+import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from backend.core import database
-# Models are now imported individually where needed, but for create_all we need Base
-# And to ensure all models are registered, we must import them
 from backend.models import users, classes, students, enrollments, attendance, payments
-from backend.core import database
 from backend.core.router_loader import include_routers
 
 database.Base.metadata.create_all(bind=database.engine)
@@ -12,16 +10,31 @@ database.Base.metadata.create_all(bind=database.engine)
 from backend.core.init_db import init_db
 init_db()
 
-app = FastAPI()
+app = FastAPI(
+    title="TeacherApp API",
+    description="API para gerenciamento de alunos e turmas",
+    version="1.0.0"
+)
 
-# CORS
+cors_origins_env = os.getenv("CORS_ORIGINS", "")
+if cors_origins_env:
+    # Produção: usa origens específicas do .env
+    origins = [origin.strip() for origin in cors_origins_env.split(",")]
+else:
+    # Desenvolvimento: permite todas as origens
+    origins = ["*"]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], # In prod, specify the frontend URL
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Load routers dynamically
+@app.get("/health", tags=["Health"])
+def health_check():
+    """Endpoint para verificação de saúde da API"""
+    return {"status": "healthy", "service": "TeacherApp API"}
+
 include_routers(app)
