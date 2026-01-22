@@ -353,13 +353,9 @@ export const Payments = () => {
                                         <td className="p-2 sm:p-4">
                                             <input
                                                 type="text"
-                                                className={`w-full bg-transparent border-b outline-none py-1 text-xs sm:text-sm font-mono transition-colors text-right ${isPaid
-                                                    ? 'border-white/10 focus:border-primary text-white'
-                                                    : 'border-transparent text-text-muted cursor-not-allowed'
-                                                    }`}
+                                                className="w-full bg-transparent border-b outline-none py-1 text-xs sm:text-sm font-mono transition-colors text-right border-white/10 focus:border-primary text-white"
                                                 value={formatCurrency(payment.amount)}
                                                 onChange={e => updateLocalPayment(student.id, 'amount', parseCurrency(e.target.value))}
-                                                disabled={!isPaid}
                                                 placeholder="R$ 0"
                                             />
                                         </td>
