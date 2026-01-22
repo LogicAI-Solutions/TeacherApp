@@ -1,10 +1,4 @@
-# Docker Compose para PRODUÇÃO
-# Uso: docker compose -f docker-compose.prod.yml up -d
-# Características:
-#   - Build otimizado
-#   - Frontend servido via Nginx
-#   - Sem hot reload (mais performático)
-#   - Sempre reinicia automaticamente
+
 
 services:
   db:
@@ -22,6 +16,8 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+    networks:
+      - app_network
 
   backend:
     build:
@@ -39,9 +35,14 @@ services:
       - POSTGRES_USER=${POSTGRES_USER:-postgres}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-postgres}
       - POSTGRES_DB=${POSTGRES_DB:-student_management}
-    # Port not exposed to host, only reachable by frontend (nginx) within docker network
-    # ports:
-    #   - "${PORT_BACKEND:-8000}:8000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - app_network
 
   frontend:
     build:
@@ -50,9 +51,17 @@ services:
     container_name: teacher_app_frontend
     restart: always
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
     ports:
       - "${PORT_FRONTEND:-80}:80"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - app_network
 
   pgadmin:
     image: dpage/pgadmin4
@@ -67,6 +76,14 @@ services:
       - db
     volumes:
       - ./database/servers.json:/pgadmin4/servers.json
+    networks:
+      - app_network
+    profiles:
+      - tools
+
+networks:
+  app_network:
+    driver: bridge
 
 volumes:
   postgres_data:
