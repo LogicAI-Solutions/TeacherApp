@@ -98,21 +98,24 @@ export const Dashboard = () => {
                             <Link
                                 key={cls.id}
                                 to={`/class/${cls.id}`}
-                                className="glass-card p-6 group hover:translate-y-[-5px] transition-all duration-300 block no-underline text-inherit border-l-4 border-l-transparent hover:border-l-primary"
+                                className="glass-card group hover:translate-y-[-5px] transition-all duration-300 block no-underline text-inherit relative overflow-hidden"
                                 style={{ animationDelay: `${index * 100}ms` }}
                             >
-                                <div className="flex justify-between items-start">
+                                {/* Gradient accent line */}
+                                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary/0 via-primary to-primary/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                                
+                                <div className="flex justify-between items-start p-6">
                                     <div>
-                                        <h3 className="text-xl font-bold mb-2 text-text-main group-hover:text-primary-light transition-colors">{cls.name}</h3>
+                                        <h3 className="text-xl font-bold mb-2 text-text-main group-hover:text-gradient transition-all duration-300">{cls.name}</h3>
                                         <p className="text-text-muted text-sm flex items-center gap-2">
                                             <Calendar size={14} className="text-primary" /> {cls.schedule}
                                         </p>
                                     </div>
                                     <div className="flex gap-2">
-                                        <button onClick={(e) => openEditModal(e, cls)} className="bg-bg-dark/50 p-2 rounded-lg hover:bg-primary/20 text-text-muted hover:text-primary transition-colors">
+                                        <button onClick={(e) => openEditModal(e, cls)} className="bg-white/5 backdrop-blur-sm p-2 rounded-xl hover:bg-primary/20 text-text-muted hover:text-primary transition-all duration-300 border border-white/5 hover:border-primary/30">
                                             <Pencil size={18} />
                                         </button>
-                                        <button onClick={(e) => openDeleteModal(e, cls)} className="bg-bg-dark/50 p-2 rounded-lg hover:bg-danger/20 text-text-muted hover:text-danger transition-colors">
+                                        <button onClick={(e) => openDeleteModal(e, cls)} className="bg-white/5 backdrop-blur-sm p-2 rounded-xl hover:bg-danger/20 text-text-muted hover:text-danger transition-all duration-300 border border-white/5 hover:border-danger/30">
                                             <Trash size={18} />
                                         </button>
                                     </div>
@@ -123,9 +126,9 @@ export const Dashboard = () => {
                         {/* Add Class Card Button */}
                         <button
                             onClick={() => setShowModal(true)}
-                            className="glass-card p-6 flex flex-col items-center justify-center gap-4 group hover:bg-white/5 transition-all border-dashed border-2 border-border hover:border-primary cursor-pointer min-h-[150px]"
+                            className="glass-card flex flex-col items-center justify-center gap-4 group hover:bg-white/10 transition-all border-dashed border-2 border-white/10 hover:border-primary/50 cursor-pointer min-h-[150px]"
                         >
-                            <div className="bg-primary/10 p-4 rounded-full group-hover:scale-110 transition-transform">
+                            <div className="bg-primary/10 p-4 rounded-full group-hover:scale-110 group-hover:bg-primary/20 transition-all duration-300 border border-primary/20">
                                 <Plus size={32} className="text-primary" />
                             </div>
                             <span className="font-medium text-text-muted group-hover:text-white transition-colors">Criar Nova Turma</span>
@@ -142,22 +145,22 @@ export const Dashboard = () => {
 
             {/* Modern Modal */}
             {showModal && (
-                <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in">
-                    <div className="glass-card w-full max-w-md p-8 animate-slide-up relative">
-                        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary-light to-primary rounded-t-xl"></div>
+                <div className="modal-overlay animate-fade-in">
+                    <div className="glass-modal w-full max-w-md p-8 animate-slide-up relative overflow-hidden">
+                        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary/0 via-primary to-primary/0"></div>
                         <h3 className="text-2xl mb-6 font-bold text-white">Nova Turma</h3>
                         <form onSubmit={handleCreateClass} className="flex flex-col gap-5">
                             <div className="space-y-1">
                                 <label className="text-xs font-medium text-text-muted uppercase tracking-wider ml-1">Nome da Turma</label>
-                                <input className="w-full p-3 bg-bg-dark/50 border border-border rounded-lg text-white focus:ring-2 focus:ring-primary focus:border-transparent transition-all" value={newClass.name} onChange={e => setNewClass({ ...newClass, name: e.target.value })} required placeholder="Ex: Matemática Avançada" />
+                                <input className="glass-input" value={newClass.name} onChange={e => setNewClass({ ...newClass, name: e.target.value })} required placeholder="Ex: Matemática Avançada" />
                             </div>
                             <div className="space-y-1">
                                 <label className="text-xs font-medium text-text-muted uppercase tracking-wider ml-1">Horário</label>
-                                <input className="w-full p-3 bg-bg-dark/50 border border-border rounded-lg text-white focus:ring-2 focus:ring-primary focus:border-transparent transition-all" value={newClass.schedule} onChange={e => setNewClass({ ...newClass, schedule: e.target.value })} required placeholder="Ex: Segundas e Quartas, 19h" />
+                                <input className="glass-input" value={newClass.schedule} onChange={e => setNewClass({ ...newClass, schedule: e.target.value })} required placeholder="Ex: Segundas e Quartas, 19h" />
                             </div>
                             <div className="flex justify-end gap-3 mt-4">
-                                <button type="button" onClick={() => setShowModal(false)} className="px-4 py-2 text-text-muted hover:text-white transition-colors">Cancelar</button>
-                                <button type="submit" className="px-6 py-2 bg-primary hover:bg-primary-hover text-white rounded-lg shadow-lg shadow-primary/20 transition-all font-medium">Criar Turma</button>
+                                <button type="button" onClick={() => setShowModal(false)} className="px-4 py-2 text-text-muted hover:text-white hover:bg-white/10 rounded-xl transition-all">Cancelar</button>
+                                <button type="submit" className="glass-button px-6 py-2 text-white rounded-xl font-medium">Criar Turma</button>
                             </div>
                         </form>
                     </div>
@@ -165,9 +168,9 @@ export const Dashboard = () => {
             )}
             {/* Edit Class Modal */}
             {editingClass && (
-                <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in">
-                    <div className="glass-card w-full max-w-md p-8 animate-slide-up relative">
-                        <button onClick={() => setEditingClass(null)} className="absolute top-4 right-4 text-text-muted hover:text-white">
+                <div className="modal-overlay animate-fade-in">
+                    <div className="glass-modal w-full max-w-md p-8 animate-slide-up relative overflow-hidden">
+                        <button onClick={() => setEditingClass(null)} className="absolute top-4 right-4 text-text-muted hover:text-white p-2 rounded-xl hover:bg-white/10 transition-all">
                             <X size={20} />
                         </button>
                         <h3 className="text-2xl mb-6 font-bold text-white flex items-center gap-2">
@@ -176,15 +179,15 @@ export const Dashboard = () => {
                         <form onSubmit={handleUpdateClass} className="flex flex-col gap-5">
                             <div className="space-y-1">
                                 <label className="text-xs font-medium text-text-muted uppercase tracking-wider ml-1">Nome da Turma</label>
-                                <input className="w-full p-3 bg-bg-dark/50 border border-border rounded-lg text-white focus:ring-2 focus:ring-primary focus:border-transparent transition-all" value={editClassName} onChange={e => setEditClassName(e.target.value)} required />
+                                <input className="glass-input" value={editClassName} onChange={e => setEditClassName(e.target.value)} required />
                             </div>
                             <div className="space-y-1">
                                 <label className="text-xs font-medium text-text-muted uppercase tracking-wider ml-1">Horário</label>
-                                <input className="w-full p-3 bg-bg-dark/50 border border-border rounded-lg text-white focus:ring-2 focus:ring-primary focus:border-transparent transition-all" value={editClassSchedule} onChange={e => setEditClassSchedule(e.target.value)} required />
+                                <input className="glass-input" value={editClassSchedule} onChange={e => setEditClassSchedule(e.target.value)} required />
                             </div>
                             <div className="flex justify-end gap-3 mt-4">
-                                <button type="button" onClick={() => setEditingClass(null)} className="px-4 py-2 text-text-muted hover:text-white transition-colors">Cancelar</button>
-                                <button type="submit" className="px-6 py-2 bg-primary hover:bg-primary-hover text-white rounded-lg shadow-lg shadow-primary/20 transition-all font-medium">Salvar</button>
+                                <button type="button" onClick={() => setEditingClass(null)} className="px-4 py-2 text-text-muted hover:text-white hover:bg-white/10 rounded-xl transition-all">Cancelar</button>
+                                <button type="submit" className="glass-button px-6 py-2 text-white rounded-xl font-medium">Salvar</button>
                             </div>
                         </form>
                     </div>
@@ -193,19 +196,20 @@ export const Dashboard = () => {
 
             {/* Delete Class Modal */}
             {deletingClass && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
-                    <div className="glass-card w-full max-w-sm p-6 relative animate-slide-up border-danger/30">
-                        <div className="flex flex-col items-center text-center">
-                            <div className="w-12 h-12 rounded-full bg-danger/20 flex items-center justify-center mb-4 text-danger">
-                                <AlertTriangle size={24} />
+                <div className="modal-overlay animate-fade-in">
+                    <div className="glass-modal w-full max-w-sm p-6 relative animate-slide-up overflow-hidden">
+                        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-danger/0 via-danger to-danger/0"></div>
+                        <div className="flex flex-col items-center text-center pt-2">
+                            <div className="w-14 h-14 rounded-2xl bg-danger/20 flex items-center justify-center mb-4 text-danger border border-danger/30">
+                                <AlertTriangle size={28} />
                             </div>
                             <h3 className="text-xl font-bold text-white mb-2">Excluir Turma?</h3>
                             <p className="text-text-muted mb-6">
-                                Tem certeza que deseja excluir <strong>{deletingClass.name}</strong>? Esta ação removerá todos os alunos e chamadas associados.
+                                Tem certeza que deseja excluir <strong className="text-white">{deletingClass.name}</strong>? Esta ação removerá todos os alunos e chamadas associados.
                             </p>
                             <div className="flex gap-3 w-full">
-                                <button onClick={() => setDeletingClass(null)} className="flex-1 py-2 roounded-lg text-text-muted hover:bg-white/5 transition-colors rounded-lg">Cancelar</button>
-                                <button onClick={handleDeleteClass} className="flex-1 py-2 bg-danger hover:bg-danger-hover text-white rounded-lg shadow-lg shadow-danger/20 transition-all">Excluir</button>
+                                <button onClick={() => setDeletingClass(null)} className="flex-1 py-2 text-text-muted hover:bg-white/10 transition-all rounded-xl">Cancelar</button>
+                                <button onClick={handleDeleteClass} className="flex-1 py-2 bg-danger/90 hover:bg-danger text-white rounded-xl shadow-lg shadow-danger/30 transition-all font-medium">Excluir</button>
                             </div>
                         </div>
                     </div>

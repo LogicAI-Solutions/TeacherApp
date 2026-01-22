@@ -190,7 +190,7 @@ export const Payments = () => {
     return (
         <div className="animate-fade-in relative">
             {toast && (
-                <div className={`fixed top-4 right-4 z-50 px-6 py-3 rounded-xl shadow-2xl animate-slide-in text-white font-medium ${toast.type === 'success' ? 'bg-success' : 'bg-danger'}`}>
+                <div className={`fixed top-4 right-4 z-50 px-6 py-3 rounded-2xl shadow-2xl animate-slide-in text-white font-medium backdrop-blur-xl border ${toast.type === 'success' ? 'bg-success/90 border-success/50' : 'bg-danger/90 border-danger/50'}`}>
                     {toast.msg}
                 </div>
             )}
@@ -204,31 +204,34 @@ export const Payments = () => {
                 </div>
 
                 {/* Filters */}
-                <div className="flex flex-wrap gap-2 bg-bg-card p-2 rounded-xl border border-white/5 w-full md:w-auto">
-                    <button
-                        onClick={handleExportReport}
-                        className="btn-primary-gradient px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-bold flex items-center gap-2 flex-1 sm:flex-none justify-center"
-                    >
-                        <DollarSign size={16} /> <span className="hidden sm:inline">Exportar</span> Relatório
-                    </button>
-                    <select value={selectedMonth} onChange={e => setSelectedMonth(Number(e.target.value))} className="bg-bg-dark border border-white/10 rounded-lg px-2 sm:px-3 py-2 text-white focus:outline-none focus:ring-1 focus:ring-primary text-sm flex-1 sm:flex-none">
+                <div className="flex items-center gap-2 glass p-2 rounded-2xl">
+                    <select value={selectedMonth} onChange={e => setSelectedMonth(Number(e.target.value))} className="bg-white/5 border border-white/10 rounded-lg py-1.5 px-2 text-xs text-white focus:outline-none focus:ring-1 focus:ring-primary/40">
                         {Array.from({ length: 12 }, (_, i) => i + 1).map(m => (
                             <option key={m} value={m} className="bg-bg-dark text-white">{new Date(0, m - 1).toLocaleString('pt-BR', { month: 'short' })}</option>
                         ))}
                     </select>
-                    <select value={selectedYear} onChange={e => setSelectedYear(Number(e.target.value))} className="bg-bg-dark border border-white/10 rounded-lg px-2 sm:px-3 py-2 text-white focus:outline-none focus:ring-1 focus:ring-primary text-sm flex-1 sm:flex-none">
+                    <select value={selectedYear} onChange={e => setSelectedYear(Number(e.target.value))} className="bg-white/5 border border-white/10 rounded-lg py-1.5 px-2 text-xs text-white focus:outline-none focus:ring-1 focus:ring-primary/40">
                         {Array.from({ length: 5 }, (_, i) => new Date().getFullYear() - 2 + i).map(y => (
                             <option key={y} value={y} className="bg-bg-dark text-white">{y}</option>
                         ))}
                     </select>
+                    <button
+                        onClick={handleExportReport}
+                        className="flex items-center gap-1.5 px-3 py-1.5 bg-white/5 text-success hover:bg-success/20 rounded-lg transition-all text-xs border border-white/10"
+                        title="Exportar Relatório"
+                    >
+                        <DollarSign size={14} />
+                        <span className="hidden sm:inline">Exportar</span>
+                    </button>
                 </div>
             </div>
 
             {/* Stats Cards */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4 mb-4 sm:mb-6">
-                <div className="card-gradient-1 p-3 sm:p-4 rounded-xl relative overflow-hidden">
+                <div className="stat-card p-3 sm:p-4 relative overflow-hidden group">
+                    <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                     <div className="flex items-center gap-2 sm:gap-3 mb-1 sm:mb-2">
-                        <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-indigo-500/20 flex items-center justify-center text-indigo-400">
+                        <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-indigo-500/20 flex items-center justify-center text-indigo-400 border border-indigo-500/30">
                             <DollarSign size={16} className="sm:hidden" />
                             <DollarSign size={20} className="hidden sm:block" />
                         </div>
@@ -238,9 +241,10 @@ export const Payments = () => {
                     <p className="text-xs text-indigo-400 mt-0.5 sm:mt-1 font-medium truncate">Alunos</p>
                 </div>
 
-                <div className="card-gradient-1 p-3 sm:p-4 rounded-xl relative overflow-hidden">
+                <div className="stat-card p-3 sm:p-4 relative overflow-hidden group">
+                    <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                     <div className="flex items-center gap-2 sm:gap-3 mb-1 sm:mb-2">
-                        <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-emerald-500/20 flex items-center justify-center text-emerald-400">
+                        <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center text-emerald-400 border border-emerald-500/30">
                             <CheckCircle size={16} className="sm:hidden" />
                             <CheckCircle size={20} className="hidden sm:block" />
                         </div>
@@ -250,9 +254,10 @@ export const Payments = () => {
                     <p className="text-xs text-emerald-400 mt-0.5 sm:mt-1 font-medium truncate">Pagos</p>
                 </div>
 
-                <div className="card-gradient-1 p-3 sm:p-4 rounded-xl relative overflow-hidden">
+                <div className="stat-card p-3 sm:p-4 relative overflow-hidden group">
+                    <div className="absolute inset-0 bg-gradient-to-br from-amber-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                     <div className="flex items-center gap-2 sm:gap-3 mb-1 sm:mb-2">
-                        <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-amber-500/20 flex items-center justify-center text-amber-400">
+                        <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-amber-500/20 flex items-center justify-center text-amber-400 border border-amber-500/30">
                             <AlertCircle size={16} className="sm:hidden" />
                             <AlertCircle size={20} className="hidden sm:block" />
                         </div>
@@ -262,9 +267,10 @@ export const Payments = () => {
                     <p className="text-xs text-amber-400 mt-0.5 sm:mt-1 font-medium truncate">Pendentes</p>
                 </div>
 
-                <div className="card-gradient-1 p-3 sm:p-4 rounded-xl relative overflow-hidden">
+                <div className="stat-card p-3 sm:p-4 relative overflow-hidden group">
+                    <div className="absolute inset-0 bg-gradient-to-br from-green-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                     <div className="flex items-center gap-2 sm:gap-3 mb-1 sm:mb-2">
-                        <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-green-500/20 flex items-center justify-center text-green-400">
+                        <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-green-500/20 flex items-center justify-center text-green-400 border border-green-500/30">
                             <DollarSign size={16} className="sm:hidden" />
                             <DollarSign size={20} className="hidden sm:block" />
                         </div>
@@ -277,9 +283,9 @@ export const Payments = () => {
 
             {/* Search Bar */}
             <div className={`transition-all duration-500 mb-6 sticky top-0 z-10 ${search.length > 0 ? '-translate-y-2 opacity-95' : ''}`}>
-                <div className="relative group max-w-2xl mx-auto shadow-2xl rounded-2xl">
-                    <div className="absolute inset-0 bg-primary/10 rounded-2xl blur-lg group-hover:bg-primary/30 transition-all duration-500"></div>
-                    <div className="relative bg-bg-card border border-white/5 rounded-2xl flex items-center p-1">
+                <div className="relative group max-w-2xl mx-auto">
+                    <div className="absolute inset-0 bg-primary/10 rounded-2xl blur-xl group-hover:bg-primary/20 transition-all duration-500"></div>
+                    <div className="relative glass border border-white/10 rounded-2xl flex items-center p-1">
                         <div className="pl-4 pr-3 text-text-muted group-focus-within:text-primary transition-colors">
                             <Search size={24} />
                         </div>
@@ -297,17 +303,17 @@ export const Payments = () => {
             {/* Table */}
             <div className="glass-card overflow-hidden relative h-[500px] flex flex-col">
                 {loading && (
-                    <div className="absolute inset-0 z-50 flex items-center justify-center bg-bg-card/60 backdrop-blur-sm rounded-xl">
+                    <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm rounded-2xl">
                         <Loading text="Carregando financeiro..." />
                     </div>
                 )}
-                <div className="p-4 border-b border-white/5 bg-white/5 flex items-center justify-between shrink-0">
+                <div className="p-4 border-b border-white/5 bg-white/5 backdrop-blur-sm flex items-center justify-between shrink-0">
                     <h3 className="font-bold text-white">Relatório de {selectedMonth}/{selectedYear}</h3>
                     <button
                         onClick={handleSavePayments}
                         disabled={saving}
                         className={`
-                             btn-success-gradient px-6 py-2 rounded-lg font-bold flex items-center gap-2 text-sm
+                             btn-success-gradient px-6 py-2 rounded-xl font-bold flex items-center gap-2 text-sm
                              ${saving ? 'opacity-70 cursor-wait' : ''}
                         `}
                     >
@@ -316,7 +322,7 @@ export const Payments = () => {
                 </div>
                 <div className="overflow-x-auto flex-1 overflow-y-auto">
                     <table className="w-full">
-                        <thead className="bg-black/20">
+                        <thead className="bg-white/5 sticky top-0 backdrop-blur-xl">
                             <tr>
                                 <th className="text-left p-2 sm:p-4 text-xs font-bold text-text-muted uppercase tracking-wider">Aluno</th>
                                 <th className="text-left p-2 sm:p-4 text-xs font-bold text-text-muted uppercase tracking-wider hidden md:table-cell">Responsável</th>
@@ -342,18 +348,18 @@ export const Payments = () => {
                                         <td className="p-2 sm:p-4 text-left text-sm text-text-muted hidden xl:table-cell">{student.class_type || '-'}</td>
                                         <td className="p-2 sm:p-4">
                                             <select
-                                                className={`w-full px-2 py-1 sm:p-2 rounded-lg text-xs sm:text-sm border-none focus:ring-2 focus:ring-primary outline-none transition-colors cursor-pointer ${isPaid ? 'bg-success/20 text-success' : 'bg-warning/20 text-warning'}`}
+                                                className={`w-full px-2 py-1 sm:p-2 rounded-xl text-xs sm:text-sm border focus:ring-2 focus:ring-primary/40 outline-none transition-all cursor-pointer backdrop-blur-sm ${isPaid ? 'bg-success/10 text-success border-success/30' : 'bg-warning/10 text-warning border-warning/30'}`}
                                                 value={payment.status}
                                                 onChange={e => updateLocalPayment(student.id, 'status', e.target.value)}
                                             >
-                                                <option value="PENDING" className="bg-bg-card text-white">Pendente</option>
-                                                <option value="PAID" className="bg-bg-card text-white">Pago</option>
+                                                <option value="PENDING" className="bg-bg-dark text-white">Pendente</option>
+                                                <option value="PAID" className="bg-bg-dark text-white">Pago</option>
                                             </select>
                                         </td>
                                         <td className="p-2 sm:p-4">
                                             <input
                                                 type="text"
-                                                className="w-full bg-transparent border-b outline-none py-1 text-xs sm:text-sm font-mono transition-colors text-right border-white/10 focus:border-primary text-white"
+                                                className="w-full bg-transparent border-b border-white/10 outline-none py-1 text-xs sm:text-sm font-mono transition-all text-right focus:border-primary text-white"
                                                 value={formatCurrency(payment.amount)}
                                                 onChange={e => updateLocalPayment(student.id, 'amount', parseCurrency(e.target.value))}
                                                 placeholder="R$ 0"
@@ -370,11 +376,11 @@ export const Payments = () => {
                 </div>
 
                 {/* Pagination Controls */}
-                <div className="flex justify-between items-center p-4 border-t border-white/5 bg-black/20 mt-auto shrink-0">
+                <div className="flex justify-between items-center p-4 border-t border-white/5 bg-white/3 backdrop-blur-sm mt-auto shrink-0">
                     <button
                         onClick={() => setPage(p => Math.max(0, p - 1))}
                         disabled={page === 0}
-                        className="px-4 py-2 bg-white/5 hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg text-sm text-white transition-colors"
+                        className="px-4 py-2 bg-white/5 hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl text-sm text-white transition-all border border-white/10"
                     >
                         Anterior
                     </button>
@@ -384,7 +390,7 @@ export const Payments = () => {
                     <button
                         onClick={() => setPage(p => p + 1)}
                         disabled={(page + 1) * limit >= totalStudents}
-                        className="px-4 py-2 bg-white/5 hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg text-sm text-white transition-colors"
+                        className="px-4 py-2 bg-white/5 hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl text-sm text-white transition-all border border-white/10"
                     >
                         Próxima
                     </button>
