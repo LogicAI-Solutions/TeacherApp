@@ -322,7 +322,7 @@ export const Payments = () => {
                 </div>
                 <div className="overflow-x-auto flex-1 overflow-y-auto">
                     <table className="w-full">
-                        <thead className="bg-white/5 sticky top-0 backdrop-blur-xl">
+                        <thead className="bg-bg-dark sticky top-0 z-10 [&_th:first-child]:rounded-none [&_th:last-child]:rounded-none">
                             <tr>
                                 <th className="text-left p-2 sm:p-4 text-xs font-bold text-text-muted uppercase tracking-wider">Aluno</th>
                                 <th className="text-left p-2 sm:p-4 text-xs font-bold text-text-muted uppercase tracking-wider hidden md:table-cell">Responsável</th>
