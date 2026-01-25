@@ -151,9 +151,19 @@ export const Dashboard = () => {
                                     ))}
                                 </Pie>
                                 <Tooltip
-                                    contentStyle={{ backgroundColor: 'rgba(23, 23, 23, 0.9)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.1)', color: '#fff' }}
-                                    itemStyle={{ color: '#fff' }}
-                                    formatter={(value: number) => [value, 'Quantidade']}
+                                    isAnimationActive={false}
+                                    content={({ active, payload }: any) => {
+                                        if (active && payload && payload.length) {
+                                            return (
+                                                <div style={{ backgroundColor: 'rgba(23, 23, 23, 0.9)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', padding: '12px' }}>
+                                                    <p style={{ color: '#fff', margin: 0 }}>
+                                                        Quantidade: <span style={{ fontWeight: 'bold' }}>{payload[0].value}</span>
+                                                    </p>
+                                                </div>
+                                            );
+                                        }
+                                        return null;
+                                    }}
                                 />
                                 <Legend verticalAlign="bottom" height={36} wrapperStyle={{ paddingTop: '20px' }} />
                             </PieChart>
@@ -179,9 +189,20 @@ export const Dashboard = () => {
                                 <XAxis dataKey="name" stroke="#9ca3af" tick={{ fill: '#9ca3af' }} axisLine={{ stroke: 'rgba(255,255,255,0.1)' }} />
                                 <YAxis stroke="#9ca3af" tick={{ fill: '#9ca3af' }} axisLine={{ stroke: 'rgba(255,255,255,0.1)' }} />
                                 <Tooltip
+                                    isAnimationActive={false}
                                     cursor={{ fill: 'rgba(255,255,255,0.05)' }}
-                                    contentStyle={{ backgroundColor: 'rgba(23, 23, 23, 0.9)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.1)', color: '#fff' }}
-                                    formatter={(value: number) => [value, 'Quantidade']}
+                                    content={({ active, payload }: any) => {
+                                        if (active && payload && payload.length) {
+                                            return (
+                                                <div style={{ backgroundColor: 'rgba(23, 23, 23, 0.9)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', padding: '12px' }}>
+                                                    <p style={{ color: '#fff', margin: 0 }}>
+                                                        Quantidade: <span style={{ fontWeight: 'bold' }}>{payload[0].value}</span>
+                                                    </p>
+                                                </div>
+                                            );
+                                        }
+                                        return null;
+                                    }}
                                 />
                                 <Bar dataKey="value" radius={[8, 8, 0, 0]}>
                                     {paymentData.map((entry, index) => (
