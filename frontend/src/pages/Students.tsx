@@ -46,6 +46,8 @@ export const Students = () => {
 
     const [editingStudent, setEditingStudent] = useState<Student | null>(null);
     const [editStudentData, setEditStudentData] = useState({ name: '', phone: '', parent_name: '', parent_phone: '', parent_email: '', school_year: '', class_type: '', active: true });
+    const [editClassId, setEditClassId] = useState<number | ''>(null as any); // Turma atual do aluno no editar
+    const [originalClassId, setOriginalClassId] = useState<number | null>(null); // Para detectar mudança
 
     const [deletingStudent, setDeletingStudent] = useState<Student | null>(null);
 
@@ -136,7 +138,19 @@ export const Students = () => {
                 parent_phone: unmaskPhone(editStudentData.parent_phone)
             };
             await api.put(`/students/${editingStudent.id}`, payload);
+
+            // Atualizar turma se mudou
+            const newClassId = editClassId === '' ? null : editClassId;
+            if (newClassId !== originalClassId) {
+                const enrollmentUrl = newClassId
+                    ? `/students/${editingStudent.id}/enrollment?class_id=${newClassId}`
+                    : `/students/${editingStudent.id}/enrollment`;
+                await api.put(enrollmentUrl);
+            }
+
             setEditingStudent(null);
+            setEditClassId('');
+            setOriginalClassId(null);
             fetchData();
         } catch (e) { alert('Erro ao atualizar aluno'); }
     };
@@ -352,7 +366,7 @@ export const Students = () => {
                                                         <LineChartIcon size={16} /> Ver Evolução
                                                     </button>
                                                     <button
-                                                        onClick={() => {
+                                                        onClick={async () => {
                                                             setEditingStudent(student);
                                                             setEditStudentData({
                                                                 name: student.name,
@@ -364,6 +378,15 @@ export const Students = () => {
                                                                 class_type: (student.class_type as any) || '',
                                                                 active: student.active ?? true
                                                             });
+                                                            // Buscar turma atual do aluno
+                                                            try {
+                                                                const res = await api.get(`/students/${student.id}/enrollment`);
+                                                                setEditClassId(res.data.class_id || '');
+                                                                setOriginalClassId(res.data.class_id);
+                                                            } catch (e) {
+                                                                setEditClassId('');
+                                                                setOriginalClassId(null);
+                                                            }
                                                             setOpenMenuId(null);
                                                         }}
                                                         className="w-full text-left px-4 py-3 text-sm text-text-muted hover:text-white hover:bg-white/5 flex items-center gap-2 transition-colors"
@@ -470,9 +493,9 @@ export const Students = () => {
                                     <label className="text-xs font-medium text-text-muted uppercase tracking-wider ml-1">Tipo de Turma</label>
                                     <select className="glass-input"
                                         value={newStudentData.class_type} onChange={e => setNewStudentData({ ...newStudentData, class_type: e.target.value as any })}>
-                                        <option value="">-- Selecione --</option>
-                                        <option value="Semanal">Semanal</option>
-                                        <option value="Quinzenal">Quinzenal</option>
+                                        <option value="" className="bg-bg-dark text-white">-- Selecione --</option>
+                                        <option value="Semanal" className="bg-bg-dark text-white">Semanal</option>
+                                        <option value="Quinzenal" className="bg-bg-dark text-white">Quinzenal</option>
                                     </select>
                                 </div>
                             </div>
@@ -493,8 +516,8 @@ export const Students = () => {
                                     value={selectedClassId}
                                     onChange={e => setSelectedClassId(Number(e.target.value) || '')}
                                 >
-                                    <option value="">-- Selecione uma turma --</option>
-                                    {classes.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+                                    <option value="" className="bg-bg-dark text-white">-- Selecione uma turma --</option>
+                                    {classes.map(c => <option key={c.id} value={c.id} className="bg-bg-dark text-white">{c.name}</option>)}
                                 </select>
                             </div>
 
@@ -560,12 +583,25 @@ export const Students = () => {
                                     <label className="text-xs font-medium text-text-muted uppercase tracking-wider ml-1">Tipo de Turma</label>
                                     <select className="glass-input"
                                         value={editStudentData.class_type} onChange={e => setEditStudentData({ ...editStudentData, class_type: e.target.value as any })}>
-                                        <option value="">-- Selecione --</option>
-                                        <option value="Semanal">Semanal</option>
-                                        <option value="Quinzenal">Quinzenal</option>
+                                        <option value="" className="bg-bg-dark text-white">-- Selecione --</option>
+                                        <option value="Semanal" className="bg-bg-dark text-white">Semanal</option>
+                                        <option value="Quinzenal" className="bg-bg-dark text-white">Quinzenal</option>
                                     </select>
                                 </div>
                             </div>
+
+                            <div className="pt-2 border-t border-white/10 mt-2">
+                                <label className="text-xs font-medium text-text-muted uppercase tracking-wider ml-1">Turma Matriculada</label>
+                                <select
+                                    className="glass-input"
+                                    value={editClassId}
+                                    onChange={e => setEditClassId(Number(e.target.value) || '')}
+                                >
+                                    <option value="" className="bg-bg-dark text-white">-- Nenhuma turma --</option>
+                                    {classes.map(c => <option key={c.id} value={c.id} className="bg-bg-dark text-white">{c.name}</option>)}
+                                </select>
+                            </div>
+
                             <div
                                 className="flex items-center gap-3 bg-white/5 p-3 rounded-xl border border-white/10 cursor-pointer hover:bg-white/10 transition-all backdrop-blur-sm"
                                 onClick={() => setEditStudentData({ ...editStudentData, active: !editStudentData.active })}
