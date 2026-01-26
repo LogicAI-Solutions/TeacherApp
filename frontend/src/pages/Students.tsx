@@ -14,6 +14,8 @@ interface Student {
     parent_phone?: string;
     parent_email?: string;
     school_year?: string;
+    school?: string;
+    intended_profession?: string;
     class_type?: string;
     active: boolean;
 }
@@ -41,12 +43,12 @@ export const Students = () => {
 
     // Modal States
     const [showCreateModal, setShowCreateModal] = useState(false);
-    const [newStudentData, setNewStudentData] = useState({ name: '', phone: '', parent_name: '', parent_phone: '', parent_email: '', school_year: '', class_type: '', active: true });
+    const [newStudentData, setNewStudentData] = useState({ name: '', phone: '', parent_name: '', parent_phone: '', parent_email: '', school_year: '', school: '', intended_profession: '', class_type: '', active: true });
     const [selectedClassId, setSelectedClassId] = useState<number | ''>(''); // For enrollment
 
     const [editingStudent, setEditingStudent] = useState<Student | null>(null);
-    const [editStudentData, setEditStudentData] = useState({ name: '', phone: '', parent_name: '', parent_phone: '', parent_email: '', school_year: '', class_type: '', active: true });
-    const [editClassId, setEditClassId] = useState<number | ''>(null as any); // Turma atual do aluno no editar
+    const [editStudentData, setEditStudentData] = useState({ name: '', phone: '', parent_name: '', parent_phone: '', parent_email: '', school_year: '', school: '', intended_profession: '', class_type: '', active: true });
+    const [editClassId, setEditClassId] = useState<number | ''>(''); // Turma atual do aluno no editar
     const [originalClassId, setOriginalClassId] = useState<number | null>(null); // Para detectar mudança
 
     const [deletingStudent, setDeletingStudent] = useState<Student | null>(null);
@@ -122,7 +124,7 @@ export const Students = () => {
                 await api.post(`/classes/${selectedClassId}/enroll/${res.data.id}`);
             }
             setShowCreateModal(false);
-            setNewStudentData({ name: '', phone: '', parent_name: '', parent_phone: '', parent_email: '', school_year: '', class_type: '', active: true });
+            setNewStudentData({ name: '', phone: '', parent_name: '', parent_phone: '', parent_email: '', school_year: '', school: '', intended_profession: '', class_type: '', active: true });
             setSelectedClassId('');
             fetchData();
         } catch (e) { alert('Erro ao criar aluno'); }
@@ -375,6 +377,8 @@ export const Students = () => {
                                                                 parent_phone: student.parent_phone || '',
                                                                 parent_email: student.parent_email || '',
                                                                 school_year: student.school_year || '',
+                                                                school: student.school || '',
+                                                                intended_profession: student.intended_profession || '',
                                                                 class_type: (student.class_type as any) || '',
                                                                 active: student.active ?? true
                                                             });
@@ -490,6 +494,21 @@ export const Students = () => {
                                         placeholder="Ex: 5º Ano" />
                                 </div>
                                 <div>
+                                    <label className="text-xs font-medium text-text-muted uppercase tracking-wider ml-1">Colégio/Escola</label>
+                                    <input className="glass-input"
+                                        value={newStudentData.school} onChange={e => setNewStudentData({ ...newStudentData, school: e.target.value })}
+                                        placeholder="Nome da escola" />
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label className="text-xs font-medium text-text-muted uppercase tracking-wider ml-1">Profissão Pretendida</label>
+                                    <input className="glass-input"
+                                        value={newStudentData.intended_profession} onChange={e => setNewStudentData({ ...newStudentData, intended_profession: e.target.value })}
+                                        placeholder="Ex: Engenheiro" />
+                                </div>
+                                <div>
                                     <label className="text-xs font-medium text-text-muted uppercase tracking-wider ml-1">Tipo de Turma</label>
                                     <select className="glass-input"
                                         value={newStudentData.class_type} onChange={e => setNewStudentData({ ...newStudentData, class_type: e.target.value as any })}>
@@ -578,6 +597,21 @@ export const Students = () => {
                                     <input className="glass-input"
                                         value={editStudentData.school_year} onChange={e => setEditStudentData({ ...editStudentData, school_year: e.target.value })}
                                         placeholder="Ex: 5º Ano" />
+                                </div>
+                                <div>
+                                    <label className="text-xs font-medium text-text-muted uppercase tracking-wider ml-1">Colégio/Escola</label>
+                                    <input className="glass-input"
+                                        value={editStudentData.school} onChange={e => setEditStudentData({ ...editStudentData, school: e.target.value })}
+                                        placeholder="Nome da escola" />
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label className="text-xs font-medium text-text-muted uppercase tracking-wider ml-1">Profissão Pretendida</label>
+                                    <input className="glass-input"
+                                        value={editStudentData.intended_profession} onChange={e => setEditStudentData({ ...editStudentData, intended_profession: e.target.value })}
+                                        placeholder="Ex: Engenheiro" />
                                 </div>
                                 <div>
                                     <label className="text-xs font-medium text-text-muted uppercase tracking-wider ml-1">Tipo de Turma</label>
