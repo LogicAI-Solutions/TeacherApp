@@ -748,9 +748,9 @@ export const Students = () => {
                                     onChange={e => setReportMonth(e.target.value === '' ? '' : Number(e.target.value))}
                                     className="bg-white/5 border border-white/10 rounded-lg py-1.5 px-2 text-xs text-white focus:outline-none focus:ring-1 focus:ring-primary/40"
                                 >
-                                    <option value="">Todos</option>
+                                    <option value="" className="bg-bg-dark text-white">Todos</option>
                                     {Array.from({ length: 12 }, (_, i) => i + 1).map(m => (
-                                        <option key={m} value={m}>{new Date(0, m - 1).toLocaleString('pt-BR', { month: 'short' })}</option>
+                                        <option key={m} value={m} className="bg-bg-dark text-white">{new Date(0, m - 1).toLocaleString('pt-BR', { month: 'short' })}</option>
                                     ))}
                                 </select>
                                 <select
@@ -760,7 +760,7 @@ export const Students = () => {
                                     disabled={reportMonth === ''}
                                 >
                                     {Array.from({ length: 10 }, (_, i) => new Date().getFullYear() - 5 + i).map(y => (
-                                        <option key={y} value={y}>{y}</option>
+                                        <option key={y} value={y} className="bg-bg-dark text-white">{y}</option>
                                     ))}
                                 </select>
                                 <button
