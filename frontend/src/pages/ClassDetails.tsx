@@ -546,7 +546,7 @@ export const ClassDetails = () => {
                 </div>
             )}
 
-            <div className="flex flex-col md:flex-row justify-between items-end mb-8 gap-4 animate-fade-in">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-4 animate-fade-in">
                 <div>
                     <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-text-muted">{classData.name}</h1>
                     <p className="text-primary-light flex items-center gap-2 mt-2 font-medium bg-primary/10 w-fit px-3 py-1 rounded-full text-sm">
