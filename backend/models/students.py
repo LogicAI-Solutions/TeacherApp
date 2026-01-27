@@ -12,6 +12,8 @@ class Student(Base):
     parent_phone = Column(String, nullable=True)
     parent_email = Column(String, nullable=True)
     school_year = Column(String, nullable=True)
+    school = Column(String, nullable=True)
+    intended_profession = Column(String, nullable=True)
     class_type = Column(String, nullable=True)
     active = Column(Boolean, default=True)
     owner_id = Column(Integer, ForeignKey("users.id"))

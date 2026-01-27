@@ -8,6 +8,8 @@ import pydantic
 from backend.schemas import students as student_schemas
 from backend.schemas import users as user_schemas
 from backend.crud import students as student_crud
+from backend.crud import enrollments as enrollment_crud
+from backend.crud import classes as class_crud
 from backend.core import database, security
 
 router = APIRouter()
@@ -55,6 +57,31 @@ def get_student_evolution(student_id: int, db: Session = Depends(database.get_db
             "status": log.status
         })
     return response
+
+@router.get("/students/{student_id}/enrollment")
+def get_student_enrollment(
+    student_id: int, 
+    db: Session = Depends(database.get_db), 
+    current_user: user_schemas.User = Depends(security.get_current_user)
+):
+    """Retorna a turma atual do aluno (pode ser null se não estiver em nenhuma)"""
+    enrollment = enrollment_crud.get_enrollment_for_student(db, student_id=student_id)
+    if enrollment:
+        # Busca dados da turma para retornar
+        class_data = class_crud.get_class(db, class_id=enrollment.class_id)
+        return {"class_id": enrollment.class_id, "class_name": class_data.name if class_data else None}
+    return {"class_id": None, "class_name": None}
+
+@router.put("/students/{student_id}/enrollment")
+def update_student_enrollment(
+    student_id: int, 
+    class_id: Optional[int] = None,
+    db: Session = Depends(database.get_db), 
+    current_user: user_schemas.User = Depends(security.get_current_user)
+):
+    """Atualiza a turma do aluno (pass class_id=null para remover da turma)"""
+    enrollment_crud.change_student_class(db, student_id=student_id, new_class_id=class_id)
+    return {"message": "Enrollment updated successfully"}
 
 from docx.shared import Inches, Pt, RGBColor
 from docx.enum.text import WD_ALIGN_PARAGRAPH
