@@ -8,7 +8,7 @@ class Student(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, index=True)
     phone = Column(String, nullable=True)
-    parent_name = Column(String, nullable=True)
+    parent_name = Column(String, nullable=True, index=True)
     parent_phone = Column(String, nullable=True)
     parent_email = Column(String, nullable=True)
     school_year = Column(String, nullable=True)

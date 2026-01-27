@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import api from '../api';
-import { Plus, Search, Pencil, Trash, X, AlertTriangle, UserCircle, LineChart as LineChartIcon, Download, MoreVertical } from 'lucide-react';
+import { Plus, Search, Pencil, Trash, X, AlertTriangle, UserCircle, LineChart as LineChartIcon, Download, MoreVertical, ArrowUp, ArrowDown, Filter, ArrowUpDown } from 'lucide-react';
 import html2canvas from 'html2canvas';
 import { formatPhone, unmaskPhone } from '../utils/masks';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
@@ -41,6 +41,11 @@ export const Students = () => {
     const [totalStudents, setTotalStudents] = useState(0);
     const [isLoading, setIsLoading] = useState(true);
 
+    // Filter & Sort States
+    const [sortBy, setSortBy] = useState('name');
+    const [sortDesc, setSortDesc] = useState(false);
+    const [filterActive, setFilterActive] = useState<'all' | 'active' | 'inactive'>('all');
+
     // Modal States
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [newStudentData, setNewStudentData] = useState({ name: '', phone: '', parent_name: '', parent_phone: '', parent_email: '', school_year: '', school: '', intended_profession: '', class_type: '', active: true });
@@ -80,24 +85,35 @@ export const Students = () => {
         fetchClasses();
     }, []);
 
-    // Reset page when search changes
+    // Reset page when search or filters change
     useEffect(() => {
         setPage(0);
-    }, [search]);
+    }, [search, filterActive, sortBy, sortDesc]);
 
-    // Debounce search and fetch
+    // Immediate fetch for filters/sort/pagination
+    useEffect(() => {
+        fetchData();
+    }, [page, filterActive, sortBy, sortDesc]);
+
+    // Debounced search
     useEffect(() => {
         const timeoutId = setTimeout(() => {
             fetchData();
         }, 500);
         return () => clearTimeout(timeoutId);
-    }, [search, page]);
+    }, [search]);
 
     const fetchData = async () => {
         setIsLoading(true);
         try {
             const skip = page * limit;
-            const res = await api.get(`/students/?skip=${skip}&limit=${limit}&search=${search}`);
+            let url = `/students/?skip=${skip}&limit=${limit}&search=${search}&sort_by=${sortBy}&sort_desc=${sortDesc}`;
+
+            if (filterActive !== 'all') {
+                url += `&active=${filterActive === 'active'}`;
+            }
+
+            const res = await api.get(url);
             setStudents(res.data.items);
             setTotalStudents(res.data.total);
         } catch (e) { console.error(e); }
@@ -263,26 +279,44 @@ export const Students = () => {
                 </button>
             </div>
 
-            {/* Search Bar */}
+            {/* Search Bar & Filters */}
             <div className={`transition-all duration-500 mb-6 sticky top-0 z-10 ${search.length > 0 ? '-translate-y-2 opacity-95' : ''}`}>
-                <div className="relative group max-w-2xl mx-auto">
-                    <div className="absolute inset-0 bg-primary/10 rounded-2xl blur-xl group-hover:bg-primary/20 transition-all duration-500"></div>
-                    <div className="relative glass border border-white/10 rounded-2xl flex items-center p-1">
-                        <div className="pl-4 pr-3 text-text-muted group-focus-within:text-primary transition-colors">
-                            <Search size={24} />
+                <div className="flex gap-4 max-w-4xl mx-auto">
+                    <div className="relative group flex-1">
+                        <div className="absolute inset-0 bg-primary/10 rounded-2xl blur-xl group-hover:bg-primary/20 transition-all duration-500"></div>
+                        <div className="relative glass border border-white/10 rounded-2xl flex items-center p-1">
+                            <div className="pl-4 pr-3 text-text-muted group-focus-within:text-primary transition-colors">
+                                <Search size={24} />
+                            </div>
+                            <input
+                                type="text"
+                                placeholder="Buscar aluno por nome..."
+                                className="w-full bg-transparent border-none text-white text-lg placeholder-text-muted/50 focus:ring-0 focus:outline-none py-3"
+                                value={search}
+                                onChange={e => setSearch(e.target.value)}
+                            />
+                            {search && (
+                                <button onClick={() => setSearch('')} className="p-2 text-text-muted hover:text-white hover:bg-white/10 rounded-xl transition-all mr-1">
+                                    <X size={20} />
+                                </button>
+                            )}
                         </div>
-                        <input
-                            type="text"
-                            placeholder="Buscar aluno por nome..."
-                            className="w-full bg-transparent border-none text-white text-lg placeholder-text-muted/50 focus:ring-0 focus:outline-none py-3"
-                            value={search}
-                            onChange={e => setSearch(e.target.value)}
-                        />
-                        {search && (
-                            <button onClick={() => setSearch('')} className="p-2 text-text-muted hover:text-white hover:bg-white/10 rounded-xl transition-all mr-1">
-                                <X size={20} />
-                            </button>
-                        )}
+                    </div>
+
+                    <div className="relative h-full">
+                        <div className="absolute inset-0 bg-primary/5 rounded-2xl blur-lg"></div>
+                        <div className="relative glass h-full border border-white/10 rounded-2xl flex items-center px-4 gap-2">
+                            <Filter size={18} className="text-text-muted" />
+                            <select
+                                value={filterActive}
+                                onChange={e => setFilterActive(e.target.value as 'all' | 'active' | 'inactive')}
+                                className="bg-transparent border-none text-white text-sm focus:ring-0 focus:outline-none cursor-pointer [&>option]:bg-bg-dark"
+                            >
+                                <option value="all">Todos</option>
+                                <option value="active">Ativos</option>
+                                <option value="inactive">Inativos</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -296,14 +330,59 @@ export const Students = () => {
                 )}
                 <div className="overflow-x-auto flex-1 overflow-y-auto">
                     <table className="w-full">
-                        <thead className="bg-white/5 sticky top-0 backdrop-blur-xl">
+                        <thead className="bg-white/5 sticky top-0 backdrop-blur-xl z-10">
                             <tr>
-                                <th className="text-left p-3 sm:p-4 text-xs font-bold text-text-muted uppercase tracking-wider">Nome</th>
+                                <th
+                                    className="text-left p-3 sm:p-4 text-xs font-bold text-text-muted uppercase tracking-wider cursor-pointer hover:text-white transition-colors group select-none"
+                                    onClick={() => {
+                                        if (sortBy === 'name') setSortDesc(!sortDesc);
+                                        else { setSortBy('name'); setSortDesc(false); }
+                                    }}
+                                >
+                                    <div className="flex items-center gap-1">
+                                        Nome
+                                        {sortBy === 'name' ? (
+                                            sortDesc ? <ArrowDown size={14} className="text-primary" /> : <ArrowUp size={14} className="text-primary" />
+                                        ) : (
+                                            <ArrowUpDown size={14} className="text-white/20 group-hover:text-white/50 transition-colors" />
+                                        )}
+                                    </div>
+                                </th>
                                 <th className="text-left p-3 sm:p-4 text-xs font-bold text-text-muted uppercase tracking-wider hidden md:table-cell">Contato</th>
-                                <th className="text-left p-3 sm:p-4 text-xs font-bold text-text-muted uppercase tracking-wider hidden lg:table-cell">Responsável</th>
+                                <th
+                                    className="text-left p-3 sm:p-4 text-xs font-bold text-text-muted uppercase tracking-wider hidden lg:table-cell cursor-pointer hover:text-white transition-colors group select-none"
+                                    onClick={() => {
+                                        if (sortBy === 'parent_name') setSortDesc(!sortDesc);
+                                        else { setSortBy('parent_name'); setSortDesc(false); }
+                                    }}
+                                >
+                                    <div className="flex items-center gap-1">
+                                        Responsável
+                                        {sortBy === 'parent_name' ? (
+                                            sortDesc ? <ArrowDown size={14} className="text-primary" /> : <ArrowUp size={14} className="text-primary" />
+                                        ) : (
+                                            <ArrowUpDown size={14} className="text-white/20 group-hover:text-white/50 transition-colors" />
+                                        )}
+                                    </div>
+                                </th>
                                 <th className="text-left p-3 sm:p-4 text-xs font-bold text-text-muted uppercase tracking-wider hidden xl:table-cell">Ano Escolar</th>
                                 <th className="text-left p-3 sm:p-4 text-xs font-bold text-text-muted uppercase tracking-wider hidden xl:table-cell">Tipo de Aula</th>
-                                <th className="text-center p-3 sm:p-4 text-xs font-bold text-text-muted uppercase tracking-wider">Status</th>
+                                <th
+                                    className="text-center p-3 sm:p-4 text-xs font-bold text-text-muted uppercase tracking-wider cursor-pointer hover:text-white transition-colors group select-none"
+                                    onClick={() => {
+                                        if (sortBy === 'active') setSortDesc(!sortDesc);
+                                        else { setSortBy('active'); setSortDesc(false); }
+                                    }}
+                                >
+                                    <div className="flex items-center justify-center gap-1">
+                                        Status
+                                        {sortBy === 'active' ? (
+                                            sortDesc ? <ArrowDown size={14} className="text-primary" /> : <ArrowUp size={14} className="text-primary" />
+                                        ) : (
+                                            <ArrowUpDown size={14} className="text-white/20 group-hover:text-white/50 transition-colors" />
+                                        )}
+                                    </div>
+                                </th>
                                 <th className="text-right p-3 sm:p-4 text-xs font-bold text-text-muted uppercase tracking-wider">Ações</th>
                             </tr>
                         </thead>

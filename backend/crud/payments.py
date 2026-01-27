@@ -42,3 +42,34 @@ def update_payment(db: Session, payment_id: int, payment_data: PaymentCreate):
         db.commit()
         db.refresh(payment)
     return payment
+    
+def get_payment_stats(db: Session, user_id: int, month: int, year: int):
+    # Total Active Students for the user
+    # Ideally should we count inactive? The original code counted ALL students owned by user from API
+    total_students = db.query(Student).filter(Student.owner_id == user_id).count()
+    
+    # Paid Payments for this month/year for students owned by user
+    # Note: Join Student to ensure ownership
+    paid_query = db.query(Payment).join(Student).filter(
+        Student.owner_id == user_id,
+        Payment.month == month,
+        Payment.year == year,
+        Payment.status == 'PAID'
+    )
+    paid_count = paid_query.count()
+    
+    # Total Received (Sum amount)
+    from sqlalchemy import func
+    total_received = db.query(func.sum(Payment.amount)).join(Student).filter(
+        Student.owner_id == user_id,
+        Payment.month == month,
+        Payment.year == year,
+        Payment.status == 'PAID'
+    ).scalar() or 0.0
+    
+    return {
+        "total_students": total_students,
+        "paid_count": paid_count,
+        "pending_count": total_students - paid_count,
+        "total_received": total_received
+    }

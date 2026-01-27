@@ -19,11 +19,37 @@ def read_students(
     skip: int = 0, 
     limit: int = 100, 
     search: Optional[str] = None,
+    sort_by: Optional[str] = "name",
+    sort_desc: bool = False,
+    active: Optional[bool] = None,
+    payment_status: Optional[str] = None,
+    payment_month: Optional[int] = None,
+    payment_year: Optional[int] = None,
     db: Session = Depends(database.get_db), 
     current_user: user_schemas.User = Depends(security.get_current_user)
 ):
-    students = student_crud.get_students(db, user_id=current_user.id, skip=skip, limit=limit, search=search)
-    total = student_crud.count_students(db, user_id=current_user.id, search=search)
+    students = student_crud.get_students(
+        db, 
+        user_id=current_user.id, 
+        skip=skip, 
+        limit=limit, 
+        search=search, 
+        sort_by=sort_by, 
+        sort_desc=sort_desc, 
+        active_status=active,
+        payment_status=payment_status,
+        payment_month=payment_month,
+        payment_year=payment_year
+    )
+    total = student_crud.count_students(
+        db, 
+        user_id=current_user.id, 
+        search=search,
+        active_status=active,
+        payment_status=payment_status,
+        payment_month=payment_month,
+        payment_year=payment_year
+    )
     return {"items": students, "total": total}
 
 @router.post("/students/", response_model=student_schemas.Student)
