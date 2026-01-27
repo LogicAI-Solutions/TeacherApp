@@ -470,9 +470,9 @@ export const Students = () => {
                                     <label className="text-xs font-medium text-text-muted uppercase tracking-wider ml-1">Tipo de Turma</label>
                                     <select className="glass-input"
                                         value={newStudentData.class_type} onChange={e => setNewStudentData({ ...newStudentData, class_type: e.target.value as any })}>
-                                        <option value="">-- Selecione --</option>
-                                        <option value="Semanal">Semanal</option>
-                                        <option value="Quinzenal">Quinzenal</option>
+                                        <option value="" className="bg-bg-dark text-white">-- Selecione --</option>
+                                        <option value="Semanal" className="bg-bg-dark text-white">Semanal</option>
+                                        <option value="Quinzenal" className="bg-bg-dark text-white">Quinzenal</option>
                                     </select>
                                 </div>
                             </div>
@@ -493,8 +493,8 @@ export const Students = () => {
                                     value={selectedClassId}
                                     onChange={e => setSelectedClassId(Number(e.target.value) || '')}
                                 >
-                                    <option value="">-- Selecione uma turma --</option>
-                                    {classes.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+                                    <option value="" className="bg-bg-dark text-white">-- Selecione uma turma --</option>
+                                    {classes.map(c => <option key={c.id} value={c.id} className="bg-bg-dark text-white">{c.name}</option>)}
                                 </select>
                             </div>
 
@@ -560,9 +560,9 @@ export const Students = () => {
                                     <label className="text-xs font-medium text-text-muted uppercase tracking-wider ml-1">Tipo de Turma</label>
                                     <select className="glass-input"
                                         value={editStudentData.class_type} onChange={e => setEditStudentData({ ...editStudentData, class_type: e.target.value as any })}>
-                                        <option value="">-- Selecione --</option>
-                                        <option value="Semanal">Semanal</option>
-                                        <option value="Quinzenal">Quinzenal</option>
+                                        <option value="" className="bg-bg-dark text-white">-- Selecione --</option>
+                                        <option value="Semanal" className="bg-bg-dark text-white">Semanal</option>
+                                        <option value="Quinzenal" className="bg-bg-dark text-white">Quinzenal</option>
                                     </select>
                                 </div>
                             </div>
@@ -599,9 +599,9 @@ export const Students = () => {
                                     onChange={e => setReportMonth(e.target.value === '' ? '' : Number(e.target.value))}
                                     className="bg-white/5 border border-white/10 rounded-lg py-1.5 px-2 text-xs text-white focus:outline-none focus:ring-1 focus:ring-primary/40"
                                 >
-                                    <option value="">Todos</option>
+                                    <option value="" className="bg-bg-dark text-white">Todos</option>
                                     {Array.from({ length: 12 }, (_, i) => i + 1).map(m => (
-                                        <option key={m} value={m}>{new Date(0, m - 1).toLocaleString('pt-BR', { month: 'short' })}</option>
+                                        <option key={m} value={m} className="bg-bg-dark text-white">{new Date(0, m - 1).toLocaleString('pt-BR', { month: 'short' })}</option>
                                     ))}
                                 </select>
                                 <select
@@ -611,7 +611,7 @@ export const Students = () => {
                                     disabled={reportMonth === ''}
                                 >
                                     {Array.from({ length: 10 }, (_, i) => new Date().getFullYear() - 5 + i).map(y => (
-                                        <option key={y} value={y}>{y}</option>
+                                        <option key={y} value={y} className="bg-bg-dark text-white">{y}</option>
                                     ))}
                                 </select>
                                 <button
