@@ -13,6 +13,7 @@ interface Student {
     parent_name?: string;
     parent_phone?: string;
     parent_email?: string;
+    active?: boolean;
 }
 
 interface ClassModel {
@@ -458,12 +459,20 @@ export const ClassDetails = () => {
 
         setSaving(true);
 
-        const logs = Object.values(attendanceLogs).filter(l => students.find(s => s.id === l.student_id));
-        console.log("Logs:", logs);
+        let logsToProcess = Object.values(attendanceLogs).filter(l => students.find(s => s.id === l.student_id));
+
+        // Se for nova chamada, não salvar presença para alunos inativos
+        if (!editingSessionId) {
+            logsToProcess = logsToProcess.filter(l => {
+                const s = students.find(std => std.id === l.student_id);
+                return s?.active !== false;
+            });
+        }
+
         const payload = {
             date: sessionDate,
             description: sessionDesc,
-            logs: logs.map(l => {
+            logs: logsToProcess.map(l => {
                 const gradeNum = l.grade === '' ? null : Number(l.grade);
                 return {
                     ...l,
@@ -666,7 +675,7 @@ export const ClassDetails = () => {
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-white/5">
-                                        {[...students].sort((a, b) => a.name.localeCompare(b.name)).map(s => {
+                                        {[...students].filter(s => s.active !== false).sort((a, b) => a.name.localeCompare(b.name)).map(s => {
                                             const log = attendanceLogs[s.id] || {};
                                             return (
                                                 <tr key={s.id} className="hover:bg-white/5 transition-colors group">
