@@ -32,7 +32,7 @@ interface PaymentInput {
 
 export const Payments = () => {
     const [students, setStudents] = useState<Student[]>([]);
-    const [payments, setPayments] = useState<Payment[]>([]);
+
     const [stats, setStats] = useState({ total_students: 0, paid_count: 0, pending_count: 0, total_received: 0 });
     const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
     const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
@@ -124,7 +124,6 @@ export const Payments = () => {
             setStudents(studentsRes.data.items);
             setTotalStudents(studentsRes.data.total);
             setStats(statsRes.data);
-            setPayments(paymentsRes.data);
 
             // Initialize Local State for current page students
             const initialPayments: Record<number, PaymentInput> = {};
