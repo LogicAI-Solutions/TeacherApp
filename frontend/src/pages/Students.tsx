@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import api from '../api';
-import { Plus, Search, Pencil, Trash, X, AlertTriangle, UserCircle, LineChart as LineChartIcon, Download, MoreVertical } from 'lucide-react';
+import { Plus, Search, Pencil, Trash, X, AlertTriangle, UserCircle, LineChart as LineChartIcon, Download, MoreVertical, ArrowUp, ArrowDown, Filter, ArrowUpDown } from 'lucide-react';
 import html2canvas from 'html2canvas';
 import { formatPhone, unmaskPhone } from '../utils/masks';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
@@ -14,6 +14,8 @@ interface Student {
     parent_phone?: string;
     parent_email?: string;
     school_year?: string;
+    school?: string;
+    intended_profession?: string;
     class_type?: string;
     active: boolean;
 }
@@ -39,13 +41,20 @@ export const Students = () => {
     const [totalStudents, setTotalStudents] = useState(0);
     const [isLoading, setIsLoading] = useState(true);
 
+    // Filter & Sort States
+    const [sortBy, setSortBy] = useState('name');
+    const [sortDesc, setSortDesc] = useState(false);
+    const [filterActive, setFilterActive] = useState<'all' | 'active' | 'inactive'>('all');
+
     // Modal States
     const [showCreateModal, setShowCreateModal] = useState(false);
-    const [newStudentData, setNewStudentData] = useState({ name: '', phone: '', parent_name: '', parent_phone: '', parent_email: '', school_year: '', class_type: '', active: true });
+    const [newStudentData, setNewStudentData] = useState({ name: '', phone: '', parent_name: '', parent_phone: '', parent_email: '', school_year: '', school: '', intended_profession: '', class_type: '', active: true });
     const [selectedClassId, setSelectedClassId] = useState<number | ''>(''); // For enrollment
 
     const [editingStudent, setEditingStudent] = useState<Student | null>(null);
-    const [editStudentData, setEditStudentData] = useState({ name: '', phone: '', parent_name: '', parent_phone: '', parent_email: '', school_year: '', class_type: '', active: true });
+    const [editStudentData, setEditStudentData] = useState({ name: '', phone: '', parent_name: '', parent_phone: '', parent_email: '', school_year: '', school: '', intended_profession: '', class_type: '', active: true });
+    const [editClassId, setEditClassId] = useState<number | ''>(''); // Turma atual do aluno no editar
+    const [originalClassId, setOriginalClassId] = useState<number | null>(null); // Para detectar mudança
 
     const [deletingStudent, setDeletingStudent] = useState<Student | null>(null);
 
@@ -76,24 +85,35 @@ export const Students = () => {
         fetchClasses();
     }, []);
 
-    // Reset page when search changes
+    // Reset page when search or filters change
     useEffect(() => {
         setPage(0);
-    }, [search]);
+    }, [search, filterActive, sortBy, sortDesc]);
 
-    // Debounce search and fetch
+    // Immediate fetch for filters/sort/pagination
+    useEffect(() => {
+        fetchData();
+    }, [page, filterActive, sortBy, sortDesc]);
+
+    // Debounced search
     useEffect(() => {
         const timeoutId = setTimeout(() => {
             fetchData();
         }, 500);
         return () => clearTimeout(timeoutId);
-    }, [search, page]);
+    }, [search]);
 
     const fetchData = async () => {
         setIsLoading(true);
         try {
             const skip = page * limit;
-            const res = await api.get(`/students/?skip=${skip}&limit=${limit}&search=${search}`);
+            let url = `/students/?skip=${skip}&limit=${limit}&search=${search}&sort_by=${sortBy}&sort_desc=${sortDesc}`;
+
+            if (filterActive !== 'all') {
+                url += `&active=${filterActive === 'active'}`;
+            }
+
+            const res = await api.get(url);
             setStudents(res.data.items);
             setTotalStudents(res.data.total);
         } catch (e) { console.error(e); }
@@ -120,7 +140,7 @@ export const Students = () => {
                 await api.post(`/classes/${selectedClassId}/enroll/${res.data.id}`);
             }
             setShowCreateModal(false);
-            setNewStudentData({ name: '', phone: '', parent_name: '', parent_phone: '', parent_email: '', school_year: '', class_type: '', active: true });
+            setNewStudentData({ name: '', phone: '', parent_name: '', parent_phone: '', parent_email: '', school_year: '', school: '', intended_profession: '', class_type: '', active: true });
             setSelectedClassId('');
             fetchData();
         } catch (e) { alert('Erro ao criar aluno'); }
@@ -136,7 +156,19 @@ export const Students = () => {
                 parent_phone: unmaskPhone(editStudentData.parent_phone)
             };
             await api.put(`/students/${editingStudent.id}`, payload);
+
+            // Atualizar turma se mudou
+            const newClassId = editClassId === '' ? null : editClassId;
+            if (newClassId !== originalClassId) {
+                const enrollmentUrl = newClassId
+                    ? `/students/${editingStudent.id}/enrollment?class_id=${newClassId}`
+                    : `/students/${editingStudent.id}/enrollment`;
+                await api.put(enrollmentUrl);
+            }
+
             setEditingStudent(null);
+            setEditClassId('');
+            setOriginalClassId(null);
             fetchData();
         } catch (e) { alert('Erro ao atualizar aluno'); }
     };
@@ -247,26 +279,44 @@ export const Students = () => {
                 </button>
             </div>
 
-            {/* Search Bar */}
+            {/* Search Bar & Filters */}
             <div className={`transition-all duration-500 mb-6 sticky top-0 z-10 ${search.length > 0 ? '-translate-y-2 opacity-95' : ''}`}>
-                <div className="relative group max-w-2xl mx-auto">
-                    <div className="absolute inset-0 bg-primary/10 rounded-2xl blur-xl group-hover:bg-primary/20 transition-all duration-500"></div>
-                    <div className="relative glass border border-white/10 rounded-2xl flex items-center p-1">
-                        <div className="pl-4 pr-3 text-text-muted group-focus-within:text-primary transition-colors">
-                            <Search size={24} />
+                <div className="flex gap-4 max-w-4xl mx-auto">
+                    <div className="relative group flex-1">
+                        <div className="absolute inset-0 bg-primary/10 rounded-2xl blur-xl group-hover:bg-primary/20 transition-all duration-500"></div>
+                        <div className="relative glass border border-white/10 rounded-2xl flex items-center p-1">
+                            <div className="pl-4 pr-3 text-text-muted group-focus-within:text-primary transition-colors">
+                                <Search size={24} />
+                            </div>
+                            <input
+                                type="text"
+                                placeholder="Buscar aluno por nome..."
+                                className="w-full bg-transparent border-none text-white text-lg placeholder-text-muted/50 focus:ring-0 focus:outline-none py-3"
+                                value={search}
+                                onChange={e => setSearch(e.target.value)}
+                            />
+                            {search && (
+                                <button onClick={() => setSearch('')} className="p-2 text-text-muted hover:text-white hover:bg-white/10 rounded-xl transition-all mr-1">
+                                    <X size={20} />
+                                </button>
+                            )}
                         </div>
-                        <input
-                            type="text"
-                            placeholder="Buscar aluno por nome..."
-                            className="w-full bg-transparent border-none text-white text-lg placeholder-text-muted/50 focus:ring-0 focus:outline-none py-3"
-                            value={search}
-                            onChange={e => setSearch(e.target.value)}
-                        />
-                        {search && (
-                            <button onClick={() => setSearch('')} className="p-2 text-text-muted hover:text-white hover:bg-white/10 rounded-xl transition-all mr-1">
-                                <X size={20} />
-                            </button>
-                        )}
+                    </div>
+
+                    <div className="relative h-full">
+                        <div className="absolute inset-0 bg-primary/5 rounded-2xl blur-lg"></div>
+                        <div className="relative glass h-full border border-white/10 rounded-2xl flex items-center px-4 gap-2">
+                            <Filter size={18} className="text-text-muted" />
+                            <select
+                                value={filterActive}
+                                onChange={e => setFilterActive(e.target.value as 'all' | 'active' | 'inactive')}
+                                className="bg-transparent border-none text-white text-sm focus:ring-0 focus:outline-none cursor-pointer [&>option]:bg-bg-dark"
+                            >
+                                <option value="all">Todos</option>
+                                <option value="active">Ativos</option>
+                                <option value="inactive">Inativos</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -280,14 +330,59 @@ export const Students = () => {
                 )}
                 <div className="overflow-x-auto flex-1 overflow-y-auto">
                     <table className="w-full">
-                        <thead className="bg-white/5 sticky top-0 backdrop-blur-xl">
+                        <thead className="bg-white/5 sticky top-0 backdrop-blur-xl z-10">
                             <tr>
-                                <th className="text-left p-3 sm:p-4 text-xs font-bold text-text-muted uppercase tracking-wider">Nome</th>
+                                <th
+                                    className="text-left p-3 sm:p-4 text-xs font-bold text-text-muted uppercase tracking-wider cursor-pointer hover:text-white transition-colors group select-none"
+                                    onClick={() => {
+                                        if (sortBy === 'name') setSortDesc(!sortDesc);
+                                        else { setSortBy('name'); setSortDesc(false); }
+                                    }}
+                                >
+                                    <div className="flex items-center gap-1">
+                                        Nome
+                                        {sortBy === 'name' ? (
+                                            sortDesc ? <ArrowDown size={14} className="text-primary" /> : <ArrowUp size={14} className="text-primary" />
+                                        ) : (
+                                            <ArrowUpDown size={14} className="text-white/20 group-hover:text-white/50 transition-colors" />
+                                        )}
+                                    </div>
+                                </th>
                                 <th className="text-left p-3 sm:p-4 text-xs font-bold text-text-muted uppercase tracking-wider hidden md:table-cell">Contato</th>
-                                <th className="text-left p-3 sm:p-4 text-xs font-bold text-text-muted uppercase tracking-wider hidden lg:table-cell">Responsável</th>
+                                <th
+                                    className="text-left p-3 sm:p-4 text-xs font-bold text-text-muted uppercase tracking-wider hidden lg:table-cell cursor-pointer hover:text-white transition-colors group select-none"
+                                    onClick={() => {
+                                        if (sortBy === 'parent_name') setSortDesc(!sortDesc);
+                                        else { setSortBy('parent_name'); setSortDesc(false); }
+                                    }}
+                                >
+                                    <div className="flex items-center gap-1">
+                                        Responsável
+                                        {sortBy === 'parent_name' ? (
+                                            sortDesc ? <ArrowDown size={14} className="text-primary" /> : <ArrowUp size={14} className="text-primary" />
+                                        ) : (
+                                            <ArrowUpDown size={14} className="text-white/20 group-hover:text-white/50 transition-colors" />
+                                        )}
+                                    </div>
+                                </th>
                                 <th className="text-left p-3 sm:p-4 text-xs font-bold text-text-muted uppercase tracking-wider hidden xl:table-cell">Ano Escolar</th>
                                 <th className="text-left p-3 sm:p-4 text-xs font-bold text-text-muted uppercase tracking-wider hidden xl:table-cell">Tipo de Aula</th>
-                                <th className="text-center p-3 sm:p-4 text-xs font-bold text-text-muted uppercase tracking-wider">Status</th>
+                                <th
+                                    className="text-center p-3 sm:p-4 text-xs font-bold text-text-muted uppercase tracking-wider cursor-pointer hover:text-white transition-colors group select-none"
+                                    onClick={() => {
+                                        if (sortBy === 'active') setSortDesc(!sortDesc);
+                                        else { setSortBy('active'); setSortDesc(false); }
+                                    }}
+                                >
+                                    <div className="flex items-center justify-center gap-1">
+                                        Status
+                                        {sortBy === 'active' ? (
+                                            sortDesc ? <ArrowDown size={14} className="text-primary" /> : <ArrowUp size={14} className="text-primary" />
+                                        ) : (
+                                            <ArrowUpDown size={14} className="text-white/20 group-hover:text-white/50 transition-colors" />
+                                        )}
+                                    </div>
+                                </th>
                                 <th className="text-right p-3 sm:p-4 text-xs font-bold text-text-muted uppercase tracking-wider">Ações</th>
                             </tr>
                         </thead>
@@ -352,7 +447,7 @@ export const Students = () => {
                                                         <LineChartIcon size={16} /> Ver Evolução
                                                     </button>
                                                     <button
-                                                        onClick={() => {
+                                                        onClick={async () => {
                                                             setEditingStudent(student);
                                                             setEditStudentData({
                                                                 name: student.name,
@@ -361,9 +456,20 @@ export const Students = () => {
                                                                 parent_phone: student.parent_phone || '',
                                                                 parent_email: student.parent_email || '',
                                                                 school_year: student.school_year || '',
+                                                                school: student.school || '',
+                                                                intended_profession: student.intended_profession || '',
                                                                 class_type: (student.class_type as any) || '',
                                                                 active: student.active ?? true
                                                             });
+                                                            // Buscar turma atual do aluno
+                                                            try {
+                                                                const res = await api.get(`/students/${student.id}/enrollment`);
+                                                                setEditClassId(res.data.class_id || '');
+                                                                setOriginalClassId(res.data.class_id);
+                                                            } catch (e) {
+                                                                setEditClassId('');
+                                                                setOriginalClassId(null);
+                                                            }
                                                             setOpenMenuId(null);
                                                         }}
                                                         className="w-full text-left px-4 py-3 text-sm text-text-muted hover:text-white hover:bg-white/5 flex items-center gap-2 transition-colors"
@@ -467,12 +573,27 @@ export const Students = () => {
                                         placeholder="Ex: 5º Ano" />
                                 </div>
                                 <div>
+                                    <label className="text-xs font-medium text-text-muted uppercase tracking-wider ml-1">Colégio/Escola</label>
+                                    <input className="glass-input"
+                                        value={newStudentData.school} onChange={e => setNewStudentData({ ...newStudentData, school: e.target.value })}
+                                        placeholder="Nome da escola" />
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label className="text-xs font-medium text-text-muted uppercase tracking-wider ml-1">Profissão Pretendida</label>
+                                    <input className="glass-input"
+                                        value={newStudentData.intended_profession} onChange={e => setNewStudentData({ ...newStudentData, intended_profession: e.target.value })}
+                                        placeholder="Ex: Engenheiro" />
+                                </div>
+                                <div>
                                     <label className="text-xs font-medium text-text-muted uppercase tracking-wider ml-1">Tipo de Turma</label>
                                     <select className="glass-input"
                                         value={newStudentData.class_type} onChange={e => setNewStudentData({ ...newStudentData, class_type: e.target.value as any })}>
-                                        <option value="">-- Selecione --</option>
-                                        <option value="Semanal">Semanal</option>
-                                        <option value="Quinzenal">Quinzenal</option>
+                                        <option value="" className="bg-bg-dark text-white">-- Selecione --</option>
+                                        <option value="Semanal" className="bg-bg-dark text-white">Semanal</option>
+                                        <option value="Quinzenal" className="bg-bg-dark text-white">Quinzenal</option>
                                     </select>
                                 </div>
                             </div>
@@ -493,8 +614,8 @@ export const Students = () => {
                                     value={selectedClassId}
                                     onChange={e => setSelectedClassId(Number(e.target.value) || '')}
                                 >
-                                    <option value="">-- Selecione uma turma --</option>
-                                    {classes.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+                                    <option value="" className="bg-bg-dark text-white">-- Selecione uma turma --</option>
+                                    {classes.map(c => <option key={c.id} value={c.id} className="bg-bg-dark text-white">{c.name}</option>)}
                                 </select>
                             </div>
 
@@ -557,15 +678,43 @@ export const Students = () => {
                                         placeholder="Ex: 5º Ano" />
                                 </div>
                                 <div>
+                                    <label className="text-xs font-medium text-text-muted uppercase tracking-wider ml-1">Colégio/Escola</label>
+                                    <input className="glass-input"
+                                        value={editStudentData.school} onChange={e => setEditStudentData({ ...editStudentData, school: e.target.value })}
+                                        placeholder="Nome da escola" />
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label className="text-xs font-medium text-text-muted uppercase tracking-wider ml-1">Profissão Pretendida</label>
+                                    <input className="glass-input"
+                                        value={editStudentData.intended_profession} onChange={e => setEditStudentData({ ...editStudentData, intended_profession: e.target.value })}
+                                        placeholder="Ex: Engenheiro" />
+                                </div>
+                                <div>
                                     <label className="text-xs font-medium text-text-muted uppercase tracking-wider ml-1">Tipo de Turma</label>
                                     <select className="glass-input"
                                         value={editStudentData.class_type} onChange={e => setEditStudentData({ ...editStudentData, class_type: e.target.value as any })}>
-                                        <option value="">-- Selecione --</option>
-                                        <option value="Semanal">Semanal</option>
-                                        <option value="Quinzenal">Quinzenal</option>
+                                        <option value="" className="bg-bg-dark text-white">-- Selecione --</option>
+                                        <option value="Semanal" className="bg-bg-dark text-white">Semanal</option>
+                                        <option value="Quinzenal" className="bg-bg-dark text-white">Quinzenal</option>
                                     </select>
                                 </div>
                             </div>
+
+                            <div className="pt-2 border-t border-white/10 mt-2">
+                                <label className="text-xs font-medium text-text-muted uppercase tracking-wider ml-1">Turma Matriculada</label>
+                                <select
+                                    className="glass-input"
+                                    value={editClassId}
+                                    onChange={e => setEditClassId(Number(e.target.value) || '')}
+                                >
+                                    <option value="" className="bg-bg-dark text-white">-- Nenhuma turma --</option>
+                                    {classes.map(c => <option key={c.id} value={c.id} className="bg-bg-dark text-white">{c.name}</option>)}
+                                </select>
+                            </div>
+
                             <div
                                 className="flex items-center gap-3 bg-white/5 p-3 rounded-xl border border-white/10 cursor-pointer hover:bg-white/10 transition-all backdrop-blur-sm"
                                 onClick={() => setEditStudentData({ ...editStudentData, active: !editStudentData.active })}
@@ -599,9 +748,9 @@ export const Students = () => {
                                     onChange={e => setReportMonth(e.target.value === '' ? '' : Number(e.target.value))}
                                     className="bg-white/5 border border-white/10 rounded-lg py-1.5 px-2 text-xs text-white focus:outline-none focus:ring-1 focus:ring-primary/40"
                                 >
-                                    <option value="">Todos</option>
+                                    <option value="" className="bg-bg-dark text-white">Todos</option>
                                     {Array.from({ length: 12 }, (_, i) => i + 1).map(m => (
-                                        <option key={m} value={m}>{new Date(0, m - 1).toLocaleString('pt-BR', { month: 'short' })}</option>
+                                        <option key={m} value={m} className="bg-bg-dark text-white">{new Date(0, m - 1).toLocaleString('pt-BR', { month: 'short' })}</option>
                                     ))}
                                 </select>
                                 <select
@@ -611,7 +760,7 @@ export const Students = () => {
                                     disabled={reportMonth === ''}
                                 >
                                     {Array.from({ length: 10 }, (_, i) => new Date().getFullYear() - 5 + i).map(y => (
-                                        <option key={y} value={y}>{y}</option>
+                                        <option key={y} value={y} className="bg-bg-dark text-white">{y}</option>
                                     ))}
                                 </select>
                                 <button

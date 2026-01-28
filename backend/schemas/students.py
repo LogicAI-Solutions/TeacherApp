@@ -9,6 +9,8 @@ class StudentBase(BaseModel):
     parent_phone: Optional[str] = None
     parent_email: Optional[str] = None
     school_year: Optional[str] = None
+    school: Optional[str] = None
+    intended_profession: Optional[str] = None
     class_type: Optional[str] = None
     active: bool = True
 

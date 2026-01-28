@@ -43,6 +43,15 @@ def update_payment(
 ):
     return payment_crud.update_payment(db, payment_id=payment_id, payment_data=payment)
 
+@router.get("/payments/stats")
+def get_payment_stats(
+    month: int,
+    year: int,
+    db: Session = Depends(database.get_db),
+    current_user: user_schemas.User = Depends(security.get_current_user)
+):
+    return payment_crud.get_payment_stats(db, user_id=current_user.id, month=month, year=year)
+
 from docx import Document
 from docx.shared import Inches, Pt, RGBColor
 from docx.enum.text import WD_ALIGN_PARAGRAPH

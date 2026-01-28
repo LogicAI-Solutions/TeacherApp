@@ -6,24 +6,95 @@ from backend.schemas.students import StudentCreate
 
 from sqlalchemy import or_
 
-def get_students(db: Session, user_id: int, skip: int = 0, limit: int = 100, search: str = None):
+def get_students(db: Session, user_id: int, skip: int = 0, limit: int = 100, search: str = None, sort_by: str = "name", sort_desc: bool = False, active_status: bool = None, payment_status: str = None, payment_month: int = None, payment_year: int = None):
     query = db.query(Student).filter(Student.owner_id == user_id)
+    
+    if active_status is not None:
+        query = query.filter(Student.active == active_status)
+
     if search:
         search_filter = f"%{search}%"
         query = query.filter(or_(
             Student.name.ilike(search_filter),
             Student.parent_name.ilike(search_filter)
         ))
+
+    if payment_status and payment_month and payment_year:
+        from backend.models.payments import Payment
+        from sqlalchemy import and_
+        
+        if payment_status == 'PAID':
+            # Students who have a PAID payment for that month/year
+            query = query.join(Payment, and_(
+                Payment.student_id == Student.id,
+                Payment.month == payment_month,
+                Payment.year == payment_year,
+                Payment.status == 'PAID'
+            ))
+        elif payment_status == 'PENDING':
+            # Students who DO NOT have a PAID payment for that month/year
+            # This includes explicit PENDING records AND missing records
+            # So we use outerjoin and check for NULL or status != PAID
+            # Actually easier: use NOT EXISTS or outer join
+            
+            # Approach: Outer Join with 'PAID' payment. Filter where ID is null.
+            query = query.outerjoin(Payment, and_(
+                Payment.student_id == Student.id,
+                Payment.month == payment_month,
+                Payment.year == payment_year,
+                Payment.status == 'PAID'
+            )).filter(Payment.id == None)
+
+    if sort_by == 'name':
+        if sort_desc:
+            query = query.order_by(Student.name.desc())
+        else:
+            query = query.order_by(Student.name.asc())
+    elif sort_by == 'active':
+        if sort_desc:
+            query = query.order_by(Student.active.desc())
+        else:
+            query = query.order_by(Student.active.asc())
+    elif sort_by == 'parent_name':
+        if sort_desc:
+            query = query.order_by(Student.parent_name.desc())
+        else:
+            query = query.order_by(Student.parent_name.asc())
+
     return query.offset(skip).limit(limit).all()
 
-def count_students(db: Session, user_id: int, search: str = None):
+def count_students(db: Session, user_id: int, search: str = None, active_status: bool = None, payment_status: str = None, payment_month: int = None, payment_year: int = None):
     query = db.query(Student).filter(Student.owner_id == user_id)
+    
+    if active_status is not None:
+        query = query.filter(Student.active == active_status)
+
     if search:
         search_filter = f"%{search}%"
         query = query.filter(or_(
             Student.name.ilike(search_filter),
             Student.parent_name.ilike(search_filter)
         ))
+        
+    if payment_status and payment_month and payment_year:
+        from backend.models.payments import Payment
+        from sqlalchemy import and_
+        
+        if payment_status == 'PAID':
+            query = query.join(Payment, and_(
+                Payment.student_id == Student.id,
+                Payment.month == payment_month,
+                Payment.year == payment_year,
+                Payment.status == 'PAID'
+            ))
+        elif payment_status == 'PENDING':
+            query = query.outerjoin(Payment, and_(
+                Payment.student_id == Student.id,
+                Payment.month == payment_month,
+                Payment.year == payment_year,
+                Payment.status == 'PAID'
+            )).filter(Payment.id == None)
+
     return query.count()
 
 def create_student(db: Session, student: StudentCreate, user_id: int):

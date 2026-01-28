@@ -12,9 +12,11 @@ import { Layout } from './components/Layout';
 
 import type { ReactNode } from 'react';
 
+import { Loading } from './components/Loading';
+
 const ProtectedRoute = ({ children }: { children: ReactNode }) => {
   const { user, isLoading } = useAuth();
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) return <Loading variant="fullscreen" text="Carregando sistema..." />;
   if (!user) return <Navigate to="/login" />;
   return children;
 };
