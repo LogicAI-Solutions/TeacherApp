@@ -758,7 +758,7 @@ export const Students = () => {
 
                         <div id="evolution-chart-container" className="h-[400px] w-full bg-white/5 backdrop-blur-sm p-4 rounded-2xl border border-white/10">
                             {filteredEvolutionData.length > 0 ? (
-                                <ResponsiveContainer width="100%" height="100%">
+                                <ResponsiveContainer width="100%" height={360}>
                                     <LineChart data={filteredEvolutionData}>
                                         <CartesianGrid strokeDasharray="3 3" stroke="#ffffff10" />
                                         <XAxis dataKey="date" stroke="#9ca3af" />

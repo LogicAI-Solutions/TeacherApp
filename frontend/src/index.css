@@ -19,12 +19,12 @@
 
   --font-sans: Inter, system-ui, sans-serif;
 
-  --animate-fade-in: fadeIn 0.5s ease-out;
-  --animate-slide-up: slideUp 0.5s ease-out;
+  --animate-fade-in: fadeIn 0.3s ease-out;
+  --animate-slide-up: slideUp 0.3s ease-out;
   --animate-slide-in-right: slideInRight 0.3s ease-out;
-  --animate-float: float 6s ease-in-out infinite;
-  --animate-glow: glow 2s ease-in-out infinite alternate;
-  --animate-shimmer: shimmer 2s linear infinite;
+  --animate-float: none;
+  --animate-glow: none;
+  --animate-shimmer: none;
 
   @keyframes fadeIn {
     0% {
@@ -319,7 +319,7 @@
     border-radius: 50%;
     filter: blur(80px);
     opacity: 0.5;
-    animation: float 6s ease-in-out infinite;
+    animation: none;
     pointer-events: none;
   }
 
@@ -478,6 +478,6 @@
       rgba(255, 255, 255, 0) 100%
     );
     background-size: 200% 100%;
-    animation: shimmer 2s linear infinite;
+    animation: none;
   }
 }
