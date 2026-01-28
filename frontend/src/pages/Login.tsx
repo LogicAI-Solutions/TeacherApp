@@ -74,6 +74,7 @@ export const Login = () => {
                             onChange={e => setNickname(e.target.value)}
                             required
                             placeholder="seu_usuario"
+                            autoComplete="username"
                         />
                     </div>
                     <div className="space-y-1">
@@ -86,6 +87,7 @@ export const Login = () => {
                                 onChange={e => setPassword(e.target.value)}
                                 required
                                 placeholder="••••••••"
+                                autoComplete="current-password"
                             />
                             <button
                                 type="button"

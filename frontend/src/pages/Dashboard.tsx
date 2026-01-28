@@ -134,7 +134,7 @@ export const Dashboard = () => {
                 <div className="glass-card p-6 min-h-[350px] sm:min-h-[400px] flex flex-col">
                     <h3 className="text-xl font-bold text-white mb-6 pl-2 border-l-4 border-primary">Alunos: Ativos vs Inativos</h3>
                     <div className="flex-1 w-full min-h-[300px]">
-                        <ResponsiveContainer width="100%" height="100%">
+                        <ResponsiveContainer width="100%" height="100%" minHeight={300}>
                             <PieChart>
                                 <Pie
                                     data={studentData}
@@ -175,7 +175,7 @@ export const Dashboard = () => {
                 <div className="glass-card p-6 min-h-[350px] sm:min-h-[400px] flex flex-col">
                     <h3 className="text-xl font-bold text-white mb-6 pl-2 border-l-4 border-success">Pagamentos do Mês Atual</h3>
                     <div className="flex-1 w-full min-h-[300px]">
-                        <ResponsiveContainer width="100%" height="100%">
+                        <ResponsiveContainer width="100%" height="100%" minHeight={300}>
                             <BarChart
                                 data={paymentData}
                                 margin={{
