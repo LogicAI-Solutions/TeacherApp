@@ -303,21 +303,7 @@ export const Students = () => {
                         </div>
                     </div>
 
-                    <div className="relative h-full">
-                        <div className="absolute inset-0 bg-primary/5 rounded-2xl blur-lg"></div>
-                        <div className="relative glass h-full border border-white/10 rounded-2xl flex items-center px-4 gap-2">
-                            <Filter size={18} className="text-text-muted" />
-                            <select
-                                value={filterActive}
-                                onChange={e => setFilterActive(e.target.value as 'all' | 'active' | 'inactive')}
-                                className="bg-transparent border-none text-white text-sm focus:ring-0 focus:outline-none cursor-pointer [&>option]:bg-bg-dark"
-                            >
-                                <option value="all">Todos</option>
-                                <option value="active">Ativos</option>
-                                <option value="inactive">Inativos</option>
-                            </select>
-                        </div>
-                    </div>
+
                 </div>
             </div>
 
