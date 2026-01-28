@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import api from '../api';
 import { Loading } from '../components/Loading';
-import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Legend } from 'recharts';
+import { PieChart, Pie, Cell, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid, Legend } from 'recharts';
 import { Users, DollarSign, TrendingUp, AlertCircle } from 'lucide-react';
 
 interface DashboardStats {
@@ -26,6 +26,22 @@ export const Dashboard = () => {
     const [stats, setStats] = useState<DashboardStats | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [chartWidth, setChartWidth] = useState(400);
+    const containerRef = useRef<HTMLDivElement>(null);
+
+    // Measure container width for responsive charts
+    useEffect(() => {
+        const updateWidth = () => {
+            if (containerRef.current) {
+                const width = containerRef.current.offsetWidth - 48; // minus padding
+                setChartWidth(Math.max(300, width));
+            }
+        };
+
+        updateWidth();
+        window.addEventListener('resize', updateWidth);
+        return () => window.removeEventListener('resize', updateWidth);
+    }, []);
 
     useEffect(() => {
         const fetchStats = async () => {
@@ -129,88 +145,88 @@ export const Dashboard = () => {
             </div>
 
             {/* Charts Section */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8" ref={containerRef}>
                 {/* Students Chart */}
-                <div className="glass-card p-6 min-h-[350px] sm:min-h-[400px] flex flex-col">
-                    <h3 className="text-xl font-bold text-white mb-6 pl-2 border-l-4 border-primary">Alunos: Ativos vs Inativos</h3>
-                    <div className="flex-1 w-full min-h-[300px]">
-                        <ResponsiveContainer width="100%" height="100%" minHeight={300}>
-                            <PieChart>
-                                <Pie
-                                    data={studentData}
-                                    cx="50%"
-                                    cy="50%"
-                                    innerRadius={60}
-                                    outerRadius={100}
-                                    fill="#8884d8"
-                                    paddingAngle={5}
-                                    dataKey="value"
-                                >
-                                    {studentData.map((_, index) => (
-                                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} stroke="rgba(255,255,255,0.1)" />
-                                    ))}
-                                </Pie>
-                                <Tooltip
-                                    isAnimationActive={false}
-                                    content={({ active, payload }: any) => {
-                                        if (active && payload && payload.length) {
-                                            return (
-                                                <div style={{ backgroundColor: 'rgba(23, 23, 23, 0.9)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', padding: '12px' }}>
-                                                    <p style={{ color: '#fff', margin: 0 }}>
-                                                        Quantidade: <span style={{ fontWeight: 'bold' }}>{payload[0].value}</span>
-                                                    </p>
-                                                </div>
-                                            );
-                                        }
-                                        return null;
-                                    }}
-                                />
-                                <Legend verticalAlign="bottom" height={36} wrapperStyle={{ paddingTop: '20px' }} />
-                            </PieChart>
-                        </ResponsiveContainer>
+                <div className="glass-card p-6 min-h-[350px] sm:min-h-[400px] flex flex-col items-center">
+                    <h3 className="text-xl font-bold text-white mb-6 pl-2 border-l-4 border-primary w-full">Alunos: Ativos vs Inativos</h3>
+                    <div className="flex-1 w-full flex items-center justify-center overflow-hidden">
+                        <PieChart width={Math.min(chartWidth, 350)} height={300}>
+                            <Pie
+                                data={studentData}
+                                cx="50%"
+                                cy="50%"
+                                innerRadius={60}
+                                outerRadius={100}
+                                fill="#8884d8"
+                                paddingAngle={5}
+                                dataKey="value"
+                                animationBegin={0}
+                                animationDuration={800}
+                            >
+                                {studentData.map((_, index) => (
+                                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} stroke="rgba(255,255,255,0.1)" />
+                                ))}
+                            </Pie>
+                            <Tooltip
+                                isAnimationActive={false}
+                                content={({ active, payload }: any) => {
+                                    if (active && payload && payload.length) {
+                                        return (
+                                            <div style={{ backgroundColor: 'rgba(23, 23, 23, 0.9)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', padding: '12px' }}>
+                                                <p style={{ color: '#fff', margin: 0 }}>
+                                                    Quantidade: <span style={{ fontWeight: 'bold' }}>{payload[0].value}</span>
+                                                </p>
+                                            </div>
+                                        );
+                                    }
+                                    return null;
+                                }}
+                            />
+                            <Legend verticalAlign="bottom" height={36} wrapperStyle={{ paddingTop: '20px' }} />
+                        </PieChart>
                     </div>
                 </div>
 
                 {/* Payments Chart */}
-                <div className="glass-card p-6 min-h-[350px] sm:min-h-[400px] flex flex-col">
-                    <h3 className="text-xl font-bold text-white mb-6 pl-2 border-l-4 border-success">Pagamentos do Mês Atual</h3>
-                    <div className="flex-1 w-full min-h-[300px]">
-                        <ResponsiveContainer width="100%" height="100%" minHeight={300}>
-                            <BarChart
-                                data={paymentData}
-                                margin={{
-                                    top: 20,
-                                    right: 30,
-                                    left: 20,
-                                    bottom: 5,
+                <div className="glass-card p-6 min-h-[350px] sm:min-h-[400px] flex flex-col items-center">
+                    <h3 className="text-xl font-bold text-white mb-6 pl-2 border-l-4 border-success w-full">Pagamentos do Mês Atual</h3>
+                    <div className="flex-1 w-full flex items-center justify-center overflow-hidden">
+                        <BarChart
+                            width={Math.min(chartWidth, 450)}
+                            height={300}
+                            data={paymentData}
+                            margin={{
+                                top: 20,
+                                right: 30,
+                                left: 20,
+                                bottom: 5,
+                            }}
+                        >
+                            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
+                            <XAxis dataKey="name" stroke="#9ca3af" tick={{ fill: '#9ca3af' }} axisLine={{ stroke: 'rgba(255,255,255,0.1)' }} />
+                            <YAxis stroke="#9ca3af" tick={{ fill: '#9ca3af' }} axisLine={{ stroke: 'rgba(255,255,255,0.1)' }} />
+                            <Tooltip
+                                isAnimationActive={false}
+                                cursor={{ fill: 'rgba(255,255,255,0.05)' }}
+                                content={({ active, payload }: any) => {
+                                    if (active && payload && payload.length) {
+                                        return (
+                                            <div style={{ backgroundColor: 'rgba(23, 23, 23, 0.9)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', padding: '12px' }}>
+                                                <p style={{ color: '#fff', margin: 0 }}>
+                                                    Quantidade: <span style={{ fontWeight: 'bold' }}>{payload[0].value}</span>
+                                                </p>
+                                            </div>
+                                        );
+                                    }
+                                    return null;
                                 }}
-                            >
-                                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
-                                <XAxis dataKey="name" stroke="#9ca3af" tick={{ fill: '#9ca3af' }} axisLine={{ stroke: 'rgba(255,255,255,0.1)' }} />
-                                <YAxis stroke="#9ca3af" tick={{ fill: '#9ca3af' }} axisLine={{ stroke: 'rgba(255,255,255,0.1)' }} />
-                                <Tooltip
-                                    isAnimationActive={false}
-                                    cursor={{ fill: 'rgba(255,255,255,0.05)' }}
-                                    content={({ active, payload }: any) => {
-                                        if (active && payload && payload.length) {
-                                            return (
-                                                <div style={{ backgroundColor: 'rgba(23, 23, 23, 0.9)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', padding: '12px' }}>
-                                                    <p style={{ color: '#fff', margin: 0 }}>
-                                                        Quantidade: <span style={{ fontWeight: 'bold' }}>{payload[0].value}</span>
-                                                    </p>
-                                                </div>
-                                            );
-                                        }
-                                        return null;
-                                    }}
-                                />
-                                <Bar dataKey="value" radius={[8, 8, 0, 0]}>
-                                    {paymentData.map((entry, index) => (
-                                        <Cell key={`cell-${index}`} fill={entry.fill} />
-                                    ))}
-                                </Bar>
-                            </BarChart>
-                        </ResponsiveContainer>
+                            />
+                            <Bar dataKey="value" radius={[8, 8, 0, 0]} animationBegin={0} animationDuration={800}>
+                                {paymentData.map((entry, index) => (
+                                    <Cell key={`cell-${index}`} fill={entry.fill} />
+                                ))}
+                            </Bar>
+                        </BarChart>
                     </div>
                 </div>
             </div>
