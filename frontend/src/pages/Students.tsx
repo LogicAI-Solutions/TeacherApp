@@ -508,9 +508,10 @@ export const Students = () => {
             {/* Create Modal */}
             {showCreateModal && (
                 <div className="modal-overlay animate-fade-in">
-                    <div className="glass-modal w-full max-w-lg p-8 animate-slide-up relative max-h-[90vh] overflow-y-auto">
-                        <div className="sticky top-0 left-0 w-full h-1 bg-gradient-to-r from-primary/0 via-primary to-primary/0 -mt-8 mb-8"></div>
-                        <button onClick={() => setShowCreateModal(false)} className="absolute top-4 right-4 text-text-muted hover:text-white p-2 rounded-xl hover:bg-white/10 transition-all"><X size={20} /></button>
+                    <div className="glass-modal w-full max-w-lg animate-slide-up relative max-h-[90vh] overflow-hidden flex flex-col">
+                        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary/0 via-primary to-primary/0 z-10"></div>
+                        <button onClick={() => setShowCreateModal(false)} className="absolute top-4 right-4 text-text-muted hover:text-white p-2 rounded-xl hover:bg-white/10 transition-all z-10"><X size={20} /></button>
+                        <div className="p-8 overflow-y-auto flex-1">
                         <h3 className="text-2xl font-bold text-white mb-6">Novo Aluno</h3>
                         <form onSubmit={handleCreateStudent} className="space-y-4">
                             <div>
@@ -606,6 +607,7 @@ export const Students = () => {
                                 <button type="submit" className="glass-button text-white px-6 py-2 rounded-xl font-medium">Salvar</button>
                             </div>
                         </form>
+                        </div>
                     </div>
                 </div>
             )}
