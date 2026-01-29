@@ -16,6 +16,10 @@ router = APIRouter()
 def read_classes(skip: int = 0, limit: int = 100, db: Session = Depends(database.get_db), current_user: user_schemas.User = Depends(security.get_current_user)):
     return class_crud.get_classes(db, user_id=current_user.id, skip=skip, limit=limit)
 
+@router.put("/classes/reorder", response_model=List[class_schemas.Class])
+def reorder_classes(order_data: List[class_schemas.ClassReorder], db: Session = Depends(database.get_db), current_user: user_schemas.User = Depends(security.get_current_user)):
+    return class_crud.reorder_classes(db=db, user_id=current_user.id, order_data=order_data)
+
 @router.post("/classes/", response_model=class_schemas.Class)
 def create_class(class_: class_schemas.ClassCreate, db: Session = Depends(database.get_db), current_user: user_schemas.User = Depends(security.get_current_user)):
     return class_crud.create_class(db=db, class_=class_, user_id=current_user.id)

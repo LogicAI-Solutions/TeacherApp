@@ -1,9 +1,19 @@
 from sqlalchemy.orm import Session
 from backend.models.classes import Class
-from backend.schemas.classes import ClassCreate
+from backend.schemas.classes import ClassCreate, ClassReorder
+from typing import List
 
 def get_classes(db: Session, user_id: int, skip: int = 0, limit: int = 100):
-    return db.query(Class).filter(Class.owner_id == user_id).offset(skip).limit(limit).all()
+    return db.query(Class).filter(Class.owner_id == user_id).order_by(Class.display_order, Class.id).offset(skip).limit(limit).all()
+
+def reorder_classes(db: Session, user_id: int, order_data: List[ClassReorder]):
+    """Update the display_order for multiple classes"""
+    for item in order_data:
+        db_class = db.query(Class).filter(Class.id == item.id, Class.owner_id == user_id).first()
+        if db_class:
+            db_class.display_order = item.display_order
+    db.commit()
+    return get_classes(db, user_id)
 
 def create_class(db: Session, class_: ClassCreate, user_id: int):
     # **class_.dict() is deprecated in Pydantic v2, using class_.model_dump() is better or strict dict()
