@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import api from '../api';
-import { Plus, Search, Pencil, Trash, X, AlertTriangle, UserCircle, LineChart as LineChartIcon, Download, MoreVertical, ArrowUp, ArrowDown, Filter, ArrowUpDown } from 'lucide-react';
+import { Plus, Search, Pencil, Trash, X, AlertTriangle, UserCircle, LineChart as LineChartIcon, Download, MoreVertical, ArrowUp, ArrowDown, ArrowUpDown } from 'lucide-react';
 import html2canvas from 'html2canvas';
 import { formatPhone, unmaskPhone } from '../utils/masks';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
@@ -44,7 +44,7 @@ export const Students = () => {
     // Filter & Sort States
     const [sortBy, setSortBy] = useState('name');
     const [sortDesc, setSortDesc] = useState(false);
-    const [filterActive, setFilterActive] = useState<'all' | 'active' | 'inactive'>('all');
+
 
     // Modal States
     const [showCreateModal, setShowCreateModal] = useState(false);
@@ -88,12 +88,12 @@ export const Students = () => {
     // Reset page when search or filters change
     useEffect(() => {
         setPage(0);
-    }, [search, filterActive, sortBy, sortDesc]);
+    }, [search, sortBy, sortDesc]);
 
     // Immediate fetch for filters/sort/pagination
     useEffect(() => {
         fetchData();
-    }, [page, filterActive, sortBy, sortDesc]);
+    }, [page, sortBy, sortDesc]);
 
     // Debounced search
     useEffect(() => {
@@ -108,10 +108,6 @@ export const Students = () => {
         try {
             const skip = page * limit;
             let url = `/students/?skip=${skip}&limit=${limit}&search=${search}&sort_by=${sortBy}&sort_desc=${sortDesc}`;
-
-            if (filterActive !== 'all') {
-                url += `&active=${filterActive === 'active'}`;
-            }
 
             const res = await api.get(url);
             setStudents(res.data.items);
@@ -303,21 +299,7 @@ export const Students = () => {
                         </div>
                     </div>
 
-                    <div className="relative h-full">
-                        <div className="absolute inset-0 bg-primary/5 rounded-2xl blur-lg"></div>
-                        <div className="relative glass h-full border border-white/10 rounded-2xl flex items-center px-4 gap-2">
-                            <Filter size={18} className="text-text-muted" />
-                            <select
-                                value={filterActive}
-                                onChange={e => setFilterActive(e.target.value as 'all' | 'active' | 'inactive')}
-                                className="bg-transparent border-none text-white text-sm focus:ring-0 focus:outline-none cursor-pointer [&>option]:bg-bg-dark"
-                            >
-                                <option value="all">Todos</option>
-                                <option value="active">Ativos</option>
-                                <option value="inactive">Inativos</option>
-                            </select>
-                        </div>
-                    </div>
+
                 </div>
             </div>
 

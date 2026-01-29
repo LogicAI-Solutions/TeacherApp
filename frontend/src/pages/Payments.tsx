@@ -31,8 +31,9 @@ interface PaymentInput {
 }
 
 export const Payments = () => {
-    const [students, setStudents] = useState<Student[]>([]);
 
+
+    const [students, setStudents] = useState<Student[]>([]);
     const [stats, setStats] = useState({ total_students: 0, paid_count: 0, pending_count: 0, total_received: 0 });
     const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
     const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
