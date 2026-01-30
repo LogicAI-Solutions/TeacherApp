@@ -65,6 +65,7 @@ const SortableClassCard = ({ cls, index, isReorderMode, openEditModal, openDelet
                         <div
                             {...attributes}
                             {...listeners}
+                            style={{ touchAction: 'none' }}
                             className="cursor-grab active:cursor-grabbing p-1 -ml-1 text-text-muted hover:text-primary transition-colors"
                         >
                             <GripVertical size={20} />
