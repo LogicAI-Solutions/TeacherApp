@@ -108,7 +108,7 @@ const SortableClassCard = ({ cls, index, isReorderMode, openEditModal, openDelet
             ref={setNodeRef}
             style={style}
             to={`/class/${cls.id}`}
-            className="glass-card group hover:translate-y-[-5px] transition-all duration-300 block no-underline text-inherit relative overflow-hidden"
+            className={`glass-card group hover:translate-y-[-5px] transition-all duration-300 block no-underline text-inherit relative overflow-hidden ${isReorderMode ? 'animate-jiggle cursor-grab active:cursor-grabbing pointer-events-none' : ''}`}
         >
             {cardContent}
         </Link>
@@ -121,6 +121,7 @@ export const Classes = () => {
     const [newClass, setNewClass] = useState({ name: '', schedule: '' });
     const [isLoading, setIsLoading] = useState(true);
     const [isReorderMode, setIsReorderMode] = useState(false);
+    const [originalClasses, setOriginalClasses] = useState<ClassModel[]>([]);
 
     // Edit/Delete State
     const [editingClass, setEditingClass] = useState<ClassModel | null>(null);
@@ -203,29 +204,46 @@ export const Classes = () => {
         setDeletingClass(cls);
     };
 
-    const handleDragEnd = async (event: DragEndEvent) => {
+    const handleDragEnd = (event: DragEndEvent) => {
         const { active, over } = event;
-        
+
         if (over && active.id !== over.id) {
             const oldIndex = classes.findIndex((cls) => cls.id === active.id);
             const newIndex = classes.findIndex((cls) => cls.id === over.id);
-            
+
             const newOrder = arrayMove(classes, oldIndex, newIndex);
             setClasses(newOrder);
-            
-            // Save the new order to the backend
-            try {
-                const orderData = newOrder.map((cls, index) => ({
-                    id: cls.id,
-                    display_order: index
-                }));
-                await api.put('/classes/reorder', orderData);
-            } catch (error) {
-                console.error('Error saving order:', error);
-                // Revert on error
-                fetchClasses();
-            }
         }
+    };
+
+    const handleSaveOrder = async () => {
+        try {
+            const orderData = classes.map((cls, index) => ({
+                id: cls.id,
+                display_order: index
+            }));
+            await api.put('/classes/reorder', orderData);
+            setOriginalClasses(classes);
+            setIsReorderMode(false);
+        } catch (error) {
+            console.error('Error saving order:', error);
+            alert('Erro ao salvar a nova ordem');
+        }
+    };
+
+    const handleCancelReorder = () => {
+        setClasses(originalClasses);
+        setIsReorderMode(false);
+    };
+
+    const handleSortAlphabetically = () => {
+        const sorted = [...classes].sort((a, b) => a.name.localeCompare(b.name));
+        setClasses(sorted);
+    };
+
+    const startReorderMode = () => {
+        setOriginalClasses([...classes]);
+        setIsReorderMode(true);
     };
 
     return (
@@ -235,17 +253,39 @@ export const Classes = () => {
                     Minhas Turmas
                 </h2>
                 {classes.length > 1 && (
-                    <button
-                        onClick={() => setIsReorderMode(!isReorderMode)}
-                        className={`flex items-center gap-2 px-4 py-2 rounded-xl font-medium transition-all duration-300 ${
-                            isReorderMode
-                                ? 'bg-primary text-white shadow-lg shadow-primary/30'
-                                : 'bg-white/5 text-text-muted hover:bg-white/10 hover:text-white border border-white/10'
-                        }`}
-                    >
-                        <ArrowUpDown size={18} />
-                        {isReorderMode ? 'Concluir' : 'Reorganizar'}
-                    </button>
+                    <div className="flex flex-wrap gap-2 w-full sm:w-auto">
+                        {!isReorderMode ? (
+                            <button
+                                onClick={startReorderMode}
+                                className="flex items-center gap-2 px-4 py-2 rounded-xl font-medium transition-all duration-300 bg-white/5 text-text-muted hover:bg-white/10 hover:text-white border border-white/10 w-full sm:w-auto justify-center"
+                            >
+                                <ArrowUpDown size={18} />
+                                Reorganizar
+                            </button>
+                        ) : (
+                            <>
+                                <button
+                                    onClick={handleSortAlphabetically}
+                                    className="flex items-center gap-2 px-4 py-2 rounded-xl font-medium transition-all duration-300 bg-white/5 text-text-muted hover:bg-white/10 hover:text-white border border-white/10 flex-1 sm:flex-none justify-center"
+                                >
+                                    <ArrowUpDown size={18} />
+                                    Ordenar (A-Z)
+                                </button>
+                                <button
+                                    onClick={handleCancelReorder}
+                                    className="px-4 py-2 rounded-xl font-medium transition-all duration-300 bg-white/5 text-text-muted hover:bg-white/10 hover:text-danger border border-white/10 flex-1 sm:flex-none justify-center"
+                                >
+                                    Cancelar
+                                </button>
+                                <button
+                                    onClick={handleSaveOrder}
+                                    className="px-4 py-2 rounded-xl font-medium transition-all duration-300 bg-primary text-white shadow-lg shadow-primary/30 w-full sm:w-auto justify-center"
+                                >
+                                    Salvar Ordem
+                                </button>
+                            </>
+                        )}
+                    </div>
                 )}
             </div>
 
