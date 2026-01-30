@@ -9,6 +9,7 @@ class Class(Base):
     name = Column(String, index=True)
     schedule = Column(String) # e.g., "Monday 18:30"
     owner_id = Column(Integer, ForeignKey("users.id"))
+    display_order = Column(Integer, default=0)
 
     owner = relationship("User", back_populates="owned_classes")
     enrollments = relationship("Enrollment", back_populates="course_class")

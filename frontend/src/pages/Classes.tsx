@@ -1,26 +1,144 @@
 import React, { useEffect, useState } from 'react';
 import api from '../api';
-import { Plus, Calendar, Pencil, Trash, X, AlertTriangle } from 'lucide-react';
+import { Plus, Calendar, Pencil, Trash, X, AlertTriangle, GripVertical, ArrowUpDown } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Loading } from '../components/Loading';
+import {
+    DndContext,
+    closestCenter,
+    KeyboardSensor,
+    PointerSensor,
+    useSensor,
+    useSensors,
+    type DragEndEvent,
+} from '@dnd-kit/core';
+import {
+    arrayMove,
+    SortableContext,
+    sortableKeyboardCoordinates,
+    useSortable,
+    rectSortingStrategy,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 
 interface ClassModel {
     id: number;
     name: string;
     schedule: string;
+    display_order?: number;
 }
+
+interface SortableClassCardProps {
+    cls: ClassModel;
+    index: number;
+    isReorderMode: boolean;
+    openEditModal: (e: React.MouseEvent, cls: ClassModel) => void;
+    openDeleteModal: (e: React.MouseEvent, cls: ClassModel) => void;
+}
+
+const SortableClassCard = ({ cls, index, isReorderMode, openEditModal, openDeleteModal }: SortableClassCardProps) => {
+    const {
+        attributes,
+        listeners,
+        setNodeRef,
+        transform,
+        transition,
+        isDragging,
+    } = useSortable({ id: cls.id });
+
+    const style = {
+        transform: CSS.Transform.toString(transform),
+        transition,
+        animationDelay: `${index * 100}ms`,
+        zIndex: isDragging ? 50 : 'auto',
+        opacity: isDragging ? 0.8 : 1,
+    };
+
+    const cardContent = (
+        <>
+            {/* Gradient accent line */}
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary/0 via-primary to-primary/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+
+            <div className="flex justify-between items-start p-6">
+                <div className="flex items-start gap-3">
+                    {isReorderMode && (
+                        <div
+                            {...attributes}
+                            {...listeners}
+                            className="cursor-grab active:cursor-grabbing p-1 -ml-1 text-text-muted hover:text-primary transition-colors"
+                        >
+                            <GripVertical size={20} />
+                        </div>
+                    )}
+                    <div>
+                        <h3 className="text-xl font-bold mb-2 text-text-main group-hover:text-gradient transition-all duration-300">{cls.name}</h3>
+                        <p className="text-text-muted text-sm flex items-center gap-2">
+                            <Calendar size={14} className="text-primary" /> {cls.schedule}
+                        </p>
+                    </div>
+                </div>
+                {!isReorderMode && (
+                    <div className="flex gap-2">
+                        <button onClick={(e) => openEditModal(e, cls)} className="bg-white/5 backdrop-blur-sm p-2 rounded-xl hover:bg-primary/20 text-text-muted hover:text-primary transition-all duration-300 border border-white/5 hover:border-primary/30">
+                            <Pencil size={18} />
+                        </button>
+                        <button onClick={(e) => openDeleteModal(e, cls)} className="bg-white/5 backdrop-blur-sm p-2 rounded-xl hover:bg-danger/20 text-text-muted hover:text-danger transition-all duration-300 border border-white/5 hover:border-danger/30">
+                            <Trash size={18} />
+                        </button>
+                    </div>
+                )}
+            </div>
+        </>
+    );
+
+    if (isReorderMode) {
+        return (
+            <div
+                ref={setNodeRef}
+                style={style}
+                className={`glass-card group transition-all duration-300 relative overflow-hidden ${isDragging ? 'ring-2 ring-primary shadow-lg shadow-primary/20' : 'hover:translate-y-[-5px]'}`}
+            >
+                {cardContent}
+            </div>
+        );
+    }
+
+    return (
+        <Link
+            ref={setNodeRef}
+            style={style}
+            to={`/class/${cls.id}`}
+            className="glass-card group hover:translate-y-[-5px] transition-all duration-300 block no-underline text-inherit relative overflow-hidden"
+        >
+            {cardContent}
+        </Link>
+    );
+};
 
 export const Classes = () => {
     const [classes, setClasses] = useState<ClassModel[]>([]);
     const [showModal, setShowModal] = useState(false);
     const [newClass, setNewClass] = useState({ name: '', schedule: '' });
     const [isLoading, setIsLoading] = useState(true);
+    const [isReorderMode, setIsReorderMode] = useState(false);
 
     // Edit/Delete State
     const [editingClass, setEditingClass] = useState<ClassModel | null>(null);
     const [editClassName, setEditClassName] = useState('');
     const [editClassSchedule, setEditClassSchedule] = useState('');
     const [deletingClass, setDeletingClass] = useState<ClassModel | null>(null);
+
+    // DnD sensors
+    const sensors = useSensors(
+        useSensor(PointerSensor, {
+            activationConstraint: {
+                distance: 8,
+            },
+        }),
+        useSensor(KeyboardSensor, {
+            coordinateGetter: sortableKeyboardCoordinates,
+        })
+    );
 
     const fetchClasses = async () => {
         setIsLoading(true);
@@ -85,12 +203,50 @@ export const Classes = () => {
         setDeletingClass(cls);
     };
 
+    const handleDragEnd = async (event: DragEndEvent) => {
+        const { active, over } = event;
+        
+        if (over && active.id !== over.id) {
+            const oldIndex = classes.findIndex((cls) => cls.id === active.id);
+            const newIndex = classes.findIndex((cls) => cls.id === over.id);
+            
+            const newOrder = arrayMove(classes, oldIndex, newIndex);
+            setClasses(newOrder);
+            
+            // Save the new order to the backend
+            try {
+                const orderData = newOrder.map((cls, index) => ({
+                    id: cls.id,
+                    display_order: index
+                }));
+                await api.put('/classes/reorder', orderData);
+            } catch (error) {
+                console.error('Error saving order:', error);
+                // Revert on error
+                fetchClasses();
+            }
+        }
+    };
+
     return (
         <div>
-            <div className="mb-8 flex justify-between items-center">
+            <div className="mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <h2 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-white/70">
                     Minhas Turmas
                 </h2>
+                {classes.length > 1 && (
+                    <button
+                        onClick={() => setIsReorderMode(!isReorderMode)}
+                        className={`flex items-center gap-2 px-4 py-2 rounded-xl font-medium transition-all duration-300 ${
+                            isReorderMode
+                                ? 'bg-primary text-white shadow-lg shadow-primary/30'
+                                : 'bg-white/5 text-text-muted hover:bg-white/10 hover:text-white border border-white/10'
+                        }`}
+                    >
+                        <ArrowUpDown size={18} />
+                        {isReorderMode ? 'Concluir' : 'Reorganizar'}
+                    </button>
+                )}
             </div>
 
             {isLoading ? (
@@ -99,47 +255,47 @@ export const Classes = () => {
                 </div>
             ) : (
                 <div className="animate-slide-up space-y-8">
-                    <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-                        {classes.map((cls, index) => (
-                            <Link
-                                key={cls.id}
-                                to={`/class/${cls.id}`}
-                                className="glass-card group hover:translate-y-[-5px] transition-all duration-300 block no-underline text-inherit relative overflow-hidden"
-                                style={{ animationDelay: `${index * 100}ms` }}
-                            >
-                                {/* Gradient accent line */}
-                                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary/0 via-primary to-primary/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    {isReorderMode && (
+                        <div className="bg-primary/10 border border-primary/30 rounded-xl p-4 text-center">
+                            <p className="text-primary text-sm">
+                                <GripVertical size={16} className="inline-block mr-2 -mt-0.5" />
+                                Arraste os cards para reorganizar suas turmas
+                            </p>
+                        </div>
+                    )}
+                    <DndContext
+                        sensors={sensors}
+                        collisionDetection={closestCenter}
+                        onDragEnd={handleDragEnd}
+                    >
+                        <SortableContext items={classes.map(c => c.id)} strategy={rectSortingStrategy}>
+                            <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+                                {classes.map((cls, index) => (
+                                    <SortableClassCard
+                                        key={cls.id}
+                                        cls={cls}
+                                        index={index}
+                                        isReorderMode={isReorderMode}
+                                        openEditModal={openEditModal}
+                                        openDeleteModal={openDeleteModal}
+                                    />
+                                ))}
 
-                                <div className="flex justify-between items-start p-6">
-                                    <div>
-                                        <h3 className="text-xl font-bold mb-2 text-text-main group-hover:text-gradient transition-all duration-300">{cls.name}</h3>
-                                        <p className="text-text-muted text-sm flex items-center gap-2">
-                                            <Calendar size={14} className="text-primary" /> {cls.schedule}
-                                        </p>
-                                    </div>
-                                    <div className="flex gap-2">
-                                        <button onClick={(e) => openEditModal(e, cls)} className="bg-white/5 backdrop-blur-sm p-2 rounded-xl hover:bg-primary/20 text-text-muted hover:text-primary transition-all duration-300 border border-white/5 hover:border-primary/30">
-                                            <Pencil size={18} />
-                                        </button>
-                                        <button onClick={(e) => openDeleteModal(e, cls)} className="bg-white/5 backdrop-blur-sm p-2 rounded-xl hover:bg-danger/20 text-text-muted hover:text-danger transition-all duration-300 border border-white/5 hover:border-danger/30">
-                                            <Trash size={18} />
-                                        </button>
-                                    </div>
-                                </div>
-                            </Link>
-                        ))}
-
-                        {/* Add Class Card Button */}
-                        <button
-                            onClick={() => setShowModal(true)}
-                            className="glass-card flex flex-col items-center justify-center gap-4 group hover:bg-white/10 transition-all border-dashed border-2 border-white/10 hover:border-primary/50 cursor-pointer min-h-[150px]"
-                        >
-                            <div className="bg-primary/10 p-4 rounded-full group-hover:scale-110 group-hover:bg-primary/20 transition-all duration-300 border border-primary/20">
-                                <Plus size={32} className="text-primary" />
+                                {/* Add Class Card Button - only show when not in reorder mode */}
+                                {!isReorderMode && (
+                                    <button
+                                        onClick={() => setShowModal(true)}
+                                        className="glass-card flex flex-col items-center justify-center gap-4 group hover:bg-white/10 transition-all border-dashed border-2 border-white/10 hover:border-primary/50 cursor-pointer min-h-[150px]"
+                                    >
+                                        <div className="bg-primary/10 p-4 rounded-full group-hover:scale-110 group-hover:bg-primary/20 transition-all duration-300 border border-primary/20">
+                                            <Plus size={32} className="text-primary" />
+                                        </div>
+                                        <span className="font-medium text-text-muted group-hover:text-white transition-colors">Criar Nova Turma</span>
+                                    </button>
+                                )}
                             </div>
-                            <span className="font-medium text-text-muted group-hover:text-white transition-colors">Criar Nova Turma</span>
-                        </button>
-                    </div>
+                        </SortableContext>
+                    </DndContext>
                 </div>
             )}
 
