@@ -349,50 +349,54 @@ export const Classes = () => {
             {/* Modern Modal */}
             {showModal && (
                 <div className="modal-overlay animate-fade-in">
-                    <div className="glass-modal w-full max-w-md p-8 animate-slide-up relative overflow-hidden">
+                    <div className="glass-modal w-full max-w-md animate-slide-up relative overflow-hidden flex flex-col max-h-[90vh]">
                         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary/0 via-primary to-primary/0"></div>
-                        <h3 className="text-2xl mb-6 font-bold text-white">Nova Turma</h3>
-                        <form onSubmit={handleCreateClass} className="flex flex-col gap-5">
-                            <div className="space-y-1">
-                                <label className="text-xs font-medium text-text-muted uppercase tracking-wider ml-1">Nome da Turma</label>
-                                <input className="glass-input" value={newClass.name} onChange={e => setNewClass({ ...newClass, name: e.target.value })} required placeholder="Ex: Matemática Avançada" />
-                            </div>
-                            <div className="space-y-1">
-                                <label className="text-xs font-medium text-text-muted uppercase tracking-wider ml-1">Horário</label>
-                                <input className="glass-input" value={newClass.schedule} onChange={e => setNewClass({ ...newClass, schedule: e.target.value })} required placeholder="Ex: Segundas e Quartas, 19h" />
-                            </div>
-                            <div className="flex justify-end gap-3 mt-4">
-                                <button type="button" onClick={() => setShowModal(false)} className="px-4 py-2 text-text-muted hover:text-white hover:bg-white/10 rounded-xl transition-all">Cancelar</button>
-                                <button type="submit" className="glass-button px-6 py-2 text-white rounded-xl font-medium">Criar Turma</button>
-                            </div>
-                        </form>
+                        <div className="p-8 overflow-y-auto flex-1">
+                            <h3 className="text-2xl mb-6 font-bold text-white">Nova Turma</h3>
+                            <form onSubmit={handleCreateClass} className="flex flex-col gap-5">
+                                <div className="space-y-1">
+                                    <label className="text-xs font-medium text-text-muted uppercase tracking-wider ml-1">Nome da Turma</label>
+                                    <input className="glass-input" value={newClass.name} onChange={e => setNewClass({ ...newClass, name: e.target.value })} required placeholder="Ex: Matemática Avançada" />
+                                </div>
+                                <div className="space-y-1">
+                                    <label className="text-xs font-medium text-text-muted uppercase tracking-wider ml-1">Horário</label>
+                                    <input className="glass-input" value={newClass.schedule} onChange={e => setNewClass({ ...newClass, schedule: e.target.value })} required placeholder="Ex: Segundas e Quartas, 19h" />
+                                </div>
+                                <div className="flex justify-end gap-3 mt-4">
+                                    <button type="button" onClick={() => setShowModal(false)} className="px-4 py-2 text-text-muted hover:text-white hover:bg-white/10 rounded-xl transition-all">Cancelar</button>
+                                    <button type="submit" className="glass-button px-6 py-2 text-white rounded-xl font-medium">Criar Turma</button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
                 </div>
             )}
             {/* Edit Class Modal */}
             {editingClass && (
                 <div className="modal-overlay animate-fade-in">
-                    <div className="glass-modal w-full max-w-md p-8 animate-slide-up relative overflow-hidden">
-                        <button onClick={() => setEditingClass(null)} className="absolute top-4 right-4 text-text-muted hover:text-white p-2 rounded-xl hover:bg-white/10 transition-all">
+                    <div className="glass-modal w-full max-w-md animate-slide-up relative overflow-hidden flex flex-col max-h-[90vh]">
+                        <button onClick={() => setEditingClass(null)} className="absolute top-4 right-4 text-text-muted hover:text-white p-2 rounded-xl hover:bg-white/10 transition-all z-10">
                             <X size={20} />
                         </button>
-                        <h3 className="text-2xl mb-6 font-bold text-white flex items-center gap-2">
-                            <Pencil size={24} className="text-primary" /> Editar Turma
-                        </h3>
-                        <form onSubmit={handleUpdateClass} className="flex flex-col gap-5">
-                            <div className="space-y-1">
-                                <label className="text-xs font-medium text-text-muted uppercase tracking-wider ml-1">Nome da Turma</label>
-                                <input className="glass-input" value={editClassName} onChange={e => setEditClassName(e.target.value)} required />
-                            </div>
-                            <div className="space-y-1">
-                                <label className="text-xs font-medium text-text-muted uppercase tracking-wider ml-1">Horário</label>
-                                <input className="glass-input" value={editClassSchedule} onChange={e => setEditClassSchedule(e.target.value)} required />
-                            </div>
-                            <div className="flex justify-end gap-3 mt-4">
-                                <button type="button" onClick={() => setEditingClass(null)} className="px-4 py-2 text-text-muted hover:text-white hover:bg-white/10 rounded-xl transition-all">Cancelar</button>
-                                <button type="submit" className="glass-button px-6 py-2 text-white rounded-xl font-medium">Salvar</button>
-                            </div>
-                        </form>
+                        <div className="p-8 overflow-y-auto flex-1">
+                            <h3 className="text-2xl mb-6 font-bold text-white flex items-center gap-2">
+                                <Pencil size={24} className="text-primary" /> Editar Turma
+                            </h3>
+                            <form onSubmit={handleUpdateClass} className="flex flex-col gap-5">
+                                <div className="space-y-1">
+                                    <label className="text-xs font-medium text-text-muted uppercase tracking-wider ml-1">Nome da Turma</label>
+                                    <input className="glass-input" value={editClassName} onChange={e => setEditClassName(e.target.value)} required />
+                                </div>
+                                <div className="space-y-1">
+                                    <label className="text-xs font-medium text-text-muted uppercase tracking-wider ml-1">Horário</label>
+                                    <input className="glass-input" value={editClassSchedule} onChange={e => setEditClassSchedule(e.target.value)} required />
+                                </div>
+                                <div className="flex justify-end gap-3 mt-4">
+                                    <button type="button" onClick={() => setEditingClass(null)} className="px-4 py-2 text-text-muted hover:text-white hover:bg-white/10 rounded-xl transition-all">Cancelar</button>
+                                    <button type="submit" className="glass-button px-6 py-2 text-white rounded-xl font-medium">Salvar</button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
                 </div>
             )}

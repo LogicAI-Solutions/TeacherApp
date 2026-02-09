@@ -615,104 +615,106 @@ export const Students = () => {
             {/* Edit Modal */}
             {editingStudent && (
                 <div className="modal-overlay animate-fade-in">
-                    <div className="glass-modal w-full max-w-lg p-8 animate-slide-up relative overflow-hidden">
+                    <div className="glass-modal w-full max-w-lg animate-slide-up relative overflow-hidden flex flex-col max-h-[90vh]">
                         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary/0 via-primary to-primary/0"></div>
-                        <button onClick={() => setEditingStudent(null)} className="absolute top-4 right-4 text-text-muted hover:text-white p-2 rounded-xl hover:bg-white/10 transition-all"><X size={20} /></button>
-                        <h3 className="text-2xl font-bold text-white mb-6">Editar Aluno</h3>
-                        <form onSubmit={handleUpdateStudent} className="space-y-4">
-                            <div>
-                                <label className="text-xs font-medium text-text-muted uppercase tracking-wider ml-1">Nome Completo</label>
-                                <input className="glass-input"
-                                    value={editStudentData.name} onChange={e => setEditStudentData({ ...editStudentData, name: e.target.value })} required />
-                            </div>
-                            <div>
-                                <label className="text-xs font-medium text-text-muted uppercase tracking-wider ml-1">Celular</label>
-                                <input className="glass-input"
-                                    value={editStudentData.phone}
-                                    onChange={e => setEditStudentData({ ...editStudentData, phone: formatPhone(e.target.value) })}
-                                    maxLength={15}
-                                    placeholder="(99) 99999-9999" />
-                            </div>
-                            <div className="grid grid-cols-2 gap-4">
+                        <button onClick={() => setEditingStudent(null)} className="absolute top-4 right-4 text-text-muted hover:text-white p-2 rounded-xl hover:bg-white/10 transition-all z-10"><X size={20} /></button>
+                        <div className="p-8 overflow-y-auto flex-1">
+                            <h3 className="text-2xl font-bold text-white mb-6">Editar Aluno</h3>
+                            <form onSubmit={handleUpdateStudent} className="space-y-4">
                                 <div>
-                                    <label className="text-xs font-medium text-text-muted uppercase tracking-wider ml-1">Responsável</label>
+                                    <label className="text-xs font-medium text-text-muted uppercase tracking-wider ml-1">Nome Completo</label>
                                     <input className="glass-input"
-                                        value={editStudentData.parent_name} onChange={e => setEditStudentData({ ...editStudentData, parent_name: e.target.value })} />
+                                        value={editStudentData.name} onChange={e => setEditStudentData({ ...editStudentData, name: e.target.value })} required />
                                 </div>
                                 <div>
-                                    <label className="text-xs font-medium text-text-muted uppercase tracking-wider ml-1">Cel. Responsável</label>
+                                    <label className="text-xs font-medium text-text-muted uppercase tracking-wider ml-1">Celular</label>
                                     <input className="glass-input"
-                                        value={editStudentData.parent_phone}
-                                        onChange={e => setEditStudentData({ ...editStudentData, parent_phone: formatPhone(e.target.value) })}
+                                        value={editStudentData.phone}
+                                        onChange={e => setEditStudentData({ ...editStudentData, phone: formatPhone(e.target.value) })}
                                         maxLength={15}
                                         placeholder="(99) 99999-9999" />
                                 </div>
-                            </div>
-                            <div>
-                                <label className="text-xs font-medium text-text-muted uppercase tracking-wider ml-1">Email Responsável</label>
-                                <input type="email" className="glass-input"
-                                    value={editStudentData.parent_email} onChange={e => setEditStudentData({ ...editStudentData, parent_email: e.target.value })} />
-                            </div>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label className="text-xs font-medium text-text-muted uppercase tracking-wider ml-1">Responsável</label>
+                                        <input className="glass-input"
+                                            value={editStudentData.parent_name} onChange={e => setEditStudentData({ ...editStudentData, parent_name: e.target.value })} />
+                                    </div>
+                                    <div>
+                                        <label className="text-xs font-medium text-text-muted uppercase tracking-wider ml-1">Cel. Responsável</label>
+                                        <input className="glass-input"
+                                            value={editStudentData.parent_phone}
+                                            onChange={e => setEditStudentData({ ...editStudentData, parent_phone: formatPhone(e.target.value) })}
+                                            maxLength={15}
+                                            placeholder="(99) 99999-9999" />
+                                    </div>
+                                </div>
+                                <div>
+                                    <label className="text-xs font-medium text-text-muted uppercase tracking-wider ml-1">Email Responsável</label>
+                                    <input type="email" className="glass-input"
+                                        value={editStudentData.parent_email} onChange={e => setEditStudentData({ ...editStudentData, parent_email: e.target.value })} />
+                                </div>
 
-                            <div className="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label className="text-xs font-medium text-text-muted uppercase tracking-wider ml-1">Ano Escolar</label>
-                                    <input className="glass-input"
-                                        value={editStudentData.school_year} onChange={e => setEditStudentData({ ...editStudentData, school_year: e.target.value })}
-                                        placeholder="Ex: 5º Ano" />
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label className="text-xs font-medium text-text-muted uppercase tracking-wider ml-1">Ano Escolar</label>
+                                        <input className="glass-input"
+                                            value={editStudentData.school_year} onChange={e => setEditStudentData({ ...editStudentData, school_year: e.target.value })}
+                                            placeholder="Ex: 5º Ano" />
+                                    </div>
+                                    <div>
+                                        <label className="text-xs font-medium text-text-muted uppercase tracking-wider ml-1">Colégio/Escola</label>
+                                        <input className="glass-input"
+                                            value={editStudentData.school} onChange={e => setEditStudentData({ ...editStudentData, school: e.target.value })}
+                                            placeholder="Nome da escola" />
+                                    </div>
                                 </div>
-                                <div>
-                                    <label className="text-xs font-medium text-text-muted uppercase tracking-wider ml-1">Colégio/Escola</label>
-                                    <input className="glass-input"
-                                        value={editStudentData.school} onChange={e => setEditStudentData({ ...editStudentData, school: e.target.value })}
-                                        placeholder="Nome da escola" />
-                                </div>
-                            </div>
 
-                            <div className="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label className="text-xs font-medium text-text-muted uppercase tracking-wider ml-1">Profissão Pretendida</label>
-                                    <input className="glass-input"
-                                        value={editStudentData.intended_profession} onChange={e => setEditStudentData({ ...editStudentData, intended_profession: e.target.value })}
-                                        placeholder="Ex: Engenheiro" />
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label className="text-xs font-medium text-text-muted uppercase tracking-wider ml-1">Profissão Pretendida</label>
+                                        <input className="glass-input"
+                                            value={editStudentData.intended_profession} onChange={e => setEditStudentData({ ...editStudentData, intended_profession: e.target.value })}
+                                            placeholder="Ex: Engenheiro" />
+                                    </div>
+                                    <div>
+                                        <label className="text-xs font-medium text-text-muted uppercase tracking-wider ml-1">Tipo de Turma</label>
+                                        <select className="glass-input"
+                                            value={editStudentData.class_type} onChange={e => setEditStudentData({ ...editStudentData, class_type: e.target.value as any })}>
+                                            <option value="" className="bg-bg-dark text-white">-- Selecione --</option>
+                                            <option value="Semanal" className="bg-bg-dark text-white">Semanal</option>
+                                            <option value="Quinzenal" className="bg-bg-dark text-white">Quinzenal</option>
+                                        </select>
+                                    </div>
                                 </div>
-                                <div>
-                                    <label className="text-xs font-medium text-text-muted uppercase tracking-wider ml-1">Tipo de Turma</label>
-                                    <select className="glass-input"
-                                        value={editStudentData.class_type} onChange={e => setEditStudentData({ ...editStudentData, class_type: e.target.value as any })}>
-                                        <option value="" className="bg-bg-dark text-white">-- Selecione --</option>
-                                        <option value="Semanal" className="bg-bg-dark text-white">Semanal</option>
-                                        <option value="Quinzenal" className="bg-bg-dark text-white">Quinzenal</option>
+
+                                <div className="pt-2 border-t border-white/10 mt-2">
+                                    <label className="text-xs font-medium text-text-muted uppercase tracking-wider ml-1">Turma Matriculada</label>
+                                    <select
+                                        className="glass-input"
+                                        value={editClassId}
+                                        onChange={e => setEditClassId(Number(e.target.value) || '')}
+                                    >
+                                        <option value="" className="bg-bg-dark text-white">-- Nenhuma turma --</option>
+                                        {classes.map(c => <option key={c.id} value={c.id} className="bg-bg-dark text-white">{c.name}</option>)}
                                     </select>
                                 </div>
-                            </div>
 
-                            <div className="pt-2 border-t border-white/10 mt-2">
-                                <label className="text-xs font-medium text-text-muted uppercase tracking-wider ml-1">Turma Matriculada</label>
-                                <select
-                                    className="glass-input"
-                                    value={editClassId}
-                                    onChange={e => setEditClassId(Number(e.target.value) || '')}
+                                <div
+                                    className="flex items-center gap-3 bg-white/5 p-3 rounded-xl border border-white/10 cursor-pointer hover:bg-white/10 transition-all backdrop-blur-sm"
+                                    onClick={() => setEditStudentData({ ...editStudentData, active: !editStudentData.active })}
                                 >
-                                    <option value="" className="bg-bg-dark text-white">-- Nenhuma turma --</option>
-                                    {classes.map(c => <option key={c.id} value={c.id} className="bg-bg-dark text-white">{c.name}</option>)}
-                                </select>
-                            </div>
-
-                            <div
-                                className="flex items-center gap-3 bg-white/5 p-3 rounded-xl border border-white/10 cursor-pointer hover:bg-white/10 transition-all backdrop-blur-sm"
-                                onClick={() => setEditStudentData({ ...editStudentData, active: !editStudentData.active })}
-                            >
-                                <div className={`w-10 h-5 rounded-full relative transition-colors duration-300 ${editStudentData.active ? 'bg-primary' : 'bg-white/10'}`}>
-                                    <div className={`w-3 h-3 rounded-full bg-white absolute top-1 shadow-sm transition-transform duration-300 ${editStudentData.active ? 'translate-x-[22px]' : 'translate-x-1'}`} />
+                                    <div className={`w-10 h-5 rounded-full relative transition-colors duration-300 ${editStudentData.active ? 'bg-primary' : 'bg-white/10'}`}>
+                                        <div className={`w-3 h-3 rounded-full bg-white absolute top-1 shadow-sm transition-transform duration-300 ${editStudentData.active ? 'translate-x-[22px]' : 'translate-x-1'}`} />
+                                    </div>
+                                    <span className="text-sm font-medium text-white select-none">Aluno Ativo</span>
                                 </div>
-                                <span className="text-sm font-medium text-white select-none">Aluno Ativo</span>
-                            </div>
-                            <div className="flex justify-end gap-3 mt-6">
-                                <button type="button" onClick={() => setEditingStudent(null)} className="px-4 py-2 text-text-muted hover:text-white hover:bg-white/10 rounded-xl transition-all">Cancelar</button>
-                                <button type="submit" className="glass-button text-white px-6 py-2 rounded-xl font-medium">Salvar</button>
-                            </div>
-                        </form>
+                                <div className="flex justify-end gap-3 mt-6">
+                                    <button type="button" onClick={() => setEditingStudent(null)} className="px-4 py-2 text-text-muted hover:text-white hover:bg-white/10 rounded-xl transition-all">Cancelar</button>
+                                    <button type="submit" className="glass-button text-white px-6 py-2 rounded-xl font-medium">Salvar</button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
                 </div>
             )}
