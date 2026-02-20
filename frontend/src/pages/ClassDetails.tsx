@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import api from '../api';
 import { Plus, Save, Calendar, Users, X, FileText, Pencil, Trash2, AlertTriangle, Eye, Download } from 'lucide-react';
 import { formatPhone, unmaskPhone, formatCurrency, parseCurrency } from '../utils/masks';
@@ -72,6 +72,7 @@ interface PaymentInput {
 
 export const ClassDetails = () => {
     const { id } = useParams<{ id: string }>();
+    const navigate = useNavigate();
     const [classData, setClassData] = useState<ClassModel | null>(null);
     const [students, setStudents] = useState<Student[]>([]);
     const [allStudents, setAllStudents] = useState<Student[]>([]);
@@ -152,7 +153,12 @@ export const ClassDetails = () => {
         try {
             const res = await api.get(`/classes/${id}`);
             setClassData(res.data);
-        } catch (e) { console.error(e); }
+        } catch (e: any) {
+            console.error(e);
+            if (e.response && e.response.status === 404) {
+                navigate('/404', { replace: true });
+            }
+        }
     };
 
     const fetchStudents = async () => {
