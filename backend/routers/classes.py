@@ -70,8 +70,10 @@ def read_attendance_sessions(class_id: int, db: Session = Depends(database.get_d
 def create_attendance_session(class_id: int, session: attendance_schemas.AttendanceSessionCreate, db: Session = Depends(database.get_db), current_user: user_schemas.User = Depends(security.get_current_user)):
     # Verify class belongs to user
     # TODO: Add check
-    # TODO: Add check
-    return attendance_crud.create_attendance_session(db=db, session=session, class_id=class_id)
+    try:
+        return attendance_crud.create_attendance_session(db=db, session=session, class_id=class_id)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
 @router.post("/classes/{class_id}/enroll/{student_id}")
 def enroll_student_in_class(class_id: int, student_id: int, db: Session = Depends(database.get_db), current_user: user_schemas.User = Depends(security.get_current_user)):

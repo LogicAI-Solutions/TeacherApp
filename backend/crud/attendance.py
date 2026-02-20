@@ -22,7 +22,7 @@ def create_attendance_session(db: Session, session: AttendanceSessionCreate, cla
         AttendanceSession.date == session.date
     ).first()
     if existing_session:
-        raise ValueError("A session for this date already exists.")
+        raise ValueError("Já existe uma chamada para esse dia")
 
     # Create session
     db_session = AttendanceSession(
