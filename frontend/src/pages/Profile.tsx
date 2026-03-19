@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
 import api from '../api';
 import { UserCircle, Key, Camera, Save, Palette, Shield } from 'lucide-react';
+import axios from 'axios';
 
 const THEMES = [
     {
@@ -50,16 +51,19 @@ export const Profile = () => {
         return localStorage.getItem('app-theme') || 'dark-profissional';
     });
 
-    const apiBaseUrl = import.meta.env.VITE_API_URL || '';
+    const apiBaseUrl = (import.meta.env.VITE_API_URL || '').replace(/\/+$/, '');
+
+    const buildPhotoUrl = (photoPath?: string | null) => {
+        if (!photoPath) return null;
+        if (photoPath.startsWith('http')) return photoPath;
+        if (!apiBaseUrl) return photoPath;
+        if (photoPath.startsWith('/')) return `${apiBaseUrl}${photoPath}`;
+        return `${apiBaseUrl}/${photoPath}`;
+    };
 
     const getProfilePhotoUrl = () => {
         if (photoPreview) return photoPreview;
-        if (user?.profile_photo) {
-            // If it starts with http, use as-is; otherwise prepend API URL
-            if (user.profile_photo.startsWith('http')) return user.profile_photo;
-            return `${apiBaseUrl}${user.profile_photo}`;
-        }
-        return null;
+        return buildPhotoUrl(user?.profile_photo);
     };
 
     const handlePhotoClick = () => {
@@ -69,6 +73,22 @@ export const Profile = () => {
     const handlePhotoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (!file) return;
+
+        setProfileError('');
+        setProfileMessage('');
+
+        if (!file.type.startsWith('image/')) {
+            setProfileError('Selecione um arquivo de imagem válido.');
+            e.target.value = '';
+            return;
+        }
+
+        const maxSizeInBytes = 5 * 1024 * 1024;
+        if (file.size > maxSizeInBytes) {
+            setProfileError('A imagem deve ter no máximo 5MB.');
+            e.target.value = '';
+            return;
+        }
 
         // Preview
         const reader = new FileReader();
@@ -82,15 +102,21 @@ export const Profile = () => {
         try {
             const formData = new FormData();
             formData.append('file', file);
-            await api.post('/users/me/photo', formData, {
-                headers: { 'Content-Type': 'multipart/form-data' },
-            });
+            await api.post('/users/me/photo', formData);
             await refreshUser();
-        } catch {
-            setProfileError('Erro ao fazer upload da foto.');
+            setProfileMessage('Foto de perfil atualizada com sucesso!');
+            setTimeout(() => setProfileMessage(''), 3000);
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                const detail = error.response?.data?.detail;
+                setProfileError(typeof detail === 'string' ? detail : 'Erro ao fazer upload da foto.');
+            } else {
+                setProfileError('Erro ao fazer upload da foto.');
+            }
             setPhotoPreview(null);
         } finally {
             setPhotoUploading(false);
+            e.target.value = '';
         }
     };
 

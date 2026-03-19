@@ -12,6 +12,15 @@ export const Layout = () => {
 
     const userName = user?.full_name || (user?.email ? user.email.split('@')[0] : 'Usuario');
     const userInitial = userName.charAt(0).toUpperCase();
+    const apiBaseUrl = (import.meta.env.VITE_API_URL || '').replace(/\/+$/, '');
+
+    const profilePhotoUrl = user?.profile_photo
+        ? (user.profile_photo.startsWith('http')
+            ? user.profile_photo
+            : user.profile_photo.startsWith('/')
+                ? `${apiBaseUrl}${user.profile_photo}`
+                : `${apiBaseUrl}/${user.profile_photo}`)
+        : null;
 
     const handleLogout = () => {
         logout();
@@ -139,9 +148,17 @@ export const Layout = () => {
                                 title="Configurar perfil"
                             >
                                 <div className="flex items-center gap-3">
-                                    <div className="w-9 h-9 rounded-full bg-primary/25 border border-primary/30 text-primary-light flex items-center justify-center font-semibold text-sm shrink-0">
-                                        {userInitial}
-                                    </div>
+                                    {profilePhotoUrl ? (
+                                        <img
+                                            src={profilePhotoUrl}
+                                            alt="Foto de perfil"
+                                            className="w-9 h-9 rounded-full object-cover border border-primary/30 shrink-0"
+                                        />
+                                    ) : (
+                                        <div className="w-9 h-9 rounded-full bg-primary/25 border border-primary/30 text-primary-light flex items-center justify-center font-semibold text-sm shrink-0">
+                                            {userInitial}
+                                        </div>
+                                    )}
                                     <div className="min-w-0">
                                         <p className="text-sm font-semibold text-white truncate">{userName}</p>
                                         <p className="text-xs text-text-muted truncate">{user?.email}</p>
@@ -174,7 +191,15 @@ export const Layout = () => {
                                 className={`w-full h-10 flex items-center justify-center rounded-xl border transition-all ${location.pathname === '/profile' ? 'border-primary/30 bg-primary/10 text-white' : 'border-white/10 bg-white/5 text-text-muted hover:text-white hover:bg-white/10'}`}
                                 title="Configurar perfil"
                             >
-                                <UserCircle size={18} />
+                                {profilePhotoUrl ? (
+                                    <img
+                                        src={profilePhotoUrl}
+                                        alt="Foto de perfil"
+                                        className="w-6 h-6 rounded-full object-cover border border-primary/30"
+                                    />
+                                ) : (
+                                    <UserCircle size={18} />
+                                )}
                             </button>
                             <button
                                 onClick={handleSupport}
