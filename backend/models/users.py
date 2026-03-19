@@ -14,6 +14,7 @@ class User(Base):
     full_name = Column(String, nullable=True)
     birth_date = Column(Date, nullable=True)
     nickname = Column(String, nullable=True)
+    profile_photo = Column(String, nullable=True)
 
     owned_classes = relationship("Class", back_populates="owner")
     students = relationship("Student", back_populates="owner")

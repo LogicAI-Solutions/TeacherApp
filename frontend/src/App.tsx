@@ -6,6 +6,7 @@ import { Classes } from './pages/Classes';
 import { ClassDetails } from './pages/ClassDetails';
 import { Students } from './pages/Students';
 import { Payments } from './pages/Payments';
+import { Profile } from './pages/Profile';
 import Admin from './pages/Admin';
 import { NotFound } from './pages/NotFound';
 import { Layout } from './components/Layout';
@@ -35,7 +36,8 @@ function AppRoutes() {
         <Route path="class/:id" element={<ClassDetails />} />
         <Route path="students" element={<Students />} />
         <Route path="payments" element={<Payments />} />
-        <Route path="admin" element={<Admin />} /> {/* Added Admin route as a nested route */}
+        <Route path="admin" element={<Admin />} />
+        <Route path="profile" element={<Profile />} />
       </Route>
       <Route path="*" element={<NotFound />} />
     </Routes>

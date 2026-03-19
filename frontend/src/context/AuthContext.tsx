@@ -6,12 +6,17 @@ interface User {
     email: string;
     is_active: boolean;
     is_admin: boolean;
+    full_name?: string;
+    profile_photo?: string;
+    nickname?: string;
+    birth_date?: string;
 }
 
 interface AuthContextType {
     user: User | null;
     login: (nickname: string, password: string) => Promise<void>;
     logout: () => void;
+    refreshUser: () => Promise<void>;
     isLoading: boolean;
 }
 
@@ -21,19 +26,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [user, setUser] = useState<User | null>(null);
     const [isLoading, setIsLoading] = useState(true);
 
+    const fetchUser = async () => {
+        try {
+            const res = await api.get('/users/me');
+            setUser(res.data);
+        } catch {
+            localStorage.removeItem('token');
+            setUser(null);
+        }
+    };
+
     useEffect(() => {
         const token = localStorage.getItem('token');
         if (token) {
-            // Optionally verify token validity with backend here
-            // For now, we'll just try to fetch user profile or assume logged in if we want
-            // But let's fetch /users/me to be robust
-            api.get('/users/me')
-                .then(res => setUser(res.data))
-                .catch(() => {
-                    localStorage.removeItem('token');
-                    setUser(null);
-                })
-                .finally(() => setIsLoading(false));
+            fetchUser().finally(() => setIsLoading(false));
         } else {
             setIsLoading(false);
         }
@@ -56,8 +62,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                 setUser(userRes.data);
             } catch (err) {
                 console.error("Failed to fetch user profile after login", err);
-                // Even if fetching profile fails, we have the token? 
-                // No, if we can't get profile, something is wrong. Better to fail.
                 logout();
                 throw err;
             }
@@ -72,8 +76,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setUser(null);
     };
 
+    const refreshUser = async () => {
+        await fetchUser();
+    };
+
     return (
-        <AuthContext.Provider value={{ user, login, logout, isLoading }}>
+        <AuthContext.Provider value={{ user, login, logout, refreshUser, isLoading }}>
             {children}
         </AuthContext.Provider>
     );
@@ -86,3 +94,4 @@ export const useAuth = () => {
     }
     return context;
 };
+

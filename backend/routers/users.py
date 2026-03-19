@@ -1,12 +1,18 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File
 from sqlalchemy.orm import Session
-from typing import List
+from typing import List, Optional
 from backend.schemas import users as user_schemas
 from backend.crud import users as user_crud
 from backend.core import database, security
+from backend.models.users import User as UserModel
 import pydantic
+import os
+import uuid
 
 router = APIRouter()
+
+UPLOAD_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "uploads", "profile_photos")
+os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 @router.post("/users/", response_model=user_schemas.User)
 def create_user(user: user_schemas.UserCreate, db: Session = Depends(database.get_db), current_user: user_schemas.User = Depends(security.get_current_user)):
@@ -27,6 +33,48 @@ def read_users(skip: int = 0, limit: int = 100, search: str = None, db: Session 
 @router.get("/users/me", response_model=user_schemas.User)
 async def read_users_me(current_user: user_schemas.User = Depends(security.get_current_user)):
     return current_user
+
+class ProfileUpdate(pydantic.BaseModel):
+    full_name: Optional[str] = None
+
+@router.put("/users/me/profile", response_model=user_schemas.User)
+def update_own_profile(profile_data: ProfileUpdate, db: Session = Depends(database.get_db), current_user: user_schemas.User = Depends(security.get_current_user)):
+    db_user = db.query(UserModel).filter(UserModel.id == current_user.id).first()
+    if not db_user:
+        raise HTTPException(status_code=404, detail="Usuário não encontrado.")
+    if profile_data.full_name is not None:
+        db_user.full_name = profile_data.full_name
+    db.commit()
+    db.refresh(db_user)
+    return db_user
+
+@router.post("/users/me/photo", response_model=user_schemas.User)
+async def upload_profile_photo(file: UploadFile = File(...), db: Session = Depends(database.get_db), current_user: user_schemas.User = Depends(security.get_current_user)):
+    if not file.content_type or not file.content_type.startswith("image/"):
+        raise HTTPException(status_code=400, detail="O arquivo deve ser uma imagem.")
+    
+    ext = os.path.splitext(file.filename)[1] if file.filename else ".jpg"
+    filename = f"{uuid.uuid4().hex}{ext}"
+    filepath = os.path.join(UPLOAD_DIR, filename)
+    
+    contents = await file.read()
+    with open(filepath, "wb") as f:
+        f.write(contents)
+    
+    db_user = db.query(UserModel).filter(UserModel.id == current_user.id).first()
+    if not db_user:
+        raise HTTPException(status_code=404, detail="Usuário não encontrado.")
+    
+    # Remove old photo if exists
+    if db_user.profile_photo:
+        old_path = os.path.join(UPLOAD_DIR, os.path.basename(db_user.profile_photo))
+        if os.path.exists(old_path):
+            os.remove(old_path)
+    
+    db_user.profile_photo = f"/uploads/profile_photos/{filename}"
+    db.commit()
+    db.refresh(db_user)
+    return db_user
 
 @router.delete("/users/{user_id}")
 def delete_user(user_id: int, db: Session = Depends(database.get_db), current_user: user_schemas.User = Depends(security.get_current_user)):
