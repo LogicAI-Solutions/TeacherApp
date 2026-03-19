@@ -3,30 +3,11 @@ import { useAuth } from '../context/AuthContext';
 import api from '../api';
 import { UserCircle, Key, Camera, Save, Palette, Shield } from 'lucide-react';
 import axios from 'axios';
-
-const THEMES = [
-    {
-        id: 'azul-sereno',
-        name: 'AZUL SERENO',
-        color: '#6366f1',
-        gradient: 'linear-gradient(135deg, #6366f1, #4f46e5)',
-    },
-    {
-        id: 'acolhedor',
-        name: 'ACOLHEDOR',
-        color: '#a3a042',
-        gradient: 'linear-gradient(135deg, #a3a042, #8b8936)',
-    },
-    {
-        id: 'dark-profissional',
-        name: 'DARK PROFISSIONAL',
-        color: '#3b3d6e',
-        gradient: 'linear-gradient(135deg, #3b3d6e, #2d2f55)',
-    },
-];
+import { useTheme } from '../hooks/useTheme';
 
 export const Profile = () => {
     const { user, refreshUser } = useAuth();
+    const { selectedTheme, changeTheme, themes } = useTheme();
 
     // Personal Info State
     const [fullName, setFullName] = useState(user?.full_name || '');
@@ -46,10 +27,6 @@ export const Profile = () => {
     const [passwordMessage, setPasswordMessage] = useState('');
     const [passwordError, setPasswordError] = useState('');
 
-    // Theme State
-    const [selectedTheme, setSelectedTheme] = useState(() => {
-        return localStorage.getItem('app-theme') || 'dark-profissional';
-    });
 
     const apiBaseUrl = (import.meta.env.VITE_API_URL || '').replace(/\/+$/, '');
 
@@ -165,11 +142,6 @@ export const Profile = () => {
         }
     };
 
-    const handleThemeChange = (themeId: string) => {
-        setSelectedTheme(themeId);
-        localStorage.setItem('app-theme', themeId);
-        // Theme application logic can be expanded later
-    };
 
     const photoUrl = getProfilePhotoUrl();
     const userInitial = (user?.full_name || user?.email || 'U').charAt(0).toUpperCase();
@@ -352,10 +324,10 @@ export const Profile = () => {
                         </h2>
 
                         <div className="grid grid-cols-3 gap-3">
-                            {THEMES.map(theme => (
+                            {themes.map(theme => (
                                 <button
                                     key={theme.id}
-                                    onClick={() => handleThemeChange(theme.id)}
+                                    onClick={() => changeTheme(theme.id)}
                                     className={`
                                         flex flex-col items-center gap-3 p-4 rounded-xl border transition-all duration-300 cursor-pointer
                                         ${selectedTheme === theme.id

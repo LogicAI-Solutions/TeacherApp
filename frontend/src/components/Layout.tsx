@@ -37,7 +37,7 @@ export const Layout = () => {
     };
 
     return (
-        <div className="flex h-screen bg-bg-dark overflow-hidden relative">
+        <div className="flex h-screen overflow-hidden relative">
             {/* Background Orbs for Glass Effect */}
             <div className="orb orb-primary w-96 h-96 -top-48 -left-48 hidden md:block" style={{ animationDelay: '0s' }}></div>
             <div className="orb orb-purple w-64 h-64 bottom-20 right-20 hidden md:block" style={{ animationDelay: '3s' }}></div>

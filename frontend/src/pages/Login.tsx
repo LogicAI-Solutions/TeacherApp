@@ -42,9 +42,9 @@ export const Login = () => {
     };
 
     return (
-        <div className="flex items-center justify-center min-h-screen p-4 relative overflow-hidden">
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-bg-dark to-bg-darker relative overflow-hidden">
             {/* Background Gradients - Enhanced Glass Style */}
-            <div className="absolute inset-0 bg-gradient-to-br from-bg-dark via-slate-900 to-bg-dark"></div>
+            <div className="absolute inset-0 bg-gradient-to-br from-bg-dark to-bg-darker"></div>
             <div className="absolute top-[-30%] left-[-20%] w-[600px] h-[600px] bg-primary/10 rounded-full blur-[120px] animate-pulse"></div>
             <div className="absolute bottom-[-30%] right-[-20%] w-[600px] h-[600px] bg-purple-500/8 rounded-full blur-[120px] animate-pulse" style={{ animationDelay: '2s' }}></div>
             <div className="absolute top-[40%] left-[60%] w-[300px] h-[300px] bg-indigo-500/5 rounded-full blur-[80px] animate-pulse" style={{ animationDelay: '4s' }}></div>

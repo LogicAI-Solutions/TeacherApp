@@ -10,6 +10,10 @@ import { Profile } from './pages/Profile';
 import Admin from './pages/Admin';
 import { NotFound } from './pages/NotFound';
 import { Layout } from './components/Layout';
+import { applyThemeToDOM, getStoredTheme } from './hooks/useTheme';
+
+// Apply saved theme immediately on app load
+applyThemeToDOM(getStoredTheme());
 
 import type { ReactNode } from 'react';
 
