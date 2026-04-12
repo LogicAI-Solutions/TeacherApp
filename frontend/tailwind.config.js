@@ -8,18 +8,18 @@ export default {
     extend: {
       colors: {
         primary: {
-          DEFAULT: '#6366f1', // Indigo 500
-          hover: '#4f46e5',   // Indigo 600
-          light: '#818cf8',   // Indigo 400
+          DEFAULT: 'var(--theme-primary-hex, #6366f1)',
+          hover: 'var(--theme-primary-hover-hex, #4f46e5)',
+          light: 'var(--theme-primary-light-hex, #818cf8)',
         },
         bg: {
-          dark: '#0a0f1a',    // Darker for glass effect
-          card: 'rgba(30, 41, 59, 0.5)', // Semi-transparent
-          darker: '#020617',  // Slate 950
+          dark: 'var(--theme-bg-dark, #0a0f1a)',
+          card: 'var(--theme-bg-card, rgba(30, 41, 59, 0.5))',
+          darker: 'var(--theme-bg-darker, #020617)',
         },
         text: {
-          main: '#f8fafc',    // Slate 50
-          muted: '#94a3b8',   // Slate 400
+          main: 'var(--theme-text-main, #f8fafc)',
+          muted: 'var(--theme-text-muted, #94a3b8)',
         },
         danger: '#ef4444',
         success: '#22c55e',

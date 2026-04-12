@@ -142,3 +142,6 @@ vite.config.ts.timestamp-*
 # Python virtual environment
 .venv
 venv/
+
+# Profile photos
+uploads/

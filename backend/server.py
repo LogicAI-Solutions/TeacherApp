@@ -1,6 +1,7 @@
 import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from backend.core import database
 from backend.models import users, classes, students, enrollments, attendance, payments
 from backend.core.router_loader import include_routers
@@ -38,3 +39,8 @@ def health_check():
     return {"status": "healthy", "service": "TeacherApp API"}
 
 include_routers(app)
+
+# Serve uploaded files (profile photos, etc.)
+uploads_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "uploads")
+os.makedirs(uploads_dir, exist_ok=True)
+app.mount("/uploads", StaticFiles(directory=uploads_dir), name="uploads")

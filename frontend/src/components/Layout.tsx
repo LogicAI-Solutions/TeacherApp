@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { LogOut, LayoutDashboard, Users, GraduationCap, Menu, X, ChevronLeft, ChevronRight, Settings, UserCircle, Key, DollarSign } from 'lucide-react';
-import api from '../api';
+import { LogOut, LayoutDashboard, GraduationCap, BookOpen, Menu, X, ChevronLeft, ChevronRight, Settings, UserCircle, DollarSign, MessageCircle } from 'lucide-react';
 
 export const Layout = () => {
     const { logout, user } = useAuth();
@@ -11,47 +10,34 @@ export const Layout = () => {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
-    // Profile Modal State
-    const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
-    const [newPassword, setNewPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
-    const [loading, setLoading] = useState(false);
-    const [message, setMessage] = useState('');
-    const [error, setError] = useState('');
+    const userName = user?.full_name || (user?.email ? user.email.split('@')[0] : 'Usuario');
+    const userInitial = userName.charAt(0).toUpperCase();
+    const apiBaseUrl = (import.meta.env.VITE_API_URL || '').replace(/\/+$/, '');
+
+    const profilePhotoUrl = user?.profile_photo
+        ? (user.profile_photo.startsWith('http')
+            ? user.profile_photo
+            : user.profile_photo.startsWith('/')
+                ? `${apiBaseUrl}${user.profile_photo}`
+                : `${apiBaseUrl}/${user.profile_photo}`)
+        : null;
 
     const handleLogout = () => {
         logout();
         navigate('/login');
     };
 
-    const handleUpdatePassword = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (newPassword !== confirmPassword) {
-            setError('As senhas não coincidem.');
-            return;
-        }
-        setLoading(true);
-        setError('');
-        setMessage('');
+    const handleSupport = () => {
+        window.open('https://wa.me/5521974546156?text=Ol%C3%A1,+preciso+de+suporte+no+sistema+de+gest%C3%A3o.', '_blank');
+    };
 
-        try {
-            await api.put('/users/me/password', { password: newPassword });
-            setMessage('Senha alterada com sucesso!');
-            setNewPassword('');
-            setConfirmPassword('');
-            setTimeout(() => {
-                setIsProfileModalOpen(false);
-                setMessage('');
-            }, 2000);
-        } catch (err: any) {
-            setError('Erro ao atualizar senha.');
-        } finally {
-            setLoading(false);
-        }
+    const handleOpenProfile = () => {
+        setIsMobileMenuOpen(false);
+        navigate('/profile');
     };
 
     return (
-        <div className="flex h-screen bg-bg-dark overflow-hidden relative">
+        <div className="flex h-screen overflow-hidden relative">
             {/* Background Orbs for Glass Effect */}
             <div className="orb orb-primary w-96 h-96 -top-48 -left-48 hidden md:block" style={{ animationDelay: '0s' }}></div>
             <div className="orb orb-purple w-64 h-64 bottom-20 right-20 hidden md:block" style={{ animationDelay: '3s' }}></div>
@@ -59,7 +45,7 @@ export const Layout = () => {
             {/* Mobile Header */}
             <header className="md:hidden flex items-center justify-between px-4 py-3 glass-header w-full fixed top-0 left-0 z-50">
                 <h1 className="text-base font-bold flex items-center gap-2 text-gradient">
-                    <GraduationCap size={22} className="text-primary" /> YanaGestão
+                    <GraduationCap size={22} className="text-primary" /> Redação Yana
                 </h1>
                 <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="p-2 text-text-muted hover:text-white rounded-xl hover:bg-white/10 transition-all duration-300">
                     {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
@@ -83,11 +69,11 @@ export const Layout = () => {
                 `}
             >
                 {/* Desktop Logo & Toggle */}
-                <div className="h-[73px] flex items-center relative px-6 border-b border-white/5">
-                    <div className={`flex items-center gap-2 font-bold text-xl transition-all duration-300 ${isSidebarCollapsed ? 'justify-center w-full' : ''}`}>
-                        <GraduationCap className="shrink-0 text-primary" />
+                <div className="h-[73px] flex items-center relative border-b border-white/5">
+                    <div className={`flex items-center gap-2 font-bold text-xl transition-all duration-300 ${isSidebarCollapsed ? 'justify-center w-full px-0' : 'px-6'}`}>
+                        <GraduationCap size={24} className="shrink-0 text-primary" />
                         <span className={`whitespace-nowrap overflow-hidden transition-all duration-300 text-gradient ${isSidebarCollapsed ? 'w-0 opacity-0' : 'w-auto opacity-100'}`}>
-                            YanaGestão
+                            Redação Yana
                         </span>
                     </div>
 
@@ -99,8 +85,6 @@ export const Layout = () => {
                     </button>
                 </div>
 
-
-
                 <nav className="flex-1 p-4 flex flex-col gap-2">
                     <Link
                         to="/"
@@ -108,8 +92,8 @@ export const Layout = () => {
                         className={`nav-link-glass ${location.pathname === '/' ? 'active text-white shadow-lg shadow-primary/25' : 'text-text-muted hover:text-white'} ${isSidebarCollapsed ? 'justify-center gap-0' : 'gap-3'}`}
                         title="Dashboard"
                     >
-                        <LayoutDashboard size={20} className={`shrink-0 ${location.pathname === '/' ? '' : ''}`} />
-                        <span className={`whitespace-nowrap transition-all duration-300 ${isSidebarCollapsed ? 'opacity-0 w-0 overflow-hidden' : 'opacity-100 w-auto'}`}>Dashboard</span>
+                        <LayoutDashboard size={20} className="shrink-0" />
+                        <span className={`whitespace-nowrap transition-all duration-300 ${isSidebarCollapsed ? 'opacity-0 w-0 overflow-hidden' : 'opacity-100 w-auto'}`}>Painel</span>
                     </Link>
 
                     <Link
@@ -118,7 +102,7 @@ export const Layout = () => {
                         className={`nav-link-glass ${location.pathname === '/classes' ? 'active text-white shadow-lg shadow-primary/25' : 'text-text-muted hover:text-white'} ${isSidebarCollapsed ? 'justify-center gap-0' : 'gap-3'}`}
                         title="Turmas"
                     >
-                        <GraduationCap size={20} className={`shrink-0 ${location.pathname === '/classes' ? '' : ''}`} />
+                        <BookOpen size={20} className="shrink-0" />
                         <span className={`whitespace-nowrap transition-all duration-300 ${isSidebarCollapsed ? 'opacity-0 w-0 overflow-hidden' : 'opacity-100 w-auto'}`}>Turmas</span>
                     </Link>
 
@@ -128,7 +112,7 @@ export const Layout = () => {
                         className={`nav-link-glass ${location.pathname === '/students' ? 'active text-white shadow-lg shadow-primary/25' : 'text-text-muted hover:text-white'} ${isSidebarCollapsed ? 'justify-center gap-0' : 'gap-3'}`}
                         title="Alunos"
                     >
-                        <Users size={20} className={`shrink-0 ${location.pathname === '/students' ? '' : ''}`} />
+                        <GraduationCap size={20} className="shrink-0" />
                         <span className={`whitespace-nowrap transition-all duration-300 ${isSidebarCollapsed ? 'opacity-0 w-0 overflow-hidden' : 'opacity-100 w-auto'}`}>Alunos</span>
                     </Link>
 
@@ -138,7 +122,7 @@ export const Layout = () => {
                         className={`nav-link-glass ${location.pathname === '/payments' ? 'active text-white shadow-lg shadow-primary/25' : 'text-text-muted hover:text-white'} ${isSidebarCollapsed ? 'justify-center gap-0' : 'gap-3'}`}
                         title="Financeiro"
                     >
-                        <DollarSign size={20} className={`shrink-0 ${location.pathname === '/payments' ? '' : ''}`} />
+                        <DollarSign size={20} className="shrink-0" />
                         <span className={`whitespace-nowrap transition-all duration-300 ${isSidebarCollapsed ? 'opacity-0 w-0 overflow-hidden' : 'opacity-100 w-auto'}`}>Financeiro</span>
                     </Link>
 
@@ -153,105 +137,95 @@ export const Layout = () => {
                             <span className={`whitespace-nowrap transition-all duration-300 ${isSidebarCollapsed ? 'opacity-0 w-0 overflow-hidden' : 'opacity-100 w-auto'}`}>Administração</span>
                         </Link>
                     )}
-
-                    <button
-                        onClick={() => { setIsProfileModalOpen(true); setIsMobileMenuOpen(false); }}
-                        className={`nav-link-glass text-text-muted hover:text-white w-full text-left ${isSidebarCollapsed ? 'justify-center gap-0' : 'gap-3'}`}
-                        title="Meus Dados"
-                    >
-                        <UserCircle size={20} className="shrink-0" />
-                        <span className={`whitespace-nowrap transition-all duration-300 ${isSidebarCollapsed ? 'opacity-0 w-0 overflow-hidden' : 'opacity-100 w-auto'}`}>Meus Dados</span>
-                    </button>
                 </nav>
 
-                <div className="p-4 border-t border-white/5">
-                    {!isSidebarCollapsed && (
-                        <div className="text-sm text-text-muted mb-3 px-2 truncate">{user?.email}</div>
+                <div className="p-4 border-t border-white/5 space-y-3">
+                    {!isSidebarCollapsed ? (
+                        <>
+                            <button
+                                onClick={handleOpenProfile}
+                                className={`w-full text-left rounded-xl border transition-all p-3 backdrop-blur-sm ${location.pathname === '/profile' ? 'border-primary/30 bg-primary/10' : 'border-white/10 bg-white/5 hover:bg-white/10'}`}
+                                title="Configurar perfil"
+                            >
+                                <div className="flex items-center gap-3">
+                                    {profilePhotoUrl ? (
+                                        <img
+                                            src={profilePhotoUrl}
+                                            alt="Foto de perfil"
+                                            className="w-9 h-9 rounded-full object-cover border border-primary/30 shrink-0"
+                                        />
+                                    ) : (
+                                        <div className="w-9 h-9 rounded-full bg-primary/25 border border-primary/30 text-primary-light flex items-center justify-center font-semibold text-sm shrink-0">
+                                            {userInitial}
+                                        </div>
+                                    )}
+                                    <div className="min-w-0">
+                                        <p className="text-sm font-semibold text-white truncate">{userName}</p>
+                                        <p className="text-xs text-text-muted truncate">{user?.email}</p>
+                                    </div>
+                                </div>
+                            </button>
+
+                            <button
+                                onClick={handleSupport}
+                                className="w-full h-10 flex items-center gap-2 px-4 rounded-xl border border-emerald-500/30 bg-emerald-500/15 text-emerald-400 hover:bg-emerald-500/20 transition-all"
+                                title="Suporte"
+                            >
+                                <MessageCircle size={17} className="shrink-0" />
+                                <span className="font-medium">Suporte</span>
+                            </button>
+
+                            <button
+                                onClick={handleLogout}
+                                className="btn w-full justify-start text-danger border-danger/30 bg-danger/10 hover:bg-danger/20 backdrop-blur-sm"
+                                title="Sair"
+                            >
+                                <LogOut size={18} />
+                                <span>Sair</span>
+                            </button>
+                        </>
+                    ) : (
+                        <div className="space-y-2">
+                            <button
+                                onClick={handleOpenProfile}
+                                className={`w-full h-10 flex items-center justify-center rounded-xl border transition-all ${location.pathname === '/profile' ? 'border-primary/30 bg-primary/10 text-white' : 'border-white/10 bg-white/5 text-text-muted hover:text-white hover:bg-white/10'}`}
+                                title="Configurar perfil"
+                            >
+                                {profilePhotoUrl ? (
+                                    <img
+                                        src={profilePhotoUrl}
+                                        alt="Foto de perfil"
+                                        className="w-6 h-6 rounded-full object-cover border border-primary/30"
+                                    />
+                                ) : (
+                                    <UserCircle size={18} />
+                                )}
+                            </button>
+                            <button
+                                onClick={handleSupport}
+                                className="w-full h-10 flex items-center justify-center rounded-xl border border-emerald-500/30 bg-emerald-500/15 text-emerald-400 hover:bg-emerald-500/20 transition-all"
+                                title="Suporte"
+                            >
+                                <MessageCircle size={17} />
+                            </button>
+                            <button
+                                onClick={handleLogout}
+                                className="w-full h-10 flex items-center justify-center rounded-xl border border-danger/30 bg-danger/10 text-danger hover:bg-danger/20 transition-all"
+                                title="Sair"
+                            >
+                                <LogOut size={18} />
+                            </button>
+                        </div>
                     )}
-                    <button
-                        onClick={handleLogout}
-                        className={`btn w-full text-danger border-danger/30 bg-danger/10 hover:bg-danger/20 backdrop-blur-sm ${isSidebarCollapsed ? 'justify-center px-2' : 'justify-start'}`}
-                        title="Sair"
-                    >
-                        <LogOut size={18} />
-                        {!isSidebarCollapsed && <span>Sair</span>}
-                    </button>
                 </div>
             </aside>
 
             {/* Main Content */}
             <main className="flex-1 overflow-auto px-3 py-4 sm:p-4 md:p-6 lg:p-8 pt-16 md:pt-6 lg:pt-8 w-full h-screen">
-                <div className="container mx-auto max-w-6xl">
+                <div className="w-full h-full">
                     <Outlet />
                 </div>
             </main>
-
-            {/* Profile/Password Modal */}
-            {isProfileModalOpen && (
-                <div className="modal-overlay animate-fade-in">
-                    <div className="glass-modal w-full max-w-md p-8 relative animate-slide-up">
-                        <button onClick={() => setIsProfileModalOpen(false)} className="absolute top-4 right-4 text-text-muted hover:text-white p-2 rounded-xl hover:bg-white/10 transition-all">
-                            <X size={20} />
-                        </button>
-                        <h2 className="text-xl font-bold mb-6 text-white flex items-center gap-2">
-                            <UserCircle size={22} className="text-primary" /> Meus Dados
-                        </h2>
-
-                        <div className="mb-6 p-4 bg-white/5 rounded-xl border border-white/10 backdrop-blur-sm">
-                            <p className="text-xs text-text-muted uppercase tracking-wider">Email</p>
-                            <p className="text-white font-medium mt-1">{user?.email}</p>
-                        </div>
-
-                        <form onSubmit={handleUpdatePassword} className="space-y-4">
-                            <h3 className="text-lg font-semibold text-white flex items-center gap-2 border-t border-white/10 pt-4">
-                                <Key size={16} className="text-primary" /> Alterar Senha
-                            </h3>
-
-                            {error && <div className="text-danger text-sm bg-danger/10 p-3 rounded-xl border border-danger/20 backdrop-blur-sm">{error}</div>}
-                            {message && <div className="text-success text-sm bg-success/10 p-3 rounded-xl border border-success/20 backdrop-blur-sm">{message}</div>}
-
-                            <div>
-                                <label className="text-xs font-medium text-text-muted uppercase tracking-wider ml-1">Nova Senha</label>
-                                <input
-                                    type="password"
-                                    className="glass-input mt-2"
-                                    value={newPassword}
-                                    onChange={e => setNewPassword(e.target.value)}
-                                    required
-                                    placeholder="********"
-                                />
-                            </div>
-                            <div>
-                                <label className="text-xs font-medium text-text-muted uppercase tracking-wider ml-1">Confirmar Senha</label>
-                                <input
-                                    type="password"
-                                    className="glass-input mt-2"
-                                    value={confirmPassword}
-                                    onChange={e => setConfirmPassword(e.target.value)}
-                                    required
-                                    placeholder="********"
-                                />
-                            </div>
-                            <div className="flex justify-end gap-3 mt-6">
-                                <button
-                                    type="button"
-                                    onClick={() => setIsProfileModalOpen(false)}
-                                    className="px-4 py-2 rounded-xl text-text-muted hover:bg-white/10 transition-colors"
-                                >
-                                    Cancelar
-                                </button>
-                                <button
-                                    type="submit"
-                                    disabled={loading}
-                                    className="glass-button text-white font-bold py-2 px-6 rounded-xl cursor-pointer disabled:opacity-50"
-                                >
-                                    {loading ? 'Salvando...' : 'Salvar Senha'}
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            )}
         </div>
     );
 };

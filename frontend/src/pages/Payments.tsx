@@ -227,7 +227,7 @@ export const Payments = () => {
 
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 sm:mb-6 gap-2 sm:gap-4">
                 <div>
-                    <h1 className="text-lg sm:text-2xl md:text-3xl font-bold text-white flex items-center gap-1.5 sm:gap-2">
+                    <h1 className="text-lg sm:text-2xl md:text-3xl font-bold text-text-main flex items-center gap-1.5 sm:gap-2">
                         <DollarSign className="text-success" size={20} /> Financeiro
                     </h1>
                     <p className="text-text-muted mt-0.5 text-xs sm:text-sm">Controle de mensalidades.</p>
@@ -279,7 +279,7 @@ export const Payments = () => {
                         </div>
                         <span className="text-text-muted text-xs sm:text-sm font-medium hidden sm:inline">Total Alunos</span>
                     </div>
-                    <p className="text-xl sm:text-2xl md:text-3xl font-bold text-white">{totalStudentsCount}</p>
+                    <p className="text-xl sm:text-2xl md:text-3xl font-bold text-text-main">{totalStudentsCount}</p>
                     <p className="text-xs text-indigo-400 mt-0.5 sm:mt-1 font-medium truncate">Alunos</p>
                 </div>
 
@@ -292,21 +292,21 @@ export const Payments = () => {
                         </div>
                         <span className="text-text-muted text-xs sm:text-sm font-medium hidden sm:inline">Pagos</span>
                     </div>
-                    <p className="text-xl sm:text-2xl md:text-3xl font-bold text-white">{actualPaidCount}</p>
+                    <p className="text-xl sm:text-2xl md:text-3xl font-bold text-text-main">{actualPaidCount}</p>
                     <p className="text-xs text-emerald-400 mt-0.5 sm:mt-1 font-medium truncate">Pagos</p>
                 </div>
 
                 <div className="stat-card p-3 sm:p-4 relative overflow-hidden group">
-                    <div className="absolute inset-0 bg-gradient-to-br from-amber-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                     <div className="flex items-center gap-2 sm:gap-3 mb-1 sm:mb-2">
-                        <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-amber-500/20 flex items-center justify-center text-amber-400 border border-amber-500/30">
+                        <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-primary/20 flex items-center justify-center text-primary border border-primary/30">
                             <AlertCircle size={16} className="sm:hidden" />
                             <AlertCircle size={20} className="hidden sm:block" />
                         </div>
                         <span className="text-text-muted text-xs sm:text-sm font-medium hidden sm:inline">Pendentes</span>
                     </div>
-                    <p className="text-xl sm:text-2xl md:text-3xl font-bold text-white">{pendingCount}</p>
-                    <p className="text-xs text-amber-400 mt-0.5 sm:mt-1 font-medium truncate">Pendentes</p>
+                    <p className="text-xl sm:text-2xl md:text-3xl font-bold text-text-main">{pendingCount}</p>
+                    <p className="text-xs text-primary mt-0.5 sm:mt-1 font-medium truncate">Pendentes</p>
                 </div>
 
                 <div className="stat-card p-3 sm:p-4 relative overflow-hidden group">
@@ -318,7 +318,7 @@ export const Payments = () => {
                         </div>
                         <span className="text-text-muted text-xs sm:text-sm font-medium hidden sm:inline">Total Recebido</span>
                     </div>
-                    <p className="text-lg sm:text-xl md:text-2xl font-bold text-white">{formatCurrency(totalReceived)}</p>
+                    <p className="text-lg sm:text-xl md:text-2xl font-bold text-text-main">{formatCurrency(totalReceived)}</p>
                     <p className="text-xs text-green-400 mt-0.5 sm:mt-1 font-medium truncate">Recebido</p>
                 </div>
             </div>
@@ -343,14 +343,14 @@ export const Payments = () => {
             </div>
 
             {/* Table */}
-            <div className="glass-card overflow-hidden relative h-[500px] flex flex-col">
+            <div className="glass-card !p-0 overflow-hidden relative h-[500px] flex flex-col">
                 {(loading || saving) && (
                     <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm rounded-2xl z-[60]">
                         <Loading text={saving ? "Salvando alterações..." : "Carregando financeiro..."} />
                     </div>
                 )}
                 <div className="p-4 border-b border-white/5 bg-white/5 backdrop-blur-sm flex items-center justify-between shrink-0">
-                    <h3 className="font-bold text-white">Relatório de {selectedMonth}/{selectedYear}</h3>
+                    <h3 className="font-bold text-text-main">Relatório de {selectedMonth}/{selectedYear}</h3>
                     <button
                         onClick={handleSavePayments}
                         disabled={saving}
@@ -364,7 +364,7 @@ export const Payments = () => {
                 </div>
                 <div className="overflow-x-auto flex-1 overflow-y-auto">
                     <table className="w-full">
-                        <thead className="bg-bg-dark sticky top-0 z-10 [&_th:first-child]:rounded-none [&_th:last-child]:rounded-none">
+                        <thead className="glass-header sticky top-0 z-10 [&_th:first-child]:rounded-none [&_th:last-child]:rounded-none border-b border-white/10">
                             <tr>
                                 <th
                                     className="text-left p-2 sm:p-4 text-xs font-bold text-text-muted uppercase tracking-wider cursor-pointer hover:text-white transition-colors group select-none flex items-center gap-1"
@@ -387,7 +387,7 @@ export const Payments = () => {
                                 return (
                                     <tr key={student.id} className="hover:bg-white/5 transition-colors group">
                                         <td className="p-2 sm:p-4">
-                                            <div className="font-medium text-white text-xs sm:text-sm truncate max-w-[100px] sm:max-w-none">{student.name}</div>
+                                            <div className="font-medium text-text-main text-xs sm:text-sm truncate max-w-[100px] sm:max-w-none">{student.name}</div>
                                         </td>
                                         <td className="p-2 sm:p-4 hidden md:table-cell">
                                             <div className="text-sm text-text-muted truncate max-w-[120px]">{student.parent_name || '-'}</div>

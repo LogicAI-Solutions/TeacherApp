@@ -19,7 +19,7 @@ interface DashboardStats {
     };
 }
 
-const COLORS = ['#8b5cf6', '#e9ef44ff']; // Primary (Purple) & Danger (Red) for Active/Inactive
+const COLORS = ['#8b5cf6', '#ef4444']; // Primário (Roxo) e Perigo (Vermelho) para Ativos/Inativos
 
 
 export const Dashboard = () => {
@@ -62,7 +62,7 @@ export const Dashboard = () => {
     if (isLoading) {
         return (
             <div className="h-[50vh] flex items-center justify-center">
-                <Loading text="Carregando dashboard..." />
+                <Loading text="Carregando Painel..." />
             </div>
         );
     }
@@ -71,7 +71,7 @@ export const Dashboard = () => {
         return (
             <div className="h-[50vh] flex flex-col items-center justify-center text-danger gap-4">
                 <AlertCircle size={48} />
-                <p className="text-xl">Erro ao carregar dashboard</p>
+                <p className="text-xl">Erro ao carregar Painel</p>
                 <p className="text-text-muted">{error}</p>
                 <button onClick={() => window.location.reload()} className="glass-button px-4 py-2 text-white">Tentar Novamente</button>
             </div>
@@ -88,14 +88,14 @@ export const Dashboard = () => {
     ];
 
     const paymentData = [
-        { name: 'Pagos', value: stats.payments.paid, fill: '#10b981' },
-        { name: 'Pendentes', value: stats.payments.pending, fill: '#fbbf24' }, // Usando o calculado no backend ou deduzindo
+        { name: 'Pagos', value: stats.payments.paid, fill: '#22c55e' },
+        { name: 'Pendentes', value: stats.payments.pending, fill: '#eab308' }, 
     ];
 
     return (
         <div className="animate-slide-up space-y-8">
             <div className="mb-8">
-                <h2 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-white/70">
+                <h2 className="text-3xl font-bold text-gradient">
                     Visão Geral
                 </h2>
                 <p className="text-text-muted mt-2">Acompanhe o desempenho da sua escola em tempo real.</p>
@@ -103,43 +103,43 @@ export const Dashboard = () => {
 
             {/* Quick Stats Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <div className="glass-card p-6 flex items-center gap-4 border-l-4 border-l-primary">
+                <div className="glass-card flex items-center gap-4 border-l-4 border-l-primary">
                     <div className="p-3 rounded-full bg-primary/20 text-primary">
                         <Users size={24} />
                     </div>
                     <div>
                         <p className="text-text-muted text-sm">Total de Alunos</p>
-                        <h3 className="text-2xl font-bold text-white">{stats.students.total}</h3>
+                        <h3 className="text-2xl font-bold text-text-main">{stats.students.total}</h3>
                     </div>
                 </div>
 
-                <div className="glass-card p-6 flex items-center gap-4 border-l-4 border-l-success">
+                <div className="glass-card flex items-center gap-4 border-l-4 border-l-success">
                     <div className="p-3 rounded-full bg-success/20 text-success">
                         <TrendingUp size={24} />
                     </div>
                     <div>
                         <p className="text-text-muted text-sm">Alunos Ativos</p>
-                        <h3 className="text-2xl font-bold text-white">{stats.students.active}</h3>
+                        <h3 className="text-2xl font-bold text-text-main">{stats.students.active}</h3>
                     </div>
                 </div>
 
-                <div className="glass-card p-6 flex items-center gap-4 border-l-4 border-l-success">
+                <div className="glass-card flex items-center gap-4 border-l-4 border-l-success">
                     <div className="p-3 rounded-full bg-success/20 text-success">
                         <DollarSign size={24} />
                     </div>
                     <div>
                         <p className="text-text-muted text-sm">Pagamentos (Mês)</p>
-                        <h3 className="text-2xl font-bold text-white">{stats.payments.paid}</h3>
+                        <h3 className="text-2xl font-bold text-text-main">{stats.payments.paid}</h3>
                     </div>
                 </div>
 
-                <div className="glass-card p-6 flex items-center gap-4 border-l-4 border-l-warning">
+                <div className="glass-card flex items-center gap-4 border-l-4 border-l-warning">
                     <div className="p-3 rounded-full bg-warning/20 text-warning">
                         <AlertCircle size={24} />
                     </div>
                     <div>
                         <p className="text-text-muted text-sm">Pendentes (Mês)</p>
-                        <h3 className="text-2xl font-bold text-white">{stats.payments.pending}</h3>
+                        <h3 className="text-2xl font-bold text-text-main">{stats.payments.pending}</h3>
                     </div>
                 </div>
             </div>
@@ -147,8 +147,8 @@ export const Dashboard = () => {
             {/* Charts Section */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8" ref={containerRef}>
                 {/* Students Chart */}
-                <div className="glass-card p-6 min-h-[350px] sm:min-h-[400px] flex flex-col items-center">
-                    <h3 className="text-xl font-bold text-white mb-6 pl-2 border-l-4 border-primary w-full">Alunos: Ativos vs Inativos</h3>
+                <div className="glass-card min-h-[350px] sm:min-h-[400px] flex flex-col items-center">
+                    <h3 className="text-xl font-bold text-text-main mb-6 pl-2 border-l-4 border-primary w-full">Alunos: Ativos vs Inativos</h3>
                     <div className="flex-1 w-full flex items-center justify-center overflow-hidden">
                         <PieChart width={Math.min(chartWidth, 350)} height={300}>
                             <Pie
@@ -188,8 +188,8 @@ export const Dashboard = () => {
                 </div>
 
                 {/* Payments Chart */}
-                <div className="glass-card p-6 min-h-[350px] sm:min-h-[400px] flex flex-col items-center">
-                    <h3 className="text-xl font-bold text-white mb-6 pl-2 border-l-4 border-success w-full">Pagamentos do Mês Atual</h3>
+                <div className="glass-card min-h-[350px] sm:min-h-[400px] flex flex-col items-center">
+                    <h3 className="text-xl font-bold text-text-main mb-6 pl-2 border-l-4 border-success w-full">Pagamentos do Mês Atual</h3>
                     <div className="flex-1 w-full flex items-center justify-center overflow-hidden">
                         <BarChart
                             width={Math.min(chartWidth, 450)}

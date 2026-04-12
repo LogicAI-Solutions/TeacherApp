@@ -260,18 +260,18 @@ const Admin = () => {
                     <div className="overflow-x-auto custom-scrollbar rounded-lg border border-white/5">
                         <table className="w-full text-left border-collapse">
                             <thead>
-                                <tr className="bg-white/5 border-b border-white/10 text-text-muted text-sm uppercase tracking-wider">
-                                    <th className="p-4 font-medium sticky top-0 bg-bg-card z-10 w-[25%]">
+                                <tr className="glass-header border-b border-white/10 text-text-main text-sm uppercase tracking-wider">
+                                    <th className="p-4 font-bold sticky top-0 z-10 w-[25%] border-b border-white/10">
                                         <div className="flex items-center gap-2">Nome</div>
                                     </th>
-                                    <th className="p-4 font-medium sticky top-0 bg-bg-card z-10 w-[20%]">
+                                    <th className="p-4 font-bold sticky top-0 z-10 w-[20%] border-b border-white/10">
                                         <div className="flex items-center gap-2">Apelido</div>
                                     </th>
-                                    <th className="p-4 font-medium sticky top-0 bg-bg-card z-10 w-[25%]">
+                                    <th className="p-4 font-bold sticky top-0 z-10 w-[25%] border-b border-white/10">
                                         <div className="flex items-center gap-2">Email</div>
                                     </th>
-                                    <th className="p-4 font-medium text-center">Status</th>
-                                    <th className="p-4 font-medium text-right">Ações</th>
+                                    <th className="p-4 font-bold text-center border-b border-white/10">Status</th>
+                                    <th className="p-4 font-bold text-right border-b border-white/10">Ações</th>
                                 </tr>
                             </thead>
                             <tbody className="text-sm">

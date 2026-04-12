@@ -262,7 +262,7 @@ export const Students = () => {
         <div className="animate-fade-in">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 sm:mb-6 gap-2 sm:gap-4">
                 <div>
-                    <h1 className="text-lg sm:text-2xl md:text-3xl font-bold text-white flex items-center gap-1.5 sm:gap-2">
+                    <h1 className="text-lg sm:text-2xl md:text-3xl font-bold text-text-main flex items-center gap-1.5 sm:gap-2">
                         <UserCircle className="text-primary" size={20} /> Alunos
                     </h1>
                     <p className="text-text-muted mt-0.5 text-xs sm:text-sm">Gerencie todos os alunos cadastrados.</p>
@@ -312,7 +312,7 @@ export const Students = () => {
                 )}
                 <div className="overflow-x-auto flex-1 overflow-y-auto">
                     <table className="w-full">
-                        <thead className="bg-bg-dark sticky top-0 z-10 [&_th:first-child]:rounded-none [&_th:last-child]:rounded-none">
+                        <thead className="glass-header sticky top-0 z-10 [&_th:first-child]:rounded-none [&_th:last-child]:rounded-none border-b border-white/10">
                             <tr>
                                 <th
                                     className="text-left p-3 sm:p-4 text-xs font-bold text-text-muted uppercase tracking-wider cursor-pointer hover:text-white transition-colors group select-none"
@@ -374,7 +374,7 @@ export const Students = () => {
                                 return (
                                     <tr key={student.id} className="hover:bg-white/5 transition-colors">
                                         <td className="p-3 sm:p-4">
-                                            <div className="font-medium text-white text-sm sm:text-base">{student.name}</div>
+                                            <div className="font-medium text-text-main text-sm sm:text-base">{student.name}</div>
                                             <div className="text-xs text-text-muted md:hidden">{student.phone ? formatPhone(student.phone) : ''}</div>
                                         </td>
                                         <td className="p-3 sm:p-4 text-text-muted text-sm hidden md:table-cell">{student.phone ? formatPhone(student.phone) : '-'}</td>

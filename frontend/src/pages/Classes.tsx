@@ -250,7 +250,7 @@ export const Classes = () => {
     return (
         <div>
             <div className="mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                <h2 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-white/70">
+                <h2 className="text-3xl font-bold text-gradient">
                     Minhas Turmas
                 </h2>
                 {classes.length > 1 && (
