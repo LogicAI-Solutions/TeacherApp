@@ -2,8 +2,9 @@ import React, { useState, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
 import api from '../api';
 import { UserCircle, Key, Camera, Save, Palette, Shield } from 'lucide-react';
-import axios from 'axios';
 import { useTheme } from '../hooks/useTheme';
+import Cropper from 'react-easy-crop';
+import { getCroppedImg } from '../utils/cropImage';
 
 export const Profile = () => {
     const { user, refreshUser } = useAuth();
@@ -27,11 +28,19 @@ export const Profile = () => {
     const [passwordMessage, setPasswordMessage] = useState('');
     const [passwordError, setPasswordError] = useState('');
 
+    // Crop State
+    const [imageForCrop, setImageForCrop] = useState<string | null>(null);
+    const [crop, setCrop] = useState({ x: 0, y: 0 });
+    const [zoom, setZoom] = useState(1);
+    const [croppedAreaPixels, setCroppedAreaPixels] = useState<any>(null);
+    const [showCropModal, setShowCropModal] = useState(false);
+
 
     const apiBaseUrl = (import.meta.env.VITE_API_URL || '').replace(/\/+$/, '');
 
     const buildPhotoUrl = (photoPath?: string | null) => {
         if (!photoPath) return null;
+        if (photoPath?.startsWith('data:')) return photoPath;
         if (photoPath.startsWith('http')) return photoPath;
         if (!apiBaseUrl) return photoPath;
         if (photoPath.startsWith('/')) return `${apiBaseUrl}${photoPath}`;
@@ -47,7 +56,7 @@ export const Profile = () => {
         fileInputRef.current?.click();
     };
 
-    const handlePhotoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (!file) return;
 
@@ -56,44 +65,51 @@ export const Profile = () => {
 
         if (!file.type.startsWith('image/')) {
             setProfileError('Selecione um arquivo de imagem válido.');
-            e.target.value = '';
             return;
         }
 
-        const maxSizeInBytes = 5 * 1024 * 1024;
-        if (file.size > maxSizeInBytes) {
-            setProfileError('A imagem deve ter no máximo 5MB.');
-            e.target.value = '';
-            return;
-        }
-
-        // Preview
         const reader = new FileReader();
-        reader.onloadend = () => {
-            setPhotoPreview(reader.result as string);
+        reader.onload = () => {
+            setImageForCrop(reader.result as string);
+            setShowCropModal(true);
         };
         reader.readAsDataURL(file);
+    };
 
-        // Upload
+    const onCropComplete = (_croppedArea: any, pixels: any) => {
+        setCroppedAreaPixels(pixels);
+    };
+
+    const handleConfirmCrop = async () => {
+        if (!imageForCrop || !croppedAreaPixels) return;
+
+        setShowCropModal(false);
         setPhotoUploading(true);
+
         try {
+            const croppedImage = await getCroppedImg(imageForCrop, croppedAreaPixels);
+            if (!croppedImage) throw new Error('Falha ao processar imagem');
+
+            // Preparar Preview Local
+            const reader = new FileReader();
+            reader.onloadend = () => setPhotoPreview(reader.result as string);
+            reader.readAsDataURL(croppedImage);
+
+            // Upload via Base64 (estamos enviando como arquivo para o endpoint que agora converte para b64)
             const formData = new FormData();
-            formData.append('file', file);
+            formData.append('file', croppedImage, 'profile.jpg');
             await api.post('/users/me/photo', formData);
+            
             await refreshUser();
-            setProfileMessage('Foto de perfil atualizada com sucesso!');
+            setProfileMessage('Foto de perfil atualizada!');
             setTimeout(() => setProfileMessage(''), 3000);
         } catch (error) {
-            if (axios.isAxiosError(error)) {
-                const detail = error.response?.data?.detail;
-                setProfileError(typeof detail === 'string' ? detail : 'Erro ao fazer upload da foto.');
-            } else {
-                setProfileError('Erro ao fazer upload da foto.');
-            }
-            setPhotoPreview(null);
+            console.error(error);
+            setProfileError('Erro ao salvar a foto cortada.');
         } finally {
             setPhotoUploading(false);
-            e.target.value = '';
+            setImageForCrop(null);
+            if (fileInputRef.current) fileInputRef.current.value = '';
         }
     };
 
@@ -349,6 +365,64 @@ export const Profile = () => {
                     </div>
                 </div>
             </div>
+
+            {/* Crop Modal */}
+            {showCropModal && imageForCrop && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 bg-black/90 backdrop-blur-md animate-fade-in">
+                    <div className="glass-card w-full max-w-2xl h-[80vh] flex flex-col relative overflow-hidden">
+                        <div className="p-4 border-b border-white/10 shrink-0 flex justify-between items-center">
+                            <h3 className="font-bold text-white">Ajustar Foto</h3>
+                            <button onClick={() => setShowCropModal(false)} className="text-text-muted hover:text-white transition-colors">Cancelar</button>
+                        </div>
+                        
+                        <div className="relative flex-1 bg-black/40 overflow-hidden">
+                            <Cropper
+                                image={imageForCrop}
+                                crop={crop}
+                                zoom={zoom}
+                                aspect={1}
+                                onCropChange={setCrop}
+                                onCropComplete={onCropComplete}
+                                onZoomChange={setZoom}
+                                cropShape="round"
+                                showGrid={false}
+                            />
+                        </div>
+
+                        <div className="p-4 sm:p-6 bg-black/20 shrink-0">
+                            <div className="flex flex-col gap-4">
+                                <div className="flex items-center gap-4">
+                                    <span className="text-xs text-text-muted font-bold min-w-10">Zoom</span>
+                                    <input
+                                        type="range"
+                                        value={zoom}
+                                        min={1}
+                                        max={3}
+                                        step={0.1}
+                                        aria-labelledby="Zoom"
+                                        onChange={(e: any) => setZoom(e.target.value)}
+                                        className="flex-1 accent-primary"
+                                    />
+                                </div>
+                                <div className="flex justify-end gap-3 mt-2">
+                                    <button
+                                        onClick={() => setShowCropModal(false)}
+                                        className="px-4 py-2 rounded-xl text-text-muted hover:bg-white/5 transition-colors"
+                                    >
+                                        Cancelar
+                                    </button>
+                                    <button
+                                        onClick={handleConfirmCrop}
+                                        className="bg-primary hover:bg-primary-hover text-white px-8 py-2 rounded-xl font-bold shadow-lg shadow-primary/25 transition-all"
+                                    >
+                                        Aplicar Recorte
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

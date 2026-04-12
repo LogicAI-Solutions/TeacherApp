@@ -8,6 +8,7 @@ from backend.models.users import User as UserModel
 import pydantic
 import os
 import uuid
+import base64
 
 router = APIRouter()
 
@@ -53,25 +54,15 @@ async def upload_profile_photo(file: UploadFile = File(...), db: Session = Depen
     if not file.content_type or not file.content_type.startswith("image/"):
         raise HTTPException(status_code=400, detail="O arquivo deve ser uma imagem.")
     
-    ext = os.path.splitext(file.filename)[1] if file.filename else ".jpg"
-    filename = f"{uuid.uuid4().hex}{ext}"
-    filepath = os.path.join(UPLOAD_DIR, filename)
-    
     contents = await file.read()
-    with open(filepath, "wb") as f:
-        f.write(contents)
-    
+    base64_str = base64.b64encode(contents).decode("utf-8")
+    data_uri = f"data:{file.content_type};base64,{base64_str}"
+
     db_user = db.query(UserModel).filter(UserModel.id == current_user.id).first()
     if not db_user:
         raise HTTPException(status_code=404, detail="Usuário não encontrado.")
     
-    # Remove old photo if exists
-    if db_user.profile_photo:
-        old_path = os.path.join(UPLOAD_DIR, os.path.basename(db_user.profile_photo))
-        if os.path.exists(old_path):
-            os.remove(old_path)
-    
-    db_user.profile_photo = f"/uploads/profile_photos/{filename}"
+    db_user.profile_photo = data_uri
     db.commit()
     db.refresh(db_user)
     return db_user
