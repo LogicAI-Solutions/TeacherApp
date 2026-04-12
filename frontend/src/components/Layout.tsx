@@ -15,7 +15,7 @@ export const Layout = () => {
     const apiBaseUrl = (import.meta.env.VITE_API_URL || '').replace(/\/+$/, '');
 
     const profilePhotoUrl = user?.profile_photo
-        ? (user.profile_photo.startsWith('http')
+        ? (user.profile_photo.startsWith('http') || user.profile_photo.startsWith('data:')
             ? user.profile_photo
             : user.profile_photo.startsWith('/')
                 ? `${apiBaseUrl}${user.profile_photo}`
