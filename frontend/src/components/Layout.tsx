@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { LogOut, LayoutDashboard, Users, GraduationCap, Menu, X, ChevronLeft, ChevronRight, Settings, UserCircle, DollarSign, MessageCircle } from 'lucide-react';
+import { LogOut, LayoutDashboard, GraduationCap, BookOpen, Menu, X, ChevronLeft, ChevronRight, Settings, UserCircle, DollarSign, MessageCircle } from 'lucide-react';
 
 export const Layout = () => {
     const { logout, user } = useAuth();
@@ -45,7 +45,7 @@ export const Layout = () => {
             {/* Mobile Header */}
             <header className="md:hidden flex items-center justify-between px-4 py-3 glass-header w-full fixed top-0 left-0 z-50">
                 <h1 className="text-base font-bold flex items-center gap-2 text-gradient">
-                    <GraduationCap size={22} className="text-primary" /> YanaGestão
+                    <GraduationCap size={22} className="text-primary" /> Redação Yana
                 </h1>
                 <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="p-2 text-text-muted hover:text-white rounded-xl hover:bg-white/10 transition-all duration-300">
                     {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
@@ -69,11 +69,11 @@ export const Layout = () => {
                 `}
             >
                 {/* Desktop Logo & Toggle */}
-                <div className="h-[73px] flex items-center relative px-6 border-b border-white/5">
-                    <div className={`flex items-center gap-2 font-bold text-xl transition-all duration-300 ${isSidebarCollapsed ? 'justify-center w-full' : ''}`}>
-                        <GraduationCap className="shrink-0 text-primary" />
+                <div className="h-[73px] flex items-center relative border-b border-white/5">
+                    <div className={`flex items-center gap-2 font-bold text-xl transition-all duration-300 ${isSidebarCollapsed ? 'justify-center w-full px-0' : 'px-6'}`}>
+                        <GraduationCap size={24} className="shrink-0 text-primary" />
                         <span className={`whitespace-nowrap overflow-hidden transition-all duration-300 text-gradient ${isSidebarCollapsed ? 'w-0 opacity-0' : 'w-auto opacity-100'}`}>
-                            YanaGestão
+                            Redação Yana
                         </span>
                     </div>
 
@@ -93,7 +93,7 @@ export const Layout = () => {
                         title="Dashboard"
                     >
                         <LayoutDashboard size={20} className="shrink-0" />
-                        <span className={`whitespace-nowrap transition-all duration-300 ${isSidebarCollapsed ? 'opacity-0 w-0 overflow-hidden' : 'opacity-100 w-auto'}`}>Dashboard</span>
+                        <span className={`whitespace-nowrap transition-all duration-300 ${isSidebarCollapsed ? 'opacity-0 w-0 overflow-hidden' : 'opacity-100 w-auto'}`}>Painel</span>
                     </Link>
 
                     <Link
@@ -102,7 +102,7 @@ export const Layout = () => {
                         className={`nav-link-glass ${location.pathname === '/classes' ? 'active text-white shadow-lg shadow-primary/25' : 'text-text-muted hover:text-white'} ${isSidebarCollapsed ? 'justify-center gap-0' : 'gap-3'}`}
                         title="Turmas"
                     >
-                        <GraduationCap size={20} className="shrink-0" />
+                        <BookOpen size={20} className="shrink-0" />
                         <span className={`whitespace-nowrap transition-all duration-300 ${isSidebarCollapsed ? 'opacity-0 w-0 overflow-hidden' : 'opacity-100 w-auto'}`}>Turmas</span>
                     </Link>
 
@@ -112,7 +112,7 @@ export const Layout = () => {
                         className={`nav-link-glass ${location.pathname === '/students' ? 'active text-white shadow-lg shadow-primary/25' : 'text-text-muted hover:text-white'} ${isSidebarCollapsed ? 'justify-center gap-0' : 'gap-3'}`}
                         title="Alunos"
                     >
-                        <Users size={20} className="shrink-0" />
+                        <GraduationCap size={20} className="shrink-0" />
                         <span className={`whitespace-nowrap transition-all duration-300 ${isSidebarCollapsed ? 'opacity-0 w-0 overflow-hidden' : 'opacity-100 w-auto'}`}>Alunos</span>
                     </Link>
 
@@ -222,7 +222,7 @@ export const Layout = () => {
 
             {/* Main Content */}
             <main className="flex-1 overflow-auto px-3 py-4 sm:p-4 md:p-6 lg:p-8 pt-16 md:pt-6 lg:pt-8 w-full h-screen">
-                <div className="container mx-auto max-w-6xl">
+                <div className="w-full h-full">
                     <Outlet />
                 </div>
             </main>

@@ -563,7 +563,7 @@ export const ClassDetails = () => {
 
             <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-4 animate-fade-in">
                 <div>
-                    <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-text-muted">{classData.name}</h1>
+                    <h1 className="text-3xl font-bold text-gradient">{classData.name}</h1>
                     <p className="text-primary-light flex items-center gap-2 mt-2 font-medium bg-primary/10 w-fit px-3 py-1 rounded-full text-sm">
                         <Calendar size={14} /> {classData.schedule}
                     </p>
@@ -644,7 +644,7 @@ export const ClassDetails = () => {
                 {activeTab === 'attendance' && (
                     <div className="glass-card p-4">
                         <div className="flex justify-between items-center mb-6 border-b border-white/5 pb-4">
-                            <h2 className="text-xl font-bold flex items-center gap-2 text-white">
+                            <h2 className="text-xl font-bold flex items-center gap-2 text-text-main">
                                 <span className="w-2 h-8 bg-primary rounded-full"></span> Nova Chamada
                             </h2>
                             <div className="flex items-center gap-3">
@@ -660,19 +660,19 @@ export const ClassDetails = () => {
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                             <div className="md:col-span-2 space-y-1">
                                 <label className="text-xs font-medium text-text-muted uppercase tracking-wider ml-1">Descrição</label>
-                                <input className="w-full p-3 bg-bg-dark/50 border border-border rounded-lg text-white focus:ring-2 focus:ring-primary focus:border-transparent transition-all" value={sessionDesc} onChange={e => setSessionDesc(e.target.value)} placeholder="Ex: Introdução à Álgebra (Aula 01)" />
+                                <input className="glass-input" value={sessionDesc} onChange={e => setSessionDesc(e.target.value)} placeholder="Ex: Introdução à Álgebra (Aula 01)" />
                             </div>
                             <div className="space-y-1">
                                 <label className="text-xs font-medium text-text-muted uppercase tracking-wider ml-1">Data</label>
-                                <input type="date" className="w-full p-3 bg-bg-dark/50 border border-border rounded-lg text-white focus:ring-2 focus:ring-primary focus:border-transparent transition-all" value={sessionDate} onChange={e => setSessionDate(e.target.value)} />
+                                <input type="date" className="glass-input" value={sessionDate} onChange={e => setSessionDate(e.target.value)} />
                             </div>
                         </div>
 
-                        <div className="overflow-hidden rounded-xl border border-white/5 bg-bg-dark/20">
+                        <div className="overflow-hidden rounded-xl border border-white/8 bg-white/3">
                             <div className="overflow-x-auto">
                                 <table className="w-full">
                                     <thead>
-                                        <tr className="bg-black/20">
+                                        <tr className="bg-white/5">
                                             <th className="text-left p-4 text-xs font-bold text-text-muted uppercase tracking-wider min-w-[200px]">Aluno</th>
                                             <th className="text-left p-4 text-xs font-bold text-text-muted uppercase tracking-wider w-[150px]">Status</th>
                                             <th className="text-center p-4 text-xs font-bold text-text-muted uppercase tracking-wider w-[150px]">Trabalho Entregue?</th>
@@ -685,7 +685,7 @@ export const ClassDetails = () => {
                                             const log = attendanceLogs[s.id] || {};
                                             return (
                                                 <tr key={s.id} className="hover:bg-white/5 transition-colors group">
-                                                    <td className="p-4 font-medium text-white">{s.name}</td>
+                                                    <td className="p-4 font-medium text-text-main">{s.name}</td>
                                                     <td className="p-4">
                                                         <select
                                                             className={`w-full p-2 rounded-lg text-sm border-none focus:ring-2 focus:ring-primary outline-none transition-colors cursor-pointer ${log.status === 'present' ? 'bg-success/20 text-success' : 'bg-danger/20 text-danger'}`}
@@ -795,18 +795,18 @@ export const ClassDetails = () => {
             {activeTab === 'payments' && (
                 <div className="glass-card">
                     <div className="flex justify-between items-center mb-6 border-b border-white/5 pb-4">
-                        <h2 className="text-xl font-bold flex items-center gap-2 text-white">
+                        <h2 className="text-xl font-bold flex items-center gap-2 text-text-main">
                             <span className="w-2 h-8 bg-success rounded-full"></span> Mensalidades
                         </h2>
                         <div className="flex gap-2">
-                            <select value={selectedMonth} onChange={e => setSelectedMonth(Number(e.target.value))} className="bg-bg-dark border border-white/10 rounded-lg px-3 py-1 text-white">
+                            <select value={selectedMonth} onChange={e => setSelectedMonth(Number(e.target.value))} className="glass-input py-1 px-3">
                                 {Array.from({ length: 12 }, (_, i) => i + 1).map(m => (
-                                    <option key={m} value={m} className="bg-bg-dark text-white">{new Date(0, m - 1).toLocaleString('pt-BR', { month: 'long' })}</option>
+                                    <option key={m} value={m}>{new Date(0, m - 1).toLocaleString('pt-BR', { month: 'long' })}</option>
                                 ))}
                             </select>
-                            <select value={selectedYear} onChange={e => setSelectedYear(Number(e.target.value))} className="bg-bg-dark border border-white/10 rounded-lg px-3 py-1 text-white">
+                            <select value={selectedYear} onChange={e => setSelectedYear(Number(e.target.value))} className="glass-input py-1 px-3">
                                 {Array.from({ length: 5 }, (_, i) => new Date().getFullYear() - 2 + i).map(y => (
-                                    <option key={y} value={y} className="bg-bg-dark text-white">{y}</option>
+                                    <option key={y} value={y}>{y}</option>
                                 ))}
                             </select>
                         </div>
@@ -826,7 +826,7 @@ export const ClassDetails = () => {
                                     const isPaid = payment.status === 'PAID';
                                     return (
                                         <tr key={s.id} className="hover:bg-white/5 transition-colors group">
-                                            <td className="p-4 font-medium text-white">{s.name}</td>
+                                            <td className="p-4 font-medium text-text-main">{s.name}</td>
                                             <td className="p-4 text-text-muted text-sm">
                                                 <div className="flex flex-col">
                                                     <span>{s.parent_name || '-'}</span>
@@ -905,19 +905,21 @@ export const ClassDetails = () => {
 
             {/* Create Student Modal */}
             {showCreateStudentModal && (
-                <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in">
-                    <div className="glass-card w-full max-w-md animate-slide-up relative">
-                        <button onClick={() => setShowCreateStudentModal(false)} className="absolute top-4 right-4 text-text-muted hover:text-white">
+                <div className="modal-overlay animate-fade-in">
+                    <div className="glass-modal w-full max-w-md animate-slide-up relative overflow-hidden flex flex-col max-h-[90vh]">
+                        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary/0 via-primary to-primary/0"></div>
+                        <button onClick={() => setShowCreateStudentModal(false)} className="absolute top-4 right-4 text-text-muted hover:text-text-main p-2 rounded-xl hover:bg-white/10 transition-all z-10">
                             <X size={20} />
                         </button>
-                        <h3 className="text-xl mb-6 font-bold text-white flex items-center gap-2">
+                        <div className="p-8 overflow-y-auto flex-1">
+                        <h3 className="text-xl mb-6 font-bold text-text-main flex items-center gap-2">
                             <Plus size={20} className="text-primary" /> Novo Aluno
                         </h3>
                         <form onSubmit={handleCreateStudent} className="space-y-4">
                             <div>
                                 <label className="text-xs font-medium text-text-muted uppercase tracking-wider ml-1">Nome Completo</label>
                                 <input
-                                    className="w-full p-3 bg-bg-dark/50 border border-border rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                                    className="glass-input mt-1"
                                     value={newStudentData.name}
                                     onChange={e => setNewStudentData({ ...newStudentData, name: e.target.value })}
                                     placeholder="Ex: João Silva"
@@ -928,7 +930,7 @@ export const ClassDetails = () => {
                             <div>
                                 <label className="text-xs font-medium text-text-muted uppercase tracking-wider ml-1">Celular</label>
                                 <input
-                                    className="w-full p-3 bg-bg-dark/50 border border-border rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                                    className="glass-input mt-1"
                                     value={newStudentData.phone}
                                     onChange={e => setNewStudentData({ ...newStudentData, phone: formatPhone(e.target.value) })}
                                     maxLength={15}
@@ -939,7 +941,7 @@ export const ClassDetails = () => {
                                 <div>
                                     <label className="text-xs font-medium text-text-muted uppercase tracking-wider ml-1">Responsável</label>
                                     <input
-                                        className="w-full p-3 bg-bg-dark/50 border border-border rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                                        className="glass-input mt-1"
                                         value={newStudentData.parent_name}
                                         onChange={e => setNewStudentData({ ...newStudentData, parent_name: e.target.value })}
                                     />
@@ -947,7 +949,7 @@ export const ClassDetails = () => {
                                 <div>
                                     <label className="text-xs font-medium text-text-muted uppercase tracking-wider ml-1">Cel. Responsável</label>
                                     <input
-                                        className="w-full p-3 bg-bg-dark/50 border border-border rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                                        className="glass-input mt-1"
                                         value={newStudentData.parent_phone}
                                         onChange={e => setNewStudentData({ ...newStudentData, parent_phone: formatPhone(e.target.value) })}
                                         maxLength={15}
@@ -959,118 +961,84 @@ export const ClassDetails = () => {
                                 <label className="text-xs font-medium text-text-muted uppercase tracking-wider ml-1">Email Responsável</label>
                                 <input
                                     type="email"
-                                    className="w-full p-3 bg-bg-dark/50 border border-border rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                                    className="glass-input mt-1"
                                     value={newStudentData.parent_email}
                                     onChange={e => setNewStudentData({ ...newStudentData, parent_email: e.target.value })}
                                 />
                             </div>
                             <div className="flex justify-end gap-3 mt-6">
-                                <button type="button" onClick={() => setShowCreateStudentModal(false)} className="px-4 py-2 rounded-lg text-text-muted hover:bg-white/5 transition-colors">Cancelar</button>
-                                <button type="submit" disabled={creatingStudent} className="bg-primary hover:bg-primary-hover text-white font-bold py-2 px-6 rounded-lg shadow-lg shadow-primary/20 transition-all cursor-pointer disabled:opacity-50">
+                                <button type="button" onClick={() => setShowCreateStudentModal(false)} className="px-4 py-2 rounded-xl text-text-muted hover:bg-white/10 transition-colors">Cancelar</button>
+                                <button type="submit" disabled={creatingStudent} className="glass-button text-white px-6 py-2 rounded-xl font-medium disabled:opacity-50">
                                     {creatingStudent ? 'Criando...' : 'Adicionar'}
                                 </button>
                             </div>
                         </form>
+                        </div>
                     </div>
                 </div>
             )}
 
             {/* Edit Student Modal */}
             {editingStudent && (
-                <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in">
-                    <div className="glass-card w-full max-w-md animate-slide-up relative">
-                        <button onClick={() => setEditingStudent(null)} className="absolute top-4 right-4 text-text-muted hover:text-white">
+                <div className="modal-overlay animate-fade-in">
+                    <div className="glass-modal w-full max-w-md animate-slide-up relative overflow-hidden flex flex-col max-h-[90vh]">
+                        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary/0 via-primary to-primary/0"></div>
+                        <button onClick={() => setEditingStudent(null)} className="absolute top-4 right-4 text-text-muted hover:text-text-main p-2 rounded-xl hover:bg-white/10 transition-all z-10">
                             <X size={20} />
                         </button>
-                        <h3 className="text-xl mb-6 font-bold text-white flex items-center gap-2">
+                        <div className="p-8 overflow-y-auto flex-1">
+                        <h3 className="text-xl mb-6 font-bold text-text-main flex items-center gap-2">
                             <Pencil size={20} className="text-primary" /> Editar Aluno
                         </h3>
                         <form onSubmit={handleUpdateStudent} className="space-y-4">
                             <div>
                                 <label className="text-xs font-medium text-text-muted uppercase tracking-wider ml-1">Nome Completo</label>
-                                <input
-                                    className="w-full p-3 bg-bg-dark/50 border border-border rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
-                                    value={editStudentData.name}
-                                    onChange={e => setEditStudentData({ ...editStudentData, name: e.target.value })}
-                                    required
-                                    autoFocus
-                                />
+                                <input className="glass-input mt-1" value={editStudentData.name} onChange={e => setEditStudentData({ ...editStudentData, name: e.target.value })} required autoFocus />
                             </div>
                             <div>
                                 <label className="text-xs font-medium text-text-muted uppercase tracking-wider ml-1">Celular</label>
-                                <input
-                                    className="w-full p-3 bg-bg-dark/50 border border-border rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
-                                    value={editStudentData.phone}
-                                    onChange={e => setEditStudentData({ ...editStudentData, phone: formatPhone(e.target.value) })}
-                                    maxLength={15}
-                                    placeholder="(99) 99999-9999"
-                                />
+                                <input className="glass-input mt-1" value={editStudentData.phone} onChange={e => setEditStudentData({ ...editStudentData, phone: formatPhone(e.target.value) })} maxLength={15} placeholder="(99) 99999-9999" />
                             </div>
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
                                     <label className="text-xs font-medium text-text-muted uppercase tracking-wider ml-1">Responsável</label>
-                                    <input
-                                        className="w-full p-3 bg-bg-dark/50 border border-border rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
-                                        value={editStudentData.parent_name}
-                                        onChange={e => setEditStudentData({ ...editStudentData, parent_name: e.target.value })}
-                                    />
+                                    <input className="glass-input mt-1" value={editStudentData.parent_name} onChange={e => setEditStudentData({ ...editStudentData, parent_name: e.target.value })} />
                                 </div>
                                 <div>
                                     <label className="text-xs font-medium text-text-muted uppercase tracking-wider ml-1">Cel. Responsável</label>
-                                    <input
-                                        className="w-full p-3 bg-bg-dark/50 border border-border rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
-                                        value={editStudentData.parent_phone}
-                                        onChange={e => setEditStudentData({ ...editStudentData, parent_phone: formatPhone(e.target.value) })}
-                                        maxLength={15}
-                                        placeholder="(99) 99999-9999"
-                                    />
+                                    <input className="glass-input mt-1" value={editStudentData.parent_phone} onChange={e => setEditStudentData({ ...editStudentData, parent_phone: formatPhone(e.target.value) })} maxLength={15} placeholder="(99) 99999-9999" />
                                 </div>
                             </div>
                             <div>
                                 <label className="text-xs font-medium text-text-muted uppercase tracking-wider ml-1">Email Responsável</label>
-                                <input
-                                    type="email"
-                                    className="w-full p-3 bg-bg-dark/50 border border-border rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
-                                    value={editStudentData.parent_email}
-                                    onChange={e => setEditStudentData({ ...editStudentData, parent_email: e.target.value })}
-                                />
+                                <input type="email" className="glass-input mt-1" value={editStudentData.parent_email} onChange={e => setEditStudentData({ ...editStudentData, parent_email: e.target.value })} />
                             </div>
                             <div className="flex justify-end gap-3 mt-6">
-                                <button type="button" onClick={() => setEditingStudent(null)} className="px-4 py-2 rounded-lg text-text-muted hover:bg-white/5 transition-colors">Cancelar</button>
-                                <button type="submit" className="bg-primary hover:bg-primary-hover text-white font-bold py-2 px-6 rounded-lg shadow-lg shadow-primary/20 transition-all cursor-pointer">
-                                    Salvar
-                                </button>
+                                <button type="button" onClick={() => setEditingStudent(null)} className="px-4 py-2 rounded-xl text-text-muted hover:bg-white/10 transition-colors">Cancelar</button>
+                                <button type="submit" className="glass-button text-white px-6 py-2 rounded-xl font-medium">Salvar</button>
                             </div>
                         </form>
+                        </div>
                     </div>
                 </div>
             )}
 
             {/* Delete Student Modal */}
             {deletingStudent && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
-                    <div className="glass-card w-full max-w-sm p-6 relative animate-slide-up border-danger/30">
-                        <div className="flex flex-col items-center text-center">
-                            <div className="w-12 h-12 rounded-full bg-danger/20 flex items-center justify-center mb-4 text-danger">
+                <div className="modal-overlay animate-fade-in">
+                    <div className="glass-modal w-full max-w-sm p-6 relative animate-slide-up overflow-hidden border-danger/30">
+                        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-danger/0 via-danger to-danger/0"></div>
+                        <div className="flex flex-col items-center text-center pt-2">
+                            <div className="w-12 h-12 rounded-full bg-danger/20 flex items-center justify-center mb-4 text-danger border border-danger/30">
                                 <AlertTriangle size={24} />
                             </div>
-                            <h3 className="text-xl font-bold text-white mb-2">Excluir Aluno?</h3>
+                            <h3 className="text-xl font-bold text-text-main mb-2">Excluir Aluno?</h3>
                             <p className="text-text-muted mb-6">
-                                Tem certeza que deseja remover <strong>{deletingStudent.name}</strong>? Todo o histórico de presença será apagado.
+                                Tem certeza que deseja remover <strong className="text-text-main">{deletingStudent.name}</strong>? Todo o histórico de presença será apagado.
                             </p>
                             <div className="flex gap-3 w-full">
-                                <button
-                                    onClick={() => setDeletingStudent(null)}
-                                    className="flex-1 py-2 rounded-lg bg-bg-dark border border-white/10 text-white hover:bg-white/5 transition-colors"
-                                >
-                                    Cancelar
-                                </button>
-                                <button
-                                    onClick={handleDeleteStudent}
-                                    className="flex-1 py-2 rounded-lg bg-danger hover:bg-danger-hover text-white font-bold shadow-lg shadow-danger/20 transition-colors"
-                                >
-                                    Sim, Excluir
-                                </button>
+                                <button onClick={() => setDeletingStudent(null)} className="flex-1 py-2 rounded-xl text-text-muted hover:bg-white/10 transition-colors">Cancelar</button>
+                                <button onClick={handleDeleteStudent} className="flex-1 py-2 rounded-xl bg-danger/90 hover:bg-danger text-white font-bold shadow-lg shadow-danger/30 transition-all">Sim, Excluir</button>
                             </div>
                         </div>
                     </div>
@@ -1079,18 +1047,19 @@ export const ClassDetails = () => {
 
             {/* Session Details Modal */}
             {viewingSession && (
-                <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in">
-                    <div className="bg-bg-card border border-white/5 w-full max-w-2xl max-h-[85vh] overflow-y-auto rounded-2xl shadow-2xl relative animate-slide-up flex flex-col">
+                <div className="modal-overlay animate-fade-in">
+                    <div className="glass-modal w-full max-w-2xl max-h-[85vh] overflow-y-auto relative animate-slide-up flex flex-col">
+                        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary/0 via-primary to-primary/0"></div>
 
                         {/* Header */}
-                        <div className="p-6 border-b border-white/5 flex justify-between items-start sticky top-0 bg-bg-card z-10">
+                        <div className="p-6 border-b border-white/8 flex justify-between items-start sticky top-0 z-10 glass-header rounded-tl-3xl rounded-tr-3xl">
                             <div>
-                                <h3 className="text-xl font-bold text-white mb-1">{viewingSession.description}</h3>
+                                <h3 className="text-xl font-bold text-text-main mb-1">{viewingSession.description}</h3>
                                 <p className="text-text-muted text-sm flex items-center gap-2">
                                     <Calendar size={14} /> {viewingSession.date}
                                 </p>
                             </div>
-                            <button onClick={() => setViewingSession(null)} className="text-text-muted hover:text-white transition-colors p-1 rounded-full hover:bg-white/5">
+                            <button onClick={() => setViewingSession(null)} className="text-text-muted hover:text-text-main transition-colors p-2 rounded-xl hover:bg-white/10">
                                 <X size={20} />
                             </button>
                         </div>
@@ -1099,7 +1068,7 @@ export const ClassDetails = () => {
                         <div className="p-6 overflow-x-auto">
                             <table className="w-full text-sm text-left">
                                 <thead>
-                                    <tr className="border-b border-white/5">
+                                    <tr className="border-b border-white/8">
                                         <th className="py-3 px-2 text-text-muted font-medium">Aluno</th>
                                         <th className="py-3 px-2 text-text-muted font-medium">Status</th>
                                         <th className="py-3 px-2 text-text-muted font-medium">Nota</th>
@@ -1115,7 +1084,7 @@ export const ClassDetails = () => {
                                         })
                                         .map(log => (
                                             <tr key={log.id} className="hover:bg-white/5 transition-colors">
-                                                <td className="py-3 px-2 font-medium text-white">{log.student?.name || getStudentName(log.student_id)}</td>
+                                                <td className="py-3 px-2 font-medium text-text-main">{log.student?.name || getStudentName(log.student_id)}</td>
                                                 <td className="py-3 px-2">
                                                     <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-medium ${log.status === 'present' ? 'bg-success/10 text-success' : 'bg-danger/10 text-danger'}`}>
                                                         <span className={`w-1.5 h-1.5 rounded-full ${log.status === 'present' ? 'bg-success' : 'bg-danger'}`}></span>
@@ -1131,7 +1100,7 @@ export const ClassDetails = () => {
                         </div>
 
                         {/* Footer */}
-                        <div className="p-6 border-t border-white/5 flex flex-col-reverse sm:flex-row justify-end gap-3 bg-bg-card rounded-b-2xl">
+                        <div className="p-6 border-t border-white/8 flex flex-col-reverse sm:flex-row justify-end gap-3">
                             <button
                                 onClick={() => {
                                     requestConfirmation(
@@ -1141,17 +1110,17 @@ export const ClassDetails = () => {
                                         'danger'
                                     );
                                 }}
-                                className="px-4 py-2 rounded-lg text-xs font-medium text-danger hover:bg-danger/10 transition-colors flex items-center justify-center gap-2"
+                                className="px-4 py-2 rounded-xl text-xs font-medium text-danger hover:bg-danger/10 transition-colors flex items-center justify-center gap-2"
                             >
                                 <Trash2 size={16} /> Excluir
                             </button>
                             <button
                                 onClick={() => handleEditSession(viewingSession)}
-                                className="px-4 py-2 rounded-lg text-xs font-medium text-text-muted hover:text-white hover:bg-white/5 transition-colors border border-transparent hover:border-white/10 flex items-center justify-center gap-2"
+                                className="px-4 py-2 rounded-xl text-xs font-medium text-text-muted hover:text-text-main hover:bg-white/10 transition-colors border border-transparent hover:border-white/10 flex items-center justify-center gap-2"
                             >
                                 <Pencil size={16} /> Editar
                             </button>
-                            <button onClick={() => handleGenerateSessionReport(viewingSession.id)} className="px-4 py-2 rounded-lg text-xs font-medium bg-primary hover:bg-primary-hover text-white shadow-lg shadow-primary/20 transition-all flex items-center justify-center gap-2">
+                            <button onClick={() => handleGenerateSessionReport(viewingSession.id)} className="glass-button px-4 py-2 rounded-xl text-xs font-medium text-white flex items-center justify-center gap-2">
                                 <Download size={16} /> Relatório
                             </button>
                         </div>
@@ -1161,23 +1130,24 @@ export const ClassDetails = () => {
 
             {/* Confirmation Modal */}
             {confirmation && confirmation.isOpen && (
-                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
-                    <div className={`glass-card w-full max-w-sm p-6 relative animate-slide-up ${confirmation.type === 'danger' ? 'border-danger/30' : 'border-white/10'}`}>
-                        <div className="flex flex-col items-center text-center">
-                            <div className={`w-12 h-12 rounded-full flex items-center justify-center mb-4 ${confirmation.type === 'danger' ? 'bg-danger/20 text-danger' :
-                                confirmation.type === 'warning' ? 'bg-yellow-500/20 text-yellow-500' :
-                                    'bg-primary/20 text-primary'
+                <div className="modal-overlay animate-fade-in" style={{zIndex: 100}}>
+                    <div className={`glass-modal w-full max-w-sm p-6 relative animate-slide-up overflow-hidden ${confirmation.type === 'danger' ? 'border-danger/30' : 'border-white/10'}`}>
+                        <div className={`absolute top-0 left-0 w-full h-1 bg-gradient-to-r ${confirmation.type === 'danger' ? 'from-danger/0 via-danger to-danger/0' : 'from-primary/0 via-primary to-primary/0'}`}></div>
+                        <div className="flex flex-col items-center text-center pt-2">
+                            <div className={`w-12 h-12 rounded-full flex items-center justify-center mb-4 ${confirmation.type === 'danger' ? 'bg-danger/20 text-danger border border-danger/30' :
+                                confirmation.type === 'warning' ? 'bg-yellow-500/20 text-yellow-500 border border-yellow-500/30' :
+                                    'bg-primary/20 text-primary border border-primary/30'
                                 }`}>
                                 <AlertTriangle size={24} />
                             </div>
-                            <h3 className="text-xl font-bold text-white mb-2">{confirmation.title}</h3>
+                            <h3 className="text-xl font-bold text-text-main mb-2">{confirmation.title}</h3>
                             <div className="text-text-muted mb-6 text-sm">
                                 {confirmation.message}
                             </div>
                             <div className="flex gap-3 w-full">
                                 <button
                                     onClick={() => setConfirmation(null)}
-                                    className="flex-1 py-2 rounded-lg bg-bg-dark border border-white/10 text-white hover:bg-white/5 transition-colors"
+                                    className="flex-1 py-2 rounded-xl text-text-muted hover:bg-white/10 transition-colors"
                                 >
                                     Cancelar
                                 </button>
@@ -1186,7 +1156,7 @@ export const ClassDetails = () => {
                                         confirmation.onConfirm();
                                         setConfirmation(null);
                                     }}
-                                    className={`flex-1 py-2 rounded-lg text-white font-bold shadow-lg transition-colors ${confirmation.type === 'danger' ? 'bg-danger hover:bg-danger-hover shadow-danger/20' :
+                                    className={`flex-1 py-2 rounded-xl text-white font-bold shadow-lg transition-colors ${confirmation.type === 'danger' ? 'bg-danger/90 hover:bg-danger shadow-danger/20' :
                                         confirmation.type === 'warning' ? 'bg-yellow-500 hover:bg-yellow-600 shadow-yellow-500/20' :
                                             'bg-primary hover:bg-primary-hover shadow-primary/20'
                                         }`}

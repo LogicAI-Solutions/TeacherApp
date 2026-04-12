@@ -11,7 +11,7 @@ export interface ThemeDefinition {
 export const THEMES: ThemeDefinition[] = [
     {
         id: 'dark-profissional',
-        name: 'DARK PROFISSIONAL',
+        name: 'Escuro Profissional',
         color: '#6366f1',
         gradient: 'linear-gradient(135deg, #6366f1, #4f46e5)',
         description: 'Tema escuro elegante com acentos indigo',
@@ -25,10 +25,10 @@ export const THEMES: ThemeDefinition[] = [
     },
     {
         id: 'acolhedor',
-        name: 'ACOLHEDOR',
-        color: '#f59e0b',
-        gradient: 'linear-gradient(135deg, #f59e0b, #d97706)',
-        description: 'Tons quentes e aconchegantes',
+        name: 'QUARTZO LILÁS',
+        color: '#8b5cf6',
+        gradient: 'linear-gradient(135deg, #a78bfa, #8b5cf6)',
+        description: 'Tons suaves de lavanda e quartzo',
     },
 ];
 

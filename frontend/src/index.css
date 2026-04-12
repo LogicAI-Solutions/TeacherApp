@@ -14,7 +14,7 @@
 
   --color-danger: #ef4444;
   --color-success: #22c55e;
-  --color-warning: #eab308;
+  --color-warning: var(--theme-warning);
   --color-border: rgba(255, 255, 255, 0.08);
 
   --font-sans: Inter, system-ui, sans-serif;
@@ -121,26 +121,27 @@
   --radius: 0.75rem;
   --glass-bg: rgba(255, 255, 255, 0.03);
   --glass-border: rgba(255, 255, 255, 0.08);
-  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
 
-  /* Theme color variables (default: dark-profissional / indigo) */
-  --theme-primary: 99, 102, 241;
-  --theme-primary-hex: #6366f1;
-  --theme-primary-hover-hex: #4f46e5;
-  --theme-primary-light-hex: #818cf8;
-  --theme-primary-hover: 79, 70, 229;
-  --theme-primary-light: 129, 140, 248;
-  --theme-accent: 139, 92, 246;
-  --theme-accent-hex: #8b5cf6;
-  --theme-bg-dark: #0a0f1a;
-  --theme-bg-card: rgba(30, 41, 59, 0.5);
-  --theme-bg-darker: #020617;
-  --theme-text-main: #f8fafc;
-  --theme-text-muted: #94a3b8;
-  --theme-bg-gradient: linear-gradient(135deg, #0a0f1a 0%, #0f172a 50%, #0a0f1a 100%);
-  --theme-orb1: rgba(99, 102, 241, 0.08);
-  --theme-orb2: rgba(139, 92, 246, 0.05);
-  --theme-orb3: rgba(99, 102, 241, 0.03);
+  /* Theme color variables (default: dark-profissional / MyTeacherApp Navy) */
+  --theme-primary: 92, 94, 247;
+  --theme-primary-hex: #5c5ef7;
+  --theme-primary-hover-hex: #4a4ce0;
+  --theme-primary-light-hex: #7b7dfa;
+  --theme-primary-hover: 74, 76, 224;
+  --theme-primary-light: 123, 125, 250;
+  --theme-accent: 110, 68, 255;
+  --theme-accent-hex: #6e44ff;
+  --theme-bg-dark: #0c0d20;
+  --theme-bg-card: rgba(19, 20, 43, 0.85);
+  --theme-bg-darker: #07081a;
+  --theme-text-main: #e8e9f5;
+  --theme-text-muted: #8b8da8;
+  --theme-bg-gradient: linear-gradient(160deg, #0c0d20 0%, #0f1030 50%, #0c0d20 100%);
+  --theme-orb1: rgba(92, 94, 247, 0.12);
+  --theme-orb2: rgba(110, 68, 255, 0.08);
+  --theme-orb3: rgba(92, 94, 247, 0.05);
+  --theme-warning: #eab308;
 }
 
 /* ===== AZUL SERENO THEME (Light) ===== */
@@ -165,25 +166,26 @@ html.theme-azul-sereno {
   --theme-is-light: 1;
 }
 
-/* ===== ACOLHEDOR THEME (Light) ===== */
+/* ===== ACOLHEDOR THEME (Soft Lavender/Quartz) ===== */
 html.theme-acolhedor {
-  --theme-primary: 217, 119, 6;
-  --theme-primary-hex: #d97706;
-  --theme-primary-hover-hex: #b45309;
-  --theme-primary-light-hex: #f59e0b;
-  --theme-primary-hover: 180, 83, 9;
-  --theme-primary-light: 245, 158, 11;
-  --theme-accent: 234, 88, 12;
-  --theme-accent-hex: #ea580c;
-  --theme-bg-dark: #fffbeb;
-  --theme-bg-card: rgba(255, 255, 255, 0.75);
-  --theme-bg-darker: #fef3c7;
-  --theme-text-main: #451a03;
-  --theme-text-muted: #78350f;
-  --theme-bg-gradient: linear-gradient(135deg, #fffbeb 0%, #fef3c7 50%, #fffbeb 100%);
-  --theme-orb1: rgba(217, 119, 6, 0.05);
-  --theme-orb2: rgba(234, 88, 12, 0.04);
-  --theme-orb3: rgba(217, 119, 6, 0.03);
+  --theme-primary: 139, 92, 246;
+  --theme-primary-hex: #8b5cf6;
+  --theme-primary-hover-hex: #7c3aed;
+  --theme-primary-light-hex: #a78bfa;
+  --theme-primary-hover: 124, 58, 237;
+  --theme-primary-light: 167, 139, 250;
+  --theme-accent: 168, 85, 247;
+  --theme-accent-hex: #a855f7;
+  --theme-bg-dark: #faf5ff;
+  --theme-bg-card: rgba(255, 255, 255, 0.8);
+  --theme-bg-darker: #f3e8ff;
+  --theme-text-main: #4c1d95;
+  --theme-text-muted: #7c3aed;
+  --theme-bg-gradient: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 50%, #faf5ff 100%);
+  --theme-orb1: rgba(139, 92, 246, 0.08);
+  --theme-orb2: rgba(168, 85, 247, 0.05);
+  --theme-orb3: rgba(139, 92, 246, 0.04);
+  --theme-warning: #eab308;
   --theme-is-light: 1;
 }
 
@@ -368,8 +370,9 @@ html.theme-acolhedor .table-container {
 
 html.theme-azul-sereno th,
 html.theme-acolhedor th {
-  background: rgba(0, 0, 0, 0.03);
-  color: #64748b;
+  background: rgba(0, 0, 0, 0.05);
+  color: #1e293b !important;
+  font-weight: 700;
 }
 
 html.theme-azul-sereno th,
@@ -472,13 +475,7 @@ html.theme-acolhedor .text-gradient {
   color: transparent;
 }
 
-html.theme-azul-sereno .text-gradient {
-  background-image: linear-gradient(135deg, #0ea5e9, #06b6d4, #0ea5e9);
-}
-
-html.theme-acolhedor .text-gradient {
-  background-image: linear-gradient(135deg, #d97706, #ea580c, #d97706);
-}
+/* Gradientes agora são dinâmicos via variáveis no bloco utilities */
 
 /* --- Background utility overrides --- */
 html.theme-azul-sereno .bg-white\/5,
@@ -709,18 +706,20 @@ html.theme-acolhedor input.bg-transparent {
 
 @layer utilities {
   .glass {
-    @apply bg-white/5 backdrop-blur-2xl border border-white/10 shadow-2xl;
+    @apply bg-white/5 backdrop-blur-2xl border border-white/8 shadow-2xl;
+    background: rgba(19, 20, 46, 0.6);
     box-shadow:
-      0 8px 32px rgba(0, 0, 0, 0.3),
-      0 0 1px 0 rgba(255, 255, 255, 0.1) inset,
-      0 -1px 0 0 rgba(255, 255, 255, 0.05) inset;
+      0 8px 32px rgba(0, 0, 0, 0.4),
+      0 0 1px 0 rgba(255, 255, 255, 0.06) inset,
+      0 -1px 0 0 rgba(255, 255, 255, 0.03) inset;
   }
 
   .glass-card {
-    @apply bg-white/5 backdrop-blur-2xl border border-white/10 shadow-2xl rounded-2xl p-3 sm:p-4 md:p-6;
+    @apply bg-white/5 backdrop-blur-2xl border border-white/8 shadow-2xl rounded-2xl p-3 sm:p-4 md:p-6;
+    background: rgba(19, 20, 46, 0.75);
     box-shadow:
-      0 8px 32px rgba(0, 0, 0, 0.3),
-      0 0 1px 0 rgba(255, 255, 255, 0.15) inset;
+      0 8px 32px rgba(0, 0, 0, 0.4),
+      0 0 1px 0 rgba(255, 255, 255, 0.08) inset;
     transition: all 0.3s ease;
   }
 
@@ -733,12 +732,13 @@ html.theme-acolhedor input.bg-transparent {
 
   .glass-sidebar {
     @apply bg-white/3 backdrop-blur-2xl border-r border-white/5;
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
+    background: linear-gradient(180deg, rgba(15, 16, 38, 0.97) 0%, rgba(12, 13, 32, 0.98) 100%);
   }
 
   .glass-header {
-    @apply bg-white/5 backdrop-blur-2xl border-b border-white/10;
-    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+    @apply bg-white/5 backdrop-blur-2xl border-b border-white/5;
+    background: rgba(12, 13, 32, 0.92);
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.4);
   }
 
   .glass-modal {
@@ -769,7 +769,11 @@ html.theme-acolhedor input.bg-transparent {
   }
 
   .text-gradient {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-primary-light via-primary to-purple-400;
+    background: linear-gradient(135deg, var(--theme-primary-light-hex) 0%, var(--theme-primary-hex) 50%, var(--theme-primary-hover-hex) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    color: transparent;
   }
 
   .border-glow {
@@ -900,7 +904,8 @@ html.theme-acolhedor input.bg-transparent {
 
   .nav-link-glass.active {
     background: linear-gradient(135deg, rgba(var(--theme-primary), 0.9) 0%, rgba(var(--theme-primary-hover), 0.9) 100%);
-    box-shadow: 0 4px 20px rgba(var(--theme-primary), 0.4);
+    box-shadow: 0 4px 20px rgba(var(--theme-primary), 0.3);
+    @apply text-white;
   }
 
   .nav-link-glass:hover:not(.active) {

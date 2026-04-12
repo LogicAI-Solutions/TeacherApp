@@ -161,7 +161,7 @@ export const Login = () => {
 
                         <div className="pt-10 border-t border-white/5 text-center">
                             <p className="text-[10px] font-black text-slate-600 uppercase tracking-[0.5em] hover:text-slate-400 transition-colors cursor-default">
-                                Yana
+                                Redação Yana
                             </p>
                         </div>
                     </div>
