@@ -6,7 +6,7 @@ from backend.schemas.students import StudentCreate
 
 from sqlalchemy import or_
 
-def get_students(db: Session, user_id: int, skip: int = 0, limit: int = 100, search: str = None, sort_by: str = "name", sort_desc: bool = False, active_status: bool = None, payment_status: str = None, payment_month: int = None, payment_year: int = None):
+def get_students(db: Session, user_id: int, skip: int = 0, limit: int = 100, search: str = None, sort_by: str = "name", sort_desc: bool = False, active_status: bool = None, school_year: str = None, payment_status: str = None, payment_month: int = None, payment_year: int = None):
     query = db.query(Student).filter(Student.owner_id == user_id)
     
     if active_status is not None:
@@ -18,6 +18,9 @@ def get_students(db: Session, user_id: int, skip: int = 0, limit: int = 100, sea
             Student.name.ilike(search_filter),
             Student.parent_name.ilike(search_filter)
         ))
+
+    if school_year:
+        query = query.filter(Student.school_year.ilike(f"%{school_year}%"))
 
     if payment_status and payment_month and payment_year:
         from backend.models.payments import Payment
@@ -31,18 +34,20 @@ def get_students(db: Session, user_id: int, skip: int = 0, limit: int = 100, sea
                 Payment.year == payment_year,
                 Payment.status == 'PAID'
             ))
+        elif payment_status == 'ISENTO':
+            query = query.join(Payment, and_(
+                Payment.student_id == Student.id,
+                Payment.month == payment_month,
+                Payment.year == payment_year,
+                Payment.status == 'ISENTO'
+            ))
         elif payment_status == 'PENDING':
-            # Students who DO NOT have a PAID payment for that month/year
-            # This includes explicit PENDING records AND missing records
-            # So we use outerjoin and check for NULL or status != PAID
-            # Actually easier: use NOT EXISTS or outer join
-            
-            # Approach: Outer Join with 'PAID' payment. Filter where ID is null.
+            # Students who do not have a PAID or ISENTO payment for that month/year.
             query = query.outerjoin(Payment, and_(
                 Payment.student_id == Student.id,
                 Payment.month == payment_month,
                 Payment.year == payment_year,
-                Payment.status == 'PAID'
+                Payment.status.in_(['PAID', 'ISENTO'])
             )).filter(Payment.id == None)
 
     if sort_by == 'name':
@@ -63,7 +68,7 @@ def get_students(db: Session, user_id: int, skip: int = 0, limit: int = 100, sea
 
     return query.offset(skip).limit(limit).all()
 
-def count_students(db: Session, user_id: int, search: str = None, active_status: bool = None, payment_status: str = None, payment_month: int = None, payment_year: int = None):
+def count_students(db: Session, user_id: int, search: str = None, active_status: bool = None, school_year: str = None, payment_status: str = None, payment_month: int = None, payment_year: int = None):
     query = db.query(Student).filter(Student.owner_id == user_id)
     
     if active_status is not None:
@@ -75,6 +80,9 @@ def count_students(db: Session, user_id: int, search: str = None, active_status:
             Student.name.ilike(search_filter),
             Student.parent_name.ilike(search_filter)
         ))
+
+    if school_year:
+        query = query.filter(Student.school_year.ilike(f"%{school_year}%"))
         
     if payment_status and payment_month and payment_year:
         from backend.models.payments import Payment
@@ -87,12 +95,19 @@ def count_students(db: Session, user_id: int, search: str = None, active_status:
                 Payment.year == payment_year,
                 Payment.status == 'PAID'
             ))
+        elif payment_status == 'ISENTO':
+            query = query.join(Payment, and_(
+                Payment.student_id == Student.id,
+                Payment.month == payment_month,
+                Payment.year == payment_year,
+                Payment.status == 'ISENTO'
+            ))
         elif payment_status == 'PENDING':
             query = query.outerjoin(Payment, and_(
                 Payment.student_id == Student.id,
                 Payment.month == payment_month,
                 Payment.year == payment_year,
-                Payment.status == 'PAID'
+                Payment.status.in_(['PAID', 'ISENTO'])
             )).filter(Payment.id == None)
 
     return query.count()
@@ -113,7 +128,10 @@ def update_student(db: Session, student_id: int, student_data: StudentCreate):
         student.parent_phone = student_data.parent_phone
         student.parent_email = student_data.parent_email
         student.school_year = student_data.school_year
+        student.school = student_data.school
         student.class_type = student_data.class_type
+        student.intended_profession = student_data.intended_profession
+        student.observation = student_data.observation
         student.active = student_data.active
         db.commit()
         db.refresh(student)

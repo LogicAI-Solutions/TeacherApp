@@ -17,6 +17,7 @@ interface Student {
     school?: string;
     intended_profession?: string;
     class_type?: string;
+    observation?: string;
     active: boolean;
 }
 
@@ -36,6 +37,7 @@ export const Students = () => {
     // const [filteredStudents, setFilteredStudents] = useState<Student[]>([]); // Removed: Server side filtering
     const [classes, setClasses] = useState<ClassModel[]>([]);
     const [search, setSearch] = useState('');
+    const [schoolYearFilter, setSchoolYearFilter] = useState('');
     const [page, setPage] = useState(0);
     const [limit] = useState(8); // Diminuir para nao ter que ficar scrollando a pagina para baixo para ver mais alunos
     const [totalStudents, setTotalStudents] = useState(0);
@@ -48,11 +50,11 @@ export const Students = () => {
 
     // Modal States
     const [showCreateModal, setShowCreateModal] = useState(false);
-    const [newStudentData, setNewStudentData] = useState({ name: '', phone: '', parent_name: '', parent_phone: '', parent_email: '', school_year: '', school: '', intended_profession: '', class_type: '', active: true });
+    const [newStudentData, setNewStudentData] = useState({ name: '', phone: '', parent_name: '', parent_phone: '', parent_email: '', school_year: '', school: '', intended_profession: '', class_type: '', observation: '', active: true });
     const [selectedClassId, setSelectedClassId] = useState<number | ''>(''); // For enrollment
 
     const [editingStudent, setEditingStudent] = useState<Student | null>(null);
-    const [editStudentData, setEditStudentData] = useState({ name: '', phone: '', parent_name: '', parent_phone: '', parent_email: '', school_year: '', school: '', intended_profession: '', class_type: '', active: true });
+    const [editStudentData, setEditStudentData] = useState({ name: '', phone: '', parent_name: '', parent_phone: '', parent_email: '', school_year: '', school: '', intended_profession: '', class_type: '', observation: '', active: true });
     const [editClassId, setEditClassId] = useState<number | ''>(''); // Turma atual do aluno no editar
     const [originalClassId, setOriginalClassId] = useState<number | null>(null); // Para detectar mudança
 
@@ -88,28 +90,37 @@ export const Students = () => {
     // Reset page when search or filters change
     useEffect(() => {
         setPage(0);
-    }, [search, sortBy, sortDesc]);
+    }, [search, schoolYearFilter, sortBy, sortDesc]);
 
     // Immediate fetch for filters/sort/pagination
     useEffect(() => {
         fetchData();
     }, [page, sortBy, sortDesc]);
 
-    // Debounced search
+    // Debounced search and filters
     useEffect(() => {
         const timeoutId = setTimeout(() => {
             fetchData();
         }, 500);
         return () => clearTimeout(timeoutId);
-    }, [search]);
+    }, [search, schoolYearFilter]);
 
     const fetchData = async () => {
         setIsLoading(true);
         try {
             const skip = page * limit;
-            let url = `/students/?skip=${skip}&limit=${limit}&search=${search}&sort_by=${sortBy}&sort_desc=${sortDesc}`;
+            const params = new URLSearchParams({
+                skip: String(skip),
+                limit: String(limit),
+                search,
+                sort_by: sortBy,
+                sort_desc: String(sortDesc)
+            });
+            if (schoolYearFilter.trim()) {
+                params.set('school_year', schoolYearFilter.trim());
+            }
 
-            const res = await api.get(url);
+            const res = await api.get(`/students/?${params.toString()}`);
             setStudents(res.data.items);
             setTotalStudents(res.data.total);
         } catch (e) { console.error(e); }
@@ -136,7 +147,7 @@ export const Students = () => {
                 await api.post(`/classes/${selectedClassId}/enroll/${res.data.id}`);
             }
             setShowCreateModal(false);
-            setNewStudentData({ name: '', phone: '', parent_name: '', parent_phone: '', parent_email: '', school_year: '', school: '', intended_profession: '', class_type: '', active: true });
+            setNewStudentData({ name: '', phone: '', parent_name: '', parent_phone: '', parent_email: '', school_year: '', school: '', intended_profession: '', class_type: '', observation: '', active: true });
             setSelectedClassId('');
             fetchData();
         } catch (e) { alert('Erro ao criar aluno'); }
@@ -276,8 +287,8 @@ export const Students = () => {
             </div>
 
             {/* Search Bar & Filters */}
-            <div className={`transition-all duration-500 mb-6 sticky top-0 z-10 ${search.length > 0 ? '-translate-y-2 opacity-95' : ''}`}>
-                <div className="flex gap-4 max-w-4xl mx-auto">
+            <div className={`transition-all duration-500 mb-6 sticky top-0 z-10 ${search.length > 0 || schoolYearFilter.length > 0 ? '-translate-y-2 opacity-95' : ''}`}>
+                <div className="flex flex-col lg:flex-row gap-3 lg:gap-4 max-w-5xl mx-auto">
                     <div className="relative group flex-1">
                         <div className="absolute inset-0 bg-primary/10 rounded-2xl blur-xl group-hover:bg-primary/20 transition-all duration-500"></div>
                         <div className="relative glass border border-white/10 rounded-2xl flex items-center p-1">
@@ -299,7 +310,23 @@ export const Students = () => {
                         </div>
                     </div>
 
-
+                    <div className="relative group w-full lg:w-64">
+                        <div className="absolute inset-0 bg-primary/10 rounded-2xl blur-xl group-hover:bg-primary/20 transition-all duration-500"></div>
+                        <div className="relative glass border border-white/10 rounded-2xl flex items-center p-1">
+                            <input
+                                type="text"
+                                placeholder="Filtrar ano escolar"
+                                className="w-full bg-transparent border-none text-white text-sm sm:text-base placeholder-text-muted/50 focus:ring-0 focus:outline-none py-3 px-4"
+                                value={schoolYearFilter}
+                                onChange={e => setSchoolYearFilter(e.target.value)}
+                            />
+                            {schoolYearFilter && (
+                                <button onClick={() => setSchoolYearFilter('')} className="p-2 text-text-muted hover:text-white hover:bg-white/10 rounded-xl transition-all mr-1">
+                                    <X size={18} />
+                                </button>
+                            )}
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -441,6 +468,7 @@ export const Students = () => {
                                                                 school: student.school || '',
                                                                 intended_profession: student.intended_profession || '',
                                                                 class_type: (student.class_type as any) || '',
+                                                                observation: student.observation || '',
                                                                 active: student.active ?? true
                                                             });
                                                             // Buscar turma atual do aluno
@@ -476,7 +504,7 @@ export const Students = () => {
                             })}
                             {students.length === 0 && !isLoading && (
                                 <tr>
-                                    <td colSpan={4} className="p-8 text-center text-text-muted italic">Nenhum aluno encontrado.</td>
+                                    <td colSpan={7} className="p-8 text-center text-text-muted italic">Nenhum aluno encontrado.</td>
                                 </tr>
                             )}
                         </tbody>
@@ -579,6 +607,16 @@ export const Students = () => {
                                             <option value="Quinzenal" className="bg-bg-dark text-white">Quinzenal</option>
                                         </select>
                                     </div>
+                                </div>
+
+                                <div>
+                                    <label className="text-xs font-medium text-text-muted uppercase tracking-wider ml-1">Observação</label>
+                                    <textarea
+                                        className="glass-input min-h-[96px] resize-y"
+                                        value={newStudentData.observation}
+                                        onChange={e => setNewStudentData({ ...newStudentData, observation: e.target.value })}
+                                        placeholder="Anotações gerais sobre o aluno"
+                                    />
                                 </div>
                                 <div
                                     className="flex items-center gap-3 bg-white/5 p-3 rounded-xl border border-white/10 cursor-pointer hover:bg-white/10 transition-all backdrop-blur-sm"
@@ -686,6 +724,16 @@ export const Students = () => {
                                             <option value="Quinzenal" className="bg-bg-dark text-white">Quinzenal</option>
                                         </select>
                                     </div>
+                                </div>
+
+                                <div>
+                                    <label className="text-xs font-medium text-text-muted uppercase tracking-wider ml-1">Observação</label>
+                                    <textarea
+                                        className="glass-input min-h-[96px] resize-y"
+                                        value={editStudentData.observation}
+                                        onChange={e => setEditStudentData({ ...editStudentData, observation: e.target.value })}
+                                        placeholder="Anotações gerais sobre o aluno"
+                                    />
                                 </div>
 
                                 <div className="pt-2 border-t border-white/10 mt-2">

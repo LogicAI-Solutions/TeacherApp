@@ -11,6 +11,7 @@ interface Student {
     parent_phone?: string;
     school_year?: string;
     class_type?: string;
+    active: boolean;
 }
 
 interface Payment {
@@ -18,7 +19,7 @@ interface Payment {
     student_id: number;
     month: number;
     year: number;
-    status: string; // 'PENDING', 'PAID', 'LATE'
+    status: string; // 'PENDING', 'PAID', 'ISENTO', 'LATE'
     amount: number;
 }
 
@@ -34,7 +35,7 @@ export const Payments = () => {
 
 
     const [students, setStudents] = useState<Student[]>([]);
-    const [stats, setStats] = useState({ total_students: 0, paid_count: 0, pending_count: 0, total_received: 0 });
+    const [stats, setStats] = useState({ total_students: 0, paid_count: 0, pending_count: 0, exempt_count: 0, total_received: 0 });
     const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
     const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
     const [loading, setLoading] = useState(true);
@@ -47,7 +48,7 @@ export const Payments = () => {
 
     // Filter & Sort
     const [sortDesc, setSortDesc] = useState(false);
-    const [filterStatus, setFilterStatus] = useState<'all' | 'PAID' | 'PENDING'>('all');
+    const [filterStatus, setFilterStatus] = useState<'all' | 'PAID' | 'PENDING' | 'ISENTO'>('all');
 
     // Local State for Batch Edits
     const [localPayments, setLocalPayments] = useState<Record<number, PaymentInput>>({});
@@ -90,7 +91,7 @@ export const Payments = () => {
             const skip = page * limit;
 
             // 1. Fetch paginated students for the table (with Name Sort & Payment Filter)
-            let studentsUrl = `/students/?skip=${skip}&limit=${limit}&search=${search}&sort_by=name&sort_desc=${sortDesc}`;
+            let studentsUrl = `/students/?skip=${skip}&limit=${limit}&search=${search}&sort_by=name&sort_desc=${sortDesc}&active=true`;
 
             if (filterStatus !== 'all') {
                 studentsUrl += `&payment_status=${filterStatus}&payment_month=${selectedMonth}&payment_year=${selectedYear}`;
@@ -160,13 +161,14 @@ export const Payments = () => {
                 // Only save if it's one of the currently visible students to avoid accidental overwrites?
                 // Actually we only populate localPayments with current page.
 
+                const status = p.status;
                 const payload = {
                     student_id: p.student_id,
                     month: selectedMonth,
                     year: selectedYear,
-                    status: p.status,
-                    amount: Number(p.amount),
-                    paid_at: p.status === 'PAID' ? new Date().toISOString().split('T')[0] : null
+                    status,
+                    amount: status === 'ISENTO' ? 0 : Number(p.amount),
+                    paid_at: status === 'PAID' ? new Date().toISOString().split('T')[0] : null
                 };
 
                 if (p.id) {
@@ -187,7 +189,7 @@ export const Payments = () => {
     };
 
     // Stats are now direct from backend
-    const { total_students: totalStudentsCount, paid_count: actualPaidCount, pending_count: pendingCount, total_received: totalReceived } = stats;
+    const { total_students: totalStudentsCount, paid_count: actualPaidCount, pending_count: pendingCount, exempt_count: exemptCount, total_received: totalReceived } = stats;
 
 
 
@@ -237,12 +239,13 @@ export const Payments = () => {
                 <div className="flex items-center gap-2 glass p-2 rounded-2xl">
                     <select
                         value={filterStatus}
-                        onChange={e => setFilterStatus(e.target.value as 'all' | 'PAID' | 'PENDING')}
+                        onChange={e => setFilterStatus(e.target.value as 'all' | 'PAID' | 'PENDING' | 'ISENTO')}
                         className="bg-white/5 border border-white/10 rounded-lg py-1.5 px-2 text-xs text-white focus:outline-none focus:ring-1 focus:ring-primary/40 [&>option]:bg-bg-dark"
                     >
                         <option value="all">Todos os Status</option>
                         <option value="PAID">Pagos</option>
                         <option value="PENDING">Pendentes</option>
+                        <option value="ISENTO">Isentos</option>
                     </select>
 
                     <div className="w-[1px] h-6 bg-white/10 mx-1"></div>
@@ -269,7 +272,7 @@ export const Payments = () => {
             </div>
 
             {/* Stats Cards */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4 mb-4 sm:mb-6">
+            <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-5 gap-2 sm:gap-4 mb-4 sm:mb-6">
                 <div className="stat-card p-3 sm:p-4 relative overflow-hidden group">
                     <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                     <div className="flex items-center gap-2 sm:gap-3 mb-1 sm:mb-2">
@@ -277,10 +280,10 @@ export const Payments = () => {
                             <DollarSign size={16} className="sm:hidden" />
                             <DollarSign size={20} className="hidden sm:block" />
                         </div>
-                        <span className="text-text-muted text-xs sm:text-sm font-medium hidden sm:inline">Total Alunos</span>
+                        <span className="text-text-muted text-xs sm:text-sm font-medium hidden sm:inline">Alunos Ativos</span>
                     </div>
                     <p className="text-xl sm:text-2xl md:text-3xl font-bold text-text-main">{totalStudentsCount}</p>
-                    <p className="text-xs text-indigo-400 mt-0.5 sm:mt-1 font-medium truncate">Alunos</p>
+                    <p className="text-xs text-indigo-400 mt-0.5 sm:mt-1 font-medium truncate">Ativos</p>
                 </div>
 
                 <div className="stat-card p-3 sm:p-4 relative overflow-hidden group">
@@ -307,6 +310,19 @@ export const Payments = () => {
                     </div>
                     <p className="text-xl sm:text-2xl md:text-3xl font-bold text-text-main">{pendingCount}</p>
                     <p className="text-xs text-primary mt-0.5 sm:mt-1 font-medium truncate">Pendentes</p>
+                </div>
+
+                <div className="stat-card p-3 sm:p-4 relative overflow-hidden group">
+                    <div className="absolute inset-0 bg-gradient-to-br from-sky-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <div className="flex items-center gap-2 sm:gap-3 mb-1 sm:mb-2">
+                        <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-sky-500/20 flex items-center justify-center text-sky-400 border border-sky-500/30">
+                            <CheckCircle size={16} className="sm:hidden" />
+                            <CheckCircle size={20} className="hidden sm:block" />
+                        </div>
+                        <span className="text-text-muted text-xs sm:text-sm font-medium hidden sm:inline">Isentos</span>
+                    </div>
+                    <p className="text-xl sm:text-2xl md:text-3xl font-bold text-text-main">{exemptCount}</p>
+                    <p className="text-xs text-sky-400 mt-0.5 sm:mt-1 font-medium truncate">Isentos</p>
                 </div>
 
                 <div className="stat-card p-3 sm:p-4 relative overflow-hidden group">
@@ -384,6 +400,7 @@ export const Payments = () => {
                             {students.map(student => {
                                 const payment = localPayments[student.id] || { status: 'PENDING', amount: 0, student_id: student.id };
                                 const isPaid = payment.status === 'PAID';
+                                const isExempt = payment.status === 'ISENTO';
                                 return (
                                     <tr key={student.id} className="hover:bg-white/5 transition-colors group">
                                         <td className="p-2 sm:p-4">
@@ -396,20 +413,22 @@ export const Payments = () => {
                                         <td className="p-2 sm:p-4 text-left text-sm text-text-muted hidden xl:table-cell">{student.class_type || '-'}</td>
                                         <td className="p-2 sm:p-4">
                                             <select
-                                                className={`w-full px-2 py-1 sm:p-2 rounded-xl text-xs sm:text-sm border focus:ring-2 focus:ring-primary/40 outline-none transition-all cursor-pointer backdrop-blur-sm ${isPaid ? 'bg-success/10 text-success border-success/30' : 'bg-warning/10 text-warning border-warning/30'}`}
+                                                className={`w-full px-2 py-1 sm:p-2 rounded-xl text-xs sm:text-sm border focus:ring-2 focus:ring-primary/40 outline-none transition-all cursor-pointer backdrop-blur-sm ${isPaid ? 'bg-success/10 text-success border-success/30' : isExempt ? 'bg-sky-500/10 text-sky-400 border-sky-500/30' : 'bg-warning/10 text-warning border-warning/30'}`}
                                                 value={payment.status}
                                                 onChange={e => updateLocalPayment(student.id, 'status', e.target.value)}
                                             >
                                                 <option value="PENDING" className="bg-bg-dark text-white">Pendente</option>
                                                 <option value="PAID" className="bg-bg-dark text-white">Pago</option>
+                                                <option value="ISENTO" className="bg-bg-dark text-white">Isento</option>
                                             </select>
                                         </td>
                                         <td className="p-2 sm:p-4">
                                             <input
                                                 type="text"
                                                 className="w-full bg-transparent border-b border-white/10 outline-none py-1 text-xs sm:text-sm font-mono transition-all text-right focus:border-primary text-white"
-                                                value={formatCurrency(payment.amount)}
+                                                value={formatCurrency(isExempt ? 0 : payment.amount)}
                                                 onChange={e => updateLocalPayment(student.id, 'amount', parseCurrency(e.target.value))}
+                                                disabled={isExempt}
                                                 placeholder="R$ 0"
                                             />
                                         </td>

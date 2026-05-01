@@ -12,6 +12,7 @@ class StudentBase(BaseModel):
     school: Optional[str] = None
     intended_profession: Optional[str] = None
     class_type: Optional[str] = None
+    observation: Optional[str] = None
     active: bool = True
 
 class StudentCreate(StudentBase):
