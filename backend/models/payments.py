@@ -9,7 +9,7 @@ class Payment(Base):
     student_id = Column(Integer, ForeignKey("students.id"), index=True)
     month = Column(Integer, index=True) # 1-12
     year = Column(Integer, index=True)
-    status = Column(String) # "PENDING", "PAID", "LATE"
+    status = Column(String) # "PENDING", "PAID", "ISENTO", "LATE"
     amount = Column(Float, default=0.0)
     paid_at = Column(Date, nullable=True)
     

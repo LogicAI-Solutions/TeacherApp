@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, Boolean
+from sqlalchemy import Column, Integer, String, ForeignKey, Boolean, Text
 from sqlalchemy.orm import relationship
 from backend.core.database import Base
 
@@ -15,6 +15,7 @@ class Student(Base):
     school = Column(String, nullable=True)
     intended_profession = Column(String, nullable=True)
     class_type = Column(String, nullable=True)
+    observation = Column(Text, nullable=True)
     active = Column(Boolean, default=True)
     owner_id = Column(Integer, ForeignKey("users.id"))
 

@@ -8,7 +8,7 @@ import os
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 def ensure_columns(db: Session):
-    """Add missing columns to the users table."""
+    """Add missing columns used by lightweight deployments."""
     try:
         # Check if profile_photo column exists
         result = db.execute(text(
@@ -20,6 +20,18 @@ def ensure_columns(db: Session):
             print("Added profile_photo column to users table")
     except Exception as e:
         print(f"Column migration check failed: {e}")
+        db.rollback()
+
+    try:
+        result = db.execute(text(
+            "SELECT column_name FROM information_schema.columns WHERE table_name='students' AND column_name='observation'"
+        ))
+        if not result.fetchone():
+            db.execute(text("ALTER TABLE students ADD COLUMN observation TEXT"))
+            db.commit()
+            print("Added observation column to students table")
+    except Exception as e:
+        print(f"Student column migration check failed: {e}")
         db.rollback()
 
 def init_db(db: Session = next(database.get_db())):

@@ -22,6 +22,7 @@ def read_students(
     sort_by: Optional[str] = "name",
     sort_desc: bool = False,
     active: Optional[bool] = None,
+    school_year: Optional[str] = None,
     payment_status: Optional[str] = None,
     payment_month: Optional[int] = None,
     payment_year: Optional[int] = None,
@@ -37,6 +38,7 @@ def read_students(
         sort_by=sort_by, 
         sort_desc=sort_desc, 
         active_status=active,
+        school_year=school_year,
         payment_status=payment_status,
         payment_month=payment_month,
         payment_year=payment_year
@@ -46,6 +48,7 @@ def read_students(
         user_id=current_user.id, 
         search=search,
         active_status=active,
+        school_year=school_year,
         payment_status=payment_status,
         payment_month=payment_month,
         payment_year=payment_year
