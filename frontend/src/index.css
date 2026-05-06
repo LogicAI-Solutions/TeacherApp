@@ -5,12 +5,12 @@
   --color-primary-hover: var(--theme-primary-hover-hex);
   --color-primary-light: var(--theme-primary-light-hex);
 
-  --color-bg-dark: #0a0f1a;
-  --color-bg-card: rgba(30, 41, 59, 0.5);
-  --color-bg-darker: #020617;
+  --color-bg-dark: var(--theme-bg-dark);
+  --color-bg-card: var(--theme-bg-card);
+  --color-bg-darker: var(--theme-bg-darker);
 
-  --color-text-main: #f8fafc;
-  --color-text-muted: #94a3b8;
+  --color-text-main: var(--theme-text-main);
+  --color-text-muted: var(--theme-text-muted);
 
   --color-danger: #ef4444;
   --color-success: #22c55e;
