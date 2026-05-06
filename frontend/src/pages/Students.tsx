@@ -313,13 +313,27 @@ export const Students = () => {
                     <div className="relative group w-full lg:w-64">
                         <div className="absolute inset-0 bg-primary/10 rounded-2xl blur-xl group-hover:bg-primary/20 transition-all duration-500"></div>
                         <div className="relative glass border border-white/10 rounded-2xl flex items-center p-1">
-                            <input
-                                type="text"
-                                placeholder="Filtrar ano escolar"
-                                className="w-full bg-transparent border-none text-white text-sm sm:text-base placeholder-text-muted/50 focus:ring-0 focus:outline-none py-3 px-4"
+                            <select
+                                className="w-full bg-transparent border-none text-white text-sm sm:text-base focus:ring-0 focus:outline-none py-3 px-4 appearance-none cursor-pointer"
                                 value={schoolYearFilter}
                                 onChange={e => setSchoolYearFilter(e.target.value)}
-                            />
+                            >
+                                <option value="" className="bg-bg-dark text-white">Todos os Anos Escolares</option>
+                                <option value="1º Ano do Ensino Fundamental" className="bg-bg-dark text-white">1º Ano do Ens. Fundamental</option>
+                                <option value="2º Ano do Ensino Fundamental" className="bg-bg-dark text-white">2º Ano do Ens. Fundamental</option>
+                                <option value="3º Ano do Ensino Fundamental" className="bg-bg-dark text-white">3º Ano do Ens. Fundamental</option>
+                                <option value="4º Ano do Ensino Fundamental" className="bg-bg-dark text-white">4º Ano do Ens. Fundamental</option>
+                                <option value="5º Ano do Ensino Fundamental" className="bg-bg-dark text-white">5º Ano do Ens. Fundamental</option>
+                                <option value="6º Ano do Ensino Fundamental" className="bg-bg-dark text-white">6º Ano do Ens. Fundamental</option>
+                                <option value="7º Ano do Ensino Fundamental" className="bg-bg-dark text-white">7º Ano do Ens. Fundamental</option>
+                                <option value="8º Ano do Ensino Fundamental" className="bg-bg-dark text-white">8º Ano do Ens. Fundamental</option>
+                                <option value="9º Ano do Ensino Fundamental" className="bg-bg-dark text-white">9º Ano do Ens. Fundamental</option>
+                                <option value="1º Ano do Ensino Médio" className="bg-bg-dark text-white">1º Ano do Ensino Médio</option>
+                                <option value="2º Ano do Ensino Médio" className="bg-bg-dark text-white">2º Ano do Ensino Médio</option>
+                                <option value="3º Ano do Ensino Médio" className="bg-bg-dark text-white">3º Ano do Ensino Médio</option>
+                                <option value="Pré-Vestibular" className="bg-bg-dark text-white">Pré-Vestibular</option>
+                                <option value="Ensino Superior" className="bg-bg-dark text-white">Ensino Superior</option>
+                            </select>
                             {schoolYearFilter && (
                                 <button onClick={() => setSchoolYearFilter('')} className="p-2 text-text-muted hover:text-white hover:bg-white/10 rounded-xl transition-all mr-1">
                                     <X size={18} />
@@ -376,6 +390,7 @@ export const Students = () => {
                                 </th>
                                 <th className="text-left p-3 sm:p-4 text-xs font-bold text-text-muted uppercase tracking-wider hidden xl:table-cell">Ano Escolar</th>
                                 <th className="text-left p-3 sm:p-4 text-xs font-bold text-text-muted uppercase tracking-wider hidden xl:table-cell">Tipo de Aula</th>
+                                <th className="text-left p-3 sm:p-4 text-xs font-bold text-text-muted uppercase tracking-wider hidden 2xl:table-cell">Observação</th>
                                 <th
                                     className="text-center p-3 sm:p-4 text-xs font-bold text-text-muted uppercase tracking-wider cursor-pointer hover:text-white transition-colors group select-none"
                                     onClick={() => {
@@ -411,6 +426,11 @@ export const Students = () => {
                                         </td>
                                         <td className="p-3 sm:p-4 text-text-muted text-sm hidden xl:table-cell">{student.school_year || '-'}</td>
                                         <td className="p-3 sm:p-4 text-text-muted text-sm hidden xl:table-cell">{student.class_type || '-'}</td>
+                                        <td className="p-3 sm:p-4 text-text-muted text-sm hidden 2xl:table-cell">
+                                            <div className="truncate max-w-[150px]" title={student.observation || ''}>
+                                                {student.observation || '-'}
+                                            </div>
+                                        </td>
                                         <td className="p-3 sm:p-4 text-center">
                                             <select
                                                 className={`px-2 sm:px-3 py-1 sm:py-1.5 rounded-xl text-xs font-medium border focus:ring-2 focus:ring-primary/40 outline-none transition-all cursor-pointer backdrop-blur-sm ${student.active
@@ -579,9 +599,27 @@ export const Students = () => {
                                 <div className="grid grid-cols-2 gap-4">
                                     <div>
                                         <label className="text-xs font-medium text-text-muted uppercase tracking-wider ml-1">Ano Escolar</label>
-                                        <input className="glass-input"
-                                            value={newStudentData.school_year} onChange={e => setNewStudentData({ ...newStudentData, school_year: e.target.value })}
-                                            placeholder="Ex: 5º Ano" />
+                                        <select
+                                            className="glass-input cursor-pointer appearance-none"
+                                            value={newStudentData.school_year}
+                                            onChange={e => setNewStudentData({ ...newStudentData, school_year: e.target.value })}
+                                        >
+                                            <option value="" className="bg-bg-dark text-white">-- Selecione ou deixe em branco --</option>
+                                            <option value="1º Ano do Ensino Fundamental" className="bg-bg-dark text-white">1º Ano do Ens. Fundamental</option>
+                                            <option value="2º Ano do Ensino Fundamental" className="bg-bg-dark text-white">2º Ano do Ens. Fundamental</option>
+                                            <option value="3º Ano do Ensino Fundamental" className="bg-bg-dark text-white">3º Ano do Ens. Fundamental</option>
+                                            <option value="4º Ano do Ensino Fundamental" className="bg-bg-dark text-white">4º Ano do Ens. Fundamental</option>
+                                            <option value="5º Ano do Ensino Fundamental" className="bg-bg-dark text-white">5º Ano do Ens. Fundamental</option>
+                                            <option value="6º Ano do Ensino Fundamental" className="bg-bg-dark text-white">6º Ano do Ens. Fundamental</option>
+                                            <option value="7º Ano do Ensino Fundamental" className="bg-bg-dark text-white">7º Ano do Ens. Fundamental</option>
+                                            <option value="8º Ano do Ensino Fundamental" className="bg-bg-dark text-white">8º Ano do Ens. Fundamental</option>
+                                            <option value="9º Ano do Ensino Fundamental" className="bg-bg-dark text-white">9º Ano do Ens. Fundamental</option>
+                                            <option value="1º Ano do Ensino Médio" className="bg-bg-dark text-white">1º Ano do Ensino Médio</option>
+                                            <option value="2º Ano do Ensino Médio" className="bg-bg-dark text-white">2º Ano do Ensino Médio</option>
+                                            <option value="3º Ano do Ensino Médio" className="bg-bg-dark text-white">3º Ano do Ensino Médio</option>
+                                            <option value="Pré-Vestibular" className="bg-bg-dark text-white">Pré-Vestibular</option>
+                                            <option value="Ensino Superior" className="bg-bg-dark text-white">Ensino Superior</option>
+                                        </select>
                                     </div>
                                     <div>
                                         <label className="text-xs font-medium text-text-muted uppercase tracking-wider ml-1">Colégio/Escola</label>
@@ -696,9 +734,27 @@ export const Students = () => {
                                 <div className="grid grid-cols-2 gap-4">
                                     <div>
                                         <label className="text-xs font-medium text-text-muted uppercase tracking-wider ml-1">Ano Escolar</label>
-                                        <input className="glass-input"
-                                            value={editStudentData.school_year} onChange={e => setEditStudentData({ ...editStudentData, school_year: e.target.value })}
-                                            placeholder="Ex: 5º Ano" />
+                                        <select
+                                            className="glass-input cursor-pointer appearance-none"
+                                            value={editStudentData.school_year}
+                                            onChange={e => setEditStudentData({ ...editStudentData, school_year: e.target.value })}
+                                        >
+                                            <option value="" className="bg-bg-dark text-white">-- Selecione ou deixe em branco --</option>
+                                            <option value="1º Ano do Ensino Fundamental" className="bg-bg-dark text-white">1º Ano do Ens. Fundamental</option>
+                                            <option value="2º Ano do Ensino Fundamental" className="bg-bg-dark text-white">2º Ano do Ens. Fundamental</option>
+                                            <option value="3º Ano do Ensino Fundamental" className="bg-bg-dark text-white">3º Ano do Ens. Fundamental</option>
+                                            <option value="4º Ano do Ensino Fundamental" className="bg-bg-dark text-white">4º Ano do Ens. Fundamental</option>
+                                            <option value="5º Ano do Ensino Fundamental" className="bg-bg-dark text-white">5º Ano do Ens. Fundamental</option>
+                                            <option value="6º Ano do Ensino Fundamental" className="bg-bg-dark text-white">6º Ano do Ens. Fundamental</option>
+                                            <option value="7º Ano do Ensino Fundamental" className="bg-bg-dark text-white">7º Ano do Ens. Fundamental</option>
+                                            <option value="8º Ano do Ensino Fundamental" className="bg-bg-dark text-white">8º Ano do Ens. Fundamental</option>
+                                            <option value="9º Ano do Ensino Fundamental" className="bg-bg-dark text-white">9º Ano do Ens. Fundamental</option>
+                                            <option value="1º Ano do Ensino Médio" className="bg-bg-dark text-white">1º Ano do Ensino Médio</option>
+                                            <option value="2º Ano do Ensino Médio" className="bg-bg-dark text-white">2º Ano do Ensino Médio</option>
+                                            <option value="3º Ano do Ensino Médio" className="bg-bg-dark text-white">3º Ano do Ensino Médio</option>
+                                            <option value="Pré-Vestibular" className="bg-bg-dark text-white">Pré-Vestibular</option>
+                                            <option value="Ensino Superior" className="bg-bg-dark text-white">Ensino Superior</option>
+                                        </select>
                                     </div>
                                     <div>
                                         <label className="text-xs font-medium text-text-muted uppercase tracking-wider ml-1">Colégio/Escola</label>
@@ -770,12 +826,13 @@ export const Students = () => {
             {/* Evolution Modal */}
             {viewingEvolution && (
                 <div className="modal-overlay animate-fade-in">
-                    <div className="glass-modal w-full max-w-4xl p-8 animate-slide-up relative overflow-hidden">
-                        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-purple-500/0 via-purple-500 to-purple-500/0"></div>
-                        <button onClick={() => setViewingEvolution(null)} className="absolute top-4 right-4 text-text-muted hover:text-white p-2 rounded-xl hover:bg-white/10 transition-all"><X size={20} /></button>
+                    <div className="glass-modal w-full max-w-4xl animate-slide-up relative overflow-hidden flex flex-col max-h-[90vh]">
+                        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-purple-500/0 via-purple-500 to-purple-500/0 z-10"></div>
+                        <button onClick={() => setViewingEvolution(null)} className="absolute top-4 right-4 text-text-muted hover:text-white p-2 rounded-xl hover:bg-white/10 transition-all z-10"><X size={20} /></button>
 
-                        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-3">
-                            <h3 className="text-xl sm:text-2xl font-bold text-white truncate max-w-[200px] sm:max-w-none">Evolução: {viewingEvolution.name}</h3>
+                        <div className="p-8 overflow-y-auto flex-1 w-full">
+                            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-3">
+                                <h3 className="text-xl sm:text-2xl font-bold text-white truncate max-w-[200px] sm:max-w-none">Evolução: {viewingEvolution.name}</h3>
                             <div className="flex items-center gap-2">
                                 <select
                                     value={reportMonth}
@@ -827,6 +884,7 @@ export const Students = () => {
                                     Nenhum dado de evolução encontrado.
                                 </div>
                             )}
+                        </div>
                         </div>
                     </div>
                 </div>
