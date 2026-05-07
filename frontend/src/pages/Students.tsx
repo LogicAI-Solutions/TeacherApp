@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import api from '../api';
-import { Plus, Search, Pencil, Trash, X, AlertTriangle, UserCircle, Download, MoreVertical, ArrowUp, ArrowDown, ArrowUpDown, Phone, BookOpen, GraduationCap, Calendar, Activity, CheckCircle, XCircle } from 'lucide-react';
+import { Plus, Search, Pencil, Trash, X, AlertTriangle, UserCircle, Download, MoreVertical, ArrowUp, ArrowDown, ArrowUpDown, Phone, BookOpen, Calendar, Activity, CheckCircle, XCircle } from 'lucide-react';
 import html2canvas from 'html2canvas';
 import { formatPhone, unmaskPhone } from '../utils/masks';
 import { XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Area, AreaChart } from 'recharts';
@@ -36,7 +36,6 @@ export const Students = () => {
     const [students, setStudents] = useState<Student[]>([]);
     const [classes, setClasses] = useState<ClassModel[]>([]);
     const [search, setSearch] = useState('');
-    const [schoolYearFilter, setSchoolYearFilter] = useState('');
     const [page, setPage] = useState(0);
     const [limit] = useState(8);
     const [totalStudents, setTotalStudents] = useState(0);
@@ -47,18 +46,18 @@ export const Students = () => {
 
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [newStudentData, setNewStudentData] = useState({ name: '', phone: '', parent_name: '', parent_phone: '', parent_email: '', school_year: '', school: '', intended_profession: '', class_type: '', observation: '', active: true });
-    const [selectedClassId, setSelectedClassId] = useState<number | ''>(''); 
+    const [selectedClassId, setSelectedClassId] = useState<number | ''>('');
 
     const [editingStudent, setEditingStudent] = useState<Student | null>(null);
     const [editStudentData, setEditStudentData] = useState({ name: '', phone: '', parent_name: '', parent_phone: '', parent_email: '', school_year: '', school: '', intended_profession: '', class_type: '', observation: '', active: true });
-    const [editClassId, setEditClassId] = useState<number | ''>(''); 
-    const [originalClassId, setOriginalClassId] = useState<number | null>(null); 
+    const [editClassId, setEditClassId] = useState<number | ''>('');
+    const [originalClassId, setOriginalClassId] = useState<number | null>(null);
 
     const [deletingStudent, setDeletingStudent] = useState<Student | null>(null);
 
     const [viewingEvolution, setViewingEvolution] = useState<Student | null>(null);
     const [evolutionData, setEvolutionData] = useState<EvolutionPoint[]>([]);
-    const [reportMonth, setReportMonth] = useState<number | ''>(''); 
+    const [reportMonth, setReportMonth] = useState<number | ''>('');
     const [reportYear, setReportYear] = useState<number>(new Date().getFullYear());
 
     const [openMenuId, setOpenMenuId] = useState<number | null>(null);
@@ -75,14 +74,14 @@ export const Students = () => {
 
     useEffect(() => { fetchClasses(); }, []);
 
-    useEffect(() => { setPage(0); }, [search, schoolYearFilter, sortBy, sortDesc]);
+    useEffect(() => { setPage(0); }, [search, sortBy, sortDesc]);
 
     useEffect(() => { fetchData(); }, [page, sortBy, sortDesc]);
 
     useEffect(() => {
         const timeoutId = setTimeout(() => { fetchData(); }, 500);
         return () => clearTimeout(timeoutId);
-    }, [search, schoolYearFilter]);
+    }, [search]);
 
     const fetchData = async () => {
         setIsLoading(true);
@@ -95,9 +94,6 @@ export const Students = () => {
                 sort_by: sortBy,
                 sort_desc: String(sortDesc)
             });
-            if (schoolYearFilter.trim()) {
-                params.set('school_year', schoolYearFilter.trim());
-            }
 
             const res = await api.get(`/students/?${params.toString()}`);
             setStudents(res.data.items);
@@ -206,7 +202,7 @@ export const Students = () => {
     const handleViewEvolution = async (student: Student) => {
         setViewingEvolution(student);
         setEvolutionData([]);
-        setReportMonth(''); 
+        setReportMonth('');
         setReportYear(new Date().getFullYear());
         try {
             const res = await api.get(`/students/${student.id}/evolution`);
@@ -256,7 +252,7 @@ export const Students = () => {
                         </div>
                     </div>
                 </div>
-                
+
                 <button
                     onClick={() => setShowCreateModal(true)}
                     className="group relative inline-flex items-center justify-center gap-2 px-6 py-3 text-sm font-bold text-white transition-all duration-300 ease-in-out hover:scale-105 active:scale-95 w-full md:w-auto"
@@ -269,7 +265,7 @@ export const Students = () => {
             </div>
 
             {/* Top Toolbar (Filters & Search) */}
-            <div className="mb-8 glass-card !p-2 flex flex-col lg:flex-row gap-2 relative z-20">
+            <div className="mb-8 glass-card !p-2 flex relative z-20">
                 <div className="relative flex-1 group">
                     <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                         <Search className="h-5 w-5 text-text-muted group-focus-within:text-primary transition-colors" />
@@ -287,40 +283,6 @@ export const Students = () => {
                         </button>
                     )}
                 </div>
-
-                <div className="h-px lg:h-auto lg:w-px bg-white/10 mx-2"></div>
-
-                <div className="relative w-full lg:w-72">
-                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                        <GraduationCap className="h-5 w-5 text-text-muted" />
-                    </div>
-                    <select
-                        className="block w-full pl-12 pr-10 py-3.5 bg-transparent border-none text-white text-sm focus:ring-0 focus:outline-none rounded-xl appearance-none cursor-pointer"
-                        value={schoolYearFilter}
-                        onChange={e => setSchoolYearFilter(e.target.value)}
-                    >
-                        <option value="" className="bg-bg-dark text-white">Todos os Anos Escolares</option>
-                        <option value="1º Ano do Ensino Fundamental" className="bg-bg-dark text-white">1º Ano do Ens. Fundamental</option>
-                        <option value="2º Ano do Ensino Fundamental" className="bg-bg-dark text-white">2º Ano do Ens. Fundamental</option>
-                        <option value="3º Ano do Ensino Fundamental" className="bg-bg-dark text-white">3º Ano do Ens. Fundamental</option>
-                        <option value="4º Ano do Ensino Fundamental" className="bg-bg-dark text-white">4º Ano do Ens. Fundamental</option>
-                        <option value="5º Ano do Ensino Fundamental" className="bg-bg-dark text-white">5º Ano do Ens. Fundamental</option>
-                        <option value="6º Ano do Ensino Fundamental" className="bg-bg-dark text-white">6º Ano do Ens. Fundamental</option>
-                        <option value="7º Ano do Ensino Fundamental" className="bg-bg-dark text-white">7º Ano do Ens. Fundamental</option>
-                        <option value="8º Ano do Ensino Fundamental" className="bg-bg-dark text-white">8º Ano do Ens. Fundamental</option>
-                        <option value="9º Ano do Ensino Fundamental" className="bg-bg-dark text-white">9º Ano do Ens. Fundamental</option>
-                        <option value="1º Ano do Ensino Médio" className="bg-bg-dark text-white">1º Ano do Ensino Médio</option>
-                        <option value="2º Ano do Ensino Médio" className="bg-bg-dark text-white">2º Ano do Ensino Médio</option>
-                        <option value="3º Ano do Ensino Médio" className="bg-bg-dark text-white">3º Ano do Ensino Médio</option>
-                        <option value="Pré-Vestibular" className="bg-bg-dark text-white">Pré-Vestibular</option>
-                        <option value="Ensino Superior" className="bg-bg-dark text-white">Ensino Superior</option>
-                    </select>
-                    {schoolYearFilter && (
-                        <button onClick={() => setSchoolYearFilter('')} className="absolute inset-y-0 right-8 pr-1 flex items-center text-text-muted hover:text-white transition-colors">
-                            <X size={16} className="bg-white/10 p-0.5 rounded-full w-5 h-5" />
-                        </button>
-                    )}
-                </div>
             </div>
 
             {/* Main Content Area */}
@@ -330,7 +292,7 @@ export const Students = () => {
                         <Loading text="Sincronizando dados..." />
                     </div>
                 )}
-                
+
                 <div className="overflow-x-auto flex-1 pb-20">
                     <table className="w-full text-left border-collapse">
                         <thead>
@@ -342,7 +304,9 @@ export const Students = () => {
                                 <th onClick={() => toggleSort('parent_name')} className="p-5 font-semibold text-xs uppercase tracking-wider text-text-muted hidden lg:table-cell cursor-pointer hover:text-white transition-colors group select-none whitespace-nowrap">
                                     <div className="flex items-center gap-2">Responsável {renderSortIcon('parent_name')}</div>
                                 </th>
-                                <th className="p-5 font-semibold text-xs uppercase tracking-wider text-text-muted hidden xl:table-cell whitespace-nowrap">Ano Escolar</th>
+                                <th onClick={() => toggleSort('school_year')} className="p-5 font-semibold text-xs uppercase tracking-wider text-text-muted hidden lg:table-cell cursor-pointer hover:text-white transition-colors group select-none whitespace-nowrap">
+                                    <div className="flex items-center gap-2">Ano Escolar {renderSortIcon('school_year')}</div>
+                                </th>
                                 <th onClick={() => toggleSort('active')} className="p-5 font-semibold text-xs uppercase tracking-wider text-text-muted cursor-pointer hover:text-white transition-colors group select-none text-center whitespace-nowrap">
                                     <div className="flex items-center justify-center gap-2">Status {renderSortIcon('active')}</div>
                                 </th>
@@ -381,8 +345,12 @@ export const Students = () => {
                                         </td>
                                         <td className="p-5 hidden lg:table-cell align-middle">
                                             {student.parent_name ? (
-                                                <div>
-                                                    <div className="text-sm font-medium text-white/90">{student.parent_name}</div>
+                                                <div 
+                                                    onClick={() => setSearch(student.parent_name || '')}
+                                                    className="cursor-pointer group/parent hover:bg-white/5 p-1 rounded-lg transition-all"
+                                                    title={`Filtrar por ${student.parent_name}`}
+                                                >
+                                                    <div className="text-sm font-medium text-white/90 group-hover/parent:text-primary-light transition-colors">{student.parent_name}</div>
                                                     {student.parent_phone && (
                                                         <div className="text-xs text-text-muted flex items-center gap-1 mt-1">
                                                             <Phone size={10} className="text-white/40" /> {formatPhone(student.parent_phone)}
@@ -393,9 +361,13 @@ export const Students = () => {
                                                 <span className="text-white/20 text-sm italic">Não informado</span>
                                             )}
                                         </td>
-                                        <td className="p-5 hidden xl:table-cell align-middle">
+                                        <td className="p-5 hidden lg:table-cell align-middle">
                                             {student.school_year ? (
-                                                <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-white/5 border border-white/5 text-sm text-text-muted">
+                                                <div 
+                                                    onClick={() => setSearch(student.school_year || '')}
+                                                    className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-white/5 border border-white/5 text-sm text-text-muted cursor-pointer hover:bg-primary/20 hover:text-primary-light transition-all"
+                                                    title={`Filtrar por ${student.school_year}`}
+                                                >
                                                     <BookOpen size={14} className="text-primary/70" />
                                                     {student.school_year}
                                                 </div>
@@ -412,11 +384,10 @@ export const Students = () => {
                                                         fetchData();
                                                     } catch (err) { alert('Erro ao atualizar status'); }
                                                 }}
-                                                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all ${
-                                                    student.active 
-                                                    ? 'bg-success/10 text-success hover:bg-success/20 border border-success/20' 
-                                                    : 'bg-white/5 text-text-muted hover:bg-white/10 border border-white/10'
-                                                }`}
+                                                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all ${student.active
+                                                        ? 'bg-success/10 text-success hover:bg-success/20 border border-success/20'
+                                                        : 'bg-white/5 text-text-muted hover:bg-white/10 border border-white/10'
+                                                    }`}
                                             >
                                                 {student.active ? <CheckCircle size={14} /> : <XCircle size={14} />}
                                                 {student.active ? 'Ativo' : 'Inativo'}
@@ -520,13 +491,13 @@ export const Students = () => {
                         <button onClick={() => { setShowCreateModal(false); setEditingStudent(null); }} className="absolute top-5 right-5 text-text-muted hover:text-white p-2 rounded-xl hover:bg-white/10 transition-all z-20 bg-bg-darker/50 backdrop-blur-md">
                             <X size={20} />
                         </button>
-                        
+
                         <div className="p-8 overflow-y-auto custom-scrollbar flex-1">
                             <h3 className="text-2xl font-extrabold text-white mb-2 tracking-tight">
                                 {editingStudent ? 'Editar Perfil do Aluno' : 'Cadastrar Novo Aluno'}
                             </h3>
                             <p className="text-text-muted text-sm mb-8">Preencha as informações abaixo para manter o cadastro atualizado.</p>
-                            
+
                             <form onSubmit={editingStudent ? handleUpdateStudent : handleCreateStudent} className="space-y-6">
                                 <div className="space-y-4">
                                     <h4 className="text-xs font-bold text-primary uppercase tracking-widest border-b border-white/10 pb-2">Informações Pessoais</h4>
@@ -565,20 +536,10 @@ export const Students = () => {
                                             <label className="text-xs font-bold text-text-muted uppercase tracking-wider ml-1 mb-1 block">Ano Escolar</label>
                                             <select className="glass-input cursor-pointer appearance-none" value={editingStudent ? editStudentData.school_year : newStudentData.school_year} onChange={e => editingStudent ? setEditStudentData({ ...editStudentData, school_year: e.target.value }) : setNewStudentData({ ...newStudentData, school_year: e.target.value })}>
                                                 <option value="" className="bg-bg-dark text-white">-- Selecione --</option>
-                                                <option value="1º Ano do Ensino Fundamental" className="bg-bg-dark text-white">1º Ano do Ens. Fundamental</option>
-                                                <option value="2º Ano do Ensino Fundamental" className="bg-bg-dark text-white">2º Ano do Ens. Fundamental</option>
-                                                <option value="3º Ano do Ensino Fundamental" className="bg-bg-dark text-white">3º Ano do Ens. Fundamental</option>
-                                                <option value="4º Ano do Ensino Fundamental" className="bg-bg-dark text-white">4º Ano do Ens. Fundamental</option>
-                                                <option value="5º Ano do Ensino Fundamental" className="bg-bg-dark text-white">5º Ano do Ens. Fundamental</option>
-                                                <option value="6º Ano do Ensino Fundamental" className="bg-bg-dark text-white">6º Ano do Ens. Fundamental</option>
-                                                <option value="7º Ano do Ensino Fundamental" className="bg-bg-dark text-white">7º Ano do Ens. Fundamental</option>
-                                                <option value="8º Ano do Ensino Fundamental" className="bg-bg-dark text-white">8º Ano do Ens. Fundamental</option>
-                                                <option value="9º Ano do Ensino Fundamental" className="bg-bg-dark text-white">9º Ano do Ens. Fundamental</option>
                                                 <option value="1º Ano do Ensino Médio" className="bg-bg-dark text-white">1º Ano do Ensino Médio</option>
                                                 <option value="2º Ano do Ensino Médio" className="bg-bg-dark text-white">2º Ano do Ensino Médio</option>
                                                 <option value="3º Ano do Ensino Médio" className="bg-bg-dark text-white">3º Ano do Ensino Médio</option>
                                                 <option value="Pré-Vestibular" className="bg-bg-dark text-white">Pré-Vestibular</option>
-                                                <option value="Ensino Superior" className="bg-bg-dark text-white">Ensino Superior</option>
                                             </select>
                                         </div>
                                         <div>
@@ -604,7 +565,7 @@ export const Students = () => {
                                         <label className="text-xs font-bold text-text-muted uppercase tracking-wider ml-1 mb-1 block">Observação</label>
                                         <textarea className="glass-input min-h-[100px] resize-y" value={editingStudent ? editStudentData.observation : newStudentData.observation} onChange={e => editingStudent ? setEditStudentData({ ...editStudentData, observation: e.target.value }) : setNewStudentData({ ...newStudentData, observation: e.target.value })} placeholder="Anotações gerais e relevantes sobre o aluno..." />
                                     </div>
-                                    
+
                                     <div>
                                         <label className="text-xs font-bold text-text-muted uppercase tracking-wider ml-1 mb-1 block">{editingStudent ? 'Turma Matriculada' : 'Matricular na Turma (Opcional)'}</label>
                                         <select className="glass-input cursor-pointer" value={editingStudent ? editClassId : selectedClassId} onChange={e => editingStudent ? setEditClassId(Number(e.target.value) || '') : setSelectedClassId(Number(e.target.value) || '')}>
@@ -615,7 +576,7 @@ export const Students = () => {
                                 </div>
 
                                 <div className="pt-4 border-t border-white/10 mt-6 flex flex-col sm:flex-row justify-between items-center gap-6">
-                                    <div 
+                                    <div
                                         className="flex items-center gap-3 bg-white/5 px-4 py-2.5 rounded-xl border border-white/10 cursor-pointer hover:bg-white/10 transition-all w-full sm:w-auto group"
                                         onClick={() => editingStudent ? setEditStudentData({ ...editStudentData, active: !editStudentData.active }) : setNewStudentData({ ...newStudentData, active: !newStudentData.active })}
                                     >
@@ -624,7 +585,7 @@ export const Students = () => {
                                         </div>
                                         <span className="text-sm font-bold text-white select-none">Cadastro Ativo</span>
                                     </div>
-                                    
+
                                     <div className="flex gap-3 w-full sm:w-auto">
                                         <button type="button" onClick={() => { setShowCreateModal(false); setEditingStudent(null); }} className="flex-1 sm:flex-none px-6 py-3 text-text-muted font-semibold hover:text-white hover:bg-white/10 rounded-xl transition-all">Cancelar</button>
                                         <button type="submit" className="flex-1 sm:flex-none glass-button text-white px-8 py-3 rounded-xl font-bold shadow-lg shadow-primary/30">Salvar Dados</button>
@@ -654,7 +615,7 @@ export const Students = () => {
                                     <h3 className="text-3xl font-extrabold text-white truncate max-w-full">{viewingEvolution.name}</h3>
                                     <p className="text-text-muted mt-1 text-sm">Acompanhamento de notas e frequência</p>
                                 </div>
-                                
+
                                 <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
                                     <div className="bg-bg-darker/50 p-1.5 rounded-xl border border-white/10 flex items-center gap-2">
                                         <Calendar size={16} className="text-text-muted ml-2" />
@@ -680,7 +641,7 @@ export const Students = () => {
                                             ))}
                                         </select>
                                     </div>
-                                    
+
                                     <button
                                         onClick={handleDownloadReport}
                                         className="flex items-center justify-center gap-2 px-5 py-2.5 bg-gradient-to-r from-success/80 to-emerald-600 hover:from-success hover:to-emerald-500 text-white font-bold rounded-xl shadow-lg shadow-success/20 transition-all w-full md:w-auto"
@@ -697,8 +658,8 @@ export const Students = () => {
                                         <AreaChart data={filteredEvolutionData} margin={{ top: 20, right: 20, left: -20, bottom: 0 }}>
                                             <defs>
                                                 <linearGradient id="colorGrade" x1="0" y1="0" x2="0" y2="1">
-                                                    <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.5}/>
-                                                    <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0}/>
+                                                    <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.5} />
+                                                    <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0} />
                                                 </linearGradient>
                                             </defs>
                                             <CartesianGrid strokeDasharray="3 3" stroke="#ffffff10" vertical={false} />

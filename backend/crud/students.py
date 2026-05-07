@@ -16,7 +16,8 @@ def get_students(db: Session, user_id: int, skip: int = 0, limit: int = 100, sea
         search_filter = f"%{search}%"
         query = query.filter(or_(
             Student.name.ilike(search_filter),
-            Student.parent_name.ilike(search_filter)
+            Student.parent_name.ilike(search_filter),
+            Student.school_year.ilike(search_filter)
         ))
 
     if school_year:
@@ -65,6 +66,11 @@ def get_students(db: Session, user_id: int, skip: int = 0, limit: int = 100, sea
             query = query.order_by(Student.parent_name.desc())
         else:
             query = query.order_by(Student.parent_name.asc())
+    elif sort_by == 'school_year':
+        if sort_desc:
+            query = query.order_by(Student.school_year.desc())
+        else:
+            query = query.order_by(Student.school_year.asc())
 
     return query.offset(skip).limit(limit).all()
 
@@ -78,7 +84,8 @@ def count_students(db: Session, user_id: int, search: str = None, active_status:
         search_filter = f"%{search}%"
         query = query.filter(or_(
             Student.name.ilike(search_filter),
-            Student.parent_name.ilike(search_filter)
+            Student.parent_name.ilike(search_filter),
+            Student.school_year.ilike(search_filter)
         ))
 
     if school_year:

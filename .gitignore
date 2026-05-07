@@ -145,3 +145,13 @@ venv/
 
 # Profile photos
 uploads/
+
+# Cache Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Cache
+.cache/
+.DS_Store
