@@ -310,6 +310,7 @@ export const Students = () => {
                                 <th onClick={() => toggleSort('active')} className="p-5 font-semibold text-xs uppercase tracking-wider text-text-muted cursor-pointer hover:text-white transition-colors group select-none text-center whitespace-nowrap">
                                     <div className="flex items-center justify-center gap-2">Status {renderSortIcon('active')}</div>
                                 </th>
+                                <th className="p-5 font-semibold text-xs uppercase tracking-wider text-text-muted hidden xl:table-cell whitespace-nowrap">Observação</th>
                                 <th className="p-5 font-semibold text-xs uppercase tracking-wider text-text-muted text-right whitespace-nowrap">Ações</th>
                             </tr>
                         </thead>
@@ -392,6 +393,11 @@ export const Students = () => {
                                                 {student.active ? <CheckCircle size={14} /> : <XCircle size={14} />}
                                                 {student.active ? 'Ativo' : 'Inativo'}
                                             </button>
+                                        </td>
+                                        <td className="p-5 hidden xl:table-cell align-middle max-w-[200px]">
+                                            <div className="text-sm text-text-muted truncate font-medium" title={student.observation || ''}>
+                                                {student.observation || <span className="text-white/10 italic">Nenhuma</span>}
+                                            </div>
                                         </td>
                                         <td className="p-5 align-middle text-right relative action-menu-container">
                                             <button
