@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../api';
-import { Plus, Save, Calendar, Users, X, FileText, Pencil, Trash2, AlertTriangle, Eye, Download } from 'lucide-react';
+import { Plus, Save, Calendar, Users, X, FileText, Pencil, Trash2, AlertTriangle, Eye, Download, RefreshCw } from 'lucide-react';
 import { formatPhone, unmaskPhone, formatCurrency, parseCurrency } from '../utils/masks';
 import { Loading } from '../components/Loading';
 import { ManageStudentsModal } from '../components/ManageStudentsModal';
@@ -113,6 +113,7 @@ export const ClassDetails = () => {
     // Notification State
     const [toast, setToast] = useState<{ message: string, type: 'success' | 'error' | 'warning' } | null>(null);
     const [saving, setSaving] = useState(false);
+    const [loadError, setLoadError] = useState(false);
 
     const showNotification = (message: string, type: 'success' | 'error' | 'warning') => {
         setToast({ message, type });
@@ -153,26 +154,42 @@ export const ClassDetails = () => {
         try {
             const res = await api.get(`/classes/${id}`);
             setClassData(res.data);
+            setLoadError(false);
         } catch (e: any) {
             console.error(e);
             if (e.response && e.response.status === 404) {
                 navigate('/404', { replace: true });
+            } else {
+                setLoadError(true);
             }
         }
+    };
+
+    const handleRetry = () => {
+        setLoadError(false);
+        fetchClassData();
+        fetchStudents();
+        fetchSessions();
     };
 
     const fetchStudents = async () => {
         try {
             const res = await api.get(`/classes/${id}/students`);
             setStudents(res.data);
-        } catch (e) { console.error(e); }
+        } catch (e) {
+            console.error(e);
+            showNotification('Não foi possível carregar a lista de alunos desta turma. Tente recarregar a página.', 'error');
+        }
     };
 
     const fetchSessions = async () => {
         try {
             const res = await api.get(`/classes/${id}/attendance`);
             setSessions(res.data);
-        } catch (e) { console.error(e); }
+        } catch (e) {
+            console.error(e);
+            showNotification('Não foi possível carregar o histórico de chamadas desta turma.', 'error');
+        }
     };
 
     const handleEnrollStudent = async (studentId: number) => {
@@ -533,6 +550,21 @@ export const ClassDetails = () => {
     const getStudentName = (id: number) => {
         return students.find(s => s.id === id)?.name || "Aluno Removido";
     };
+
+    if (loadError) return (
+        <div className="h-[70vh] flex flex-col items-center justify-center text-center max-w-md mx-auto">
+            <div className="w-24 h-24 bg-danger/10 rounded-full flex items-center justify-center mb-6">
+                <AlertTriangle size={48} className="text-danger" />
+            </div>
+            <h2 className="text-3xl font-extrabold text-white mb-2">Não foi possível abrir a turma</h2>
+            <p className="text-text-muted mb-8 leading-relaxed">
+                Houve um problema ao carregar as informações desta turma. Verifique sua conexão com a internet e tente novamente.
+            </p>
+            <button onClick={handleRetry} className="glass-button text-white font-bold flex items-center gap-2 px-6 py-3 rounded-xl">
+                <RefreshCw size={18} /> Tentar Novamente
+            </button>
+        </div>
+    );
 
     if (!classData) return (
         <div className="h-screen flex items-center justify-center">

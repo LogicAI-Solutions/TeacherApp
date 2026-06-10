@@ -22,17 +22,28 @@ def ensure_columns(db: Session):
         print(f"Column migration check failed: {e}")
         db.rollback()
 
-    try:
-        result = db.execute(text(
-            "SELECT column_name FROM information_schema.columns WHERE table_name='students' AND column_name='observation'"
-        ))
-        if not result.fetchone():
-            db.execute(text("ALTER TABLE students ADD COLUMN observation TEXT"))
-            db.commit()
-            print("Added observation column to students table")
-    except Exception as e:
-        print(f"Student column migration check failed: {e}")
-        db.rollback()
+    # Colunas adicionadas ao model Student que podem faltar em bancos antigos.
+    # create_all() não altera tabelas existentes, então garantimos aqui.
+    student_columns = {
+        "school_year": "VARCHAR",
+        "school": "VARCHAR",
+        "intended_profession": "VARCHAR",
+        "class_type": "VARCHAR",
+        "observation": "TEXT",
+    }
+    for column_name, column_type in student_columns.items():
+        try:
+            result = db.execute(text(
+                "SELECT column_name FROM information_schema.columns "
+                "WHERE table_name='students' AND column_name=:col"
+            ), {"col": column_name})
+            if not result.fetchone():
+                db.execute(text(f"ALTER TABLE students ADD COLUMN {column_name} {column_type}"))
+                db.commit()
+                print(f"Added {column_name} column to students table")
+        except Exception as e:
+            print(f"Student column migration check failed for '{column_name}': {e}")
+            db.rollback()
 
 def init_db(db: Session = next(database.get_db())):
     # Ensure new columns exist
