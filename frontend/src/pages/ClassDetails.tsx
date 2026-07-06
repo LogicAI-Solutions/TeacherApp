@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../api';
-import { Plus, Save, Calendar, Users, X, FileText, Pencil, Trash2, AlertTriangle, Eye, Download, RefreshCw } from 'lucide-react';
+import { Plus, Save, Calendar, Users, X, FileText, Pencil, Trash2, AlertTriangle, Eye, Download, RefreshCw, ArrowLeft } from 'lucide-react';
 import { formatPhone, unmaskPhone, formatCurrency, parseCurrency } from '../utils/masks';
 import { Loading } from '../components/Loading';
 import { ManageStudentsModal } from '../components/ManageStudentsModal';
@@ -595,7 +595,16 @@ export const ClassDetails = () => {
 
             <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-4 animate-fade-in">
                 <div>
-                    <h1 className="text-3xl font-bold text-gradient">{classData.name}</h1>
+                    <div className="flex items-center gap-3">
+                        <button
+                            onClick={() => navigate(-1)}
+                            className="shrink-0 w-9 h-9 flex items-center justify-center rounded-xl bg-white/5 border border-white/10 text-text-muted hover:text-white hover:bg-white/10 hover:border-white/20 backdrop-blur-md transition-all"
+                            title="Voltar"
+                        >
+                            <ArrowLeft size={18} />
+                        </button>
+                        <h1 className="text-3xl font-bold text-gradient">{classData.name}</h1>
+                    </div>
                     <p className="text-primary-light flex items-center gap-2 mt-2 font-medium bg-primary/10 w-fit px-3 py-1 rounded-full text-sm">
                         <Calendar size={14} /> {classData.schedule}
                     </p>
