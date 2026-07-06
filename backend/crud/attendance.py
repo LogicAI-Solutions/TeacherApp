@@ -1,8 +1,9 @@
 from sqlalchemy.orm import Session, joinedload
 from backend.models.attendance import AttendanceSession, AttendanceLog
 from backend.schemas.attendance import AttendanceSessionCreate
+from uuid import UUID
 
-def create_attendance_session(db: Session, session: AttendanceSessionCreate, class_id: int):
+def create_attendance_session(db: Session, session: AttendanceSessionCreate, class_id: UUID):
     # Calculate next lesson number
     last_session = db.query(AttendanceSession)\
         .filter(AttendanceSession.class_id == class_id)\
@@ -82,7 +83,7 @@ def update_attendance_session(db: Session, session_id: int, session_data: Attend
     db.refresh(db_session)
     return db_session
 
-def get_class_attendance_sessions(db: Session, class_id: int):
+def get_class_attendance_sessions(db: Session, class_id: UUID):
     return db.query(AttendanceSession).filter(AttendanceSession.class_id == class_id).order_by(AttendanceSession.date.asc()).all()
 
 def get_attendance_session(db: Session, session_id: int):

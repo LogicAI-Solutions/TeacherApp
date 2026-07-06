@@ -1,4 +1,5 @@
 from sqlalchemy import Column, Integer, String, ForeignKey, Date, Float, Text, Boolean
+from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 from backend.core.database import Base
 
@@ -6,7 +7,7 @@ class AttendanceSession(Base):
     __tablename__ = "attendance_sessions"
 
     id = Column(Integer, primary_key=True, index=True)
-    class_id = Column(Integer, ForeignKey("classes.id"))
+    class_id = Column(UUID(as_uuid=True), ForeignKey("classes.id"))
     date = Column(Date)
     description = Column(String) # e.g. "Aula 01"
     lesson_number = Column(Integer, default=1)

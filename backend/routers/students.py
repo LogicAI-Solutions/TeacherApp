@@ -3,6 +3,7 @@ from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
 from docx import Document
 from typing import List, Optional
+from uuid import UUID
 import io
 import pydantic
 from backend.schemas import students as student_schemas
@@ -104,7 +105,7 @@ def get_student_enrollment(
 @router.put("/students/{student_id}/enrollment")
 def update_student_enrollment(
     student_id: int, 
-    class_id: Optional[int] = None,
+    class_id: Optional[UUID] = None,
     db: Session = Depends(database.get_db), 
     current_user: user_schemas.User = Depends(security.get_current_user)
 ):

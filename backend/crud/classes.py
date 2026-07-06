@@ -2,6 +2,7 @@ from sqlalchemy.orm import Session
 from backend.models.classes import Class
 from backend.schemas.classes import ClassCreate, ClassReorder
 from typing import List
+from uuid import UUID
 
 def get_classes(db: Session, user_id: int, skip: int = 0, limit: int = 100):
     return db.query(Class).filter(Class.owner_id == user_id).order_by(Class.display_order, Class.id).offset(skip).limit(limit).all()
@@ -31,10 +32,10 @@ def create_class(db: Session, class_: ClassCreate, user_id: int):
     db.refresh(db_class)
     return db_class
 
-def get_class(db: Session, class_id: int):
+def get_class(db: Session, class_id: UUID):
     return db.query(Class).filter(Class.id == class_id).first()
 
-def update_class(db: Session, class_id: int, class_data: ClassCreate):
+def update_class(db: Session, class_id: UUID, class_data: ClassCreate):
     db_class = db.query(Class).filter(Class.id == class_id).first()
     if db_class:
         db_class.name = class_data.name
@@ -43,7 +44,7 @@ def update_class(db: Session, class_id: int, class_data: ClassCreate):
         db.refresh(db_class)
     return db_class
 
-def delete_class(db: Session, class_id: int):
+def delete_class(db: Session, class_id: UUID):
     db_class = db.query(Class).filter(Class.id == class_id).first()
     if db_class:
         db.delete(db_class)

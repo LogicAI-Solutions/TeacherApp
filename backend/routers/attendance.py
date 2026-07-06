@@ -3,6 +3,7 @@ from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
 from docx import Document
 import io
+from uuid import UUID
 from backend.schemas import users as user_schemas
 from backend.crud import attendance as attendance_crud
 from backend.crud import classes as class_crud
@@ -14,7 +15,7 @@ router = APIRouter()
 
 @router.put("/classes/{class_id}/attendance/{session_id}", response_model=attendance_schemas.AttendanceSession)
 def update_attendance_session(
-    class_id: int, 
+    class_id: UUID,
     session_id: int, 
     session: attendance_schemas.AttendanceSessionCreate, 
     db: Session = Depends(database.get_db), 
@@ -32,7 +33,7 @@ def update_attendance_session(
 
 @router.delete("/classes/{class_id}/attendance/{session_id}")
 def delete_attendance_session(
-    class_id: int, 
+    class_id: UUID,
     session_id: int, 
     db: Session = Depends(database.get_db), 
     current_user: user_schemas.User = Depends(security.get_current_user)

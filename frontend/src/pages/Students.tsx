@@ -28,7 +28,7 @@ interface EvolutionPoint {
 }
 
 interface ClassModel {
-    id: number;
+    id: string;
     name: string;
 }
 
@@ -46,12 +46,12 @@ export const Students = () => {
 
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [newStudentData, setNewStudentData] = useState({ name: '', phone: '', parent_name: '', parent_phone: '', parent_email: '', school_year: '', school: '', intended_profession: '', class_type: '', observation: '', active: true });
-    const [selectedClassId, setSelectedClassId] = useState<number | ''>('');
+    const [selectedClassId, setSelectedClassId] = useState<string | ''>('');
 
     const [editingStudent, setEditingStudent] = useState<Student | null>(null);
     const [editStudentData, setEditStudentData] = useState({ name: '', phone: '', parent_name: '', parent_phone: '', parent_email: '', school_year: '', school: '', intended_profession: '', class_type: '', observation: '', active: true });
-    const [editClassId, setEditClassId] = useState<number | ''>('');
-    const [originalClassId, setOriginalClassId] = useState<number | null>(null);
+    const [editClassId, setEditClassId] = useState<string | ''>('');
+    const [originalClassId, setOriginalClassId] = useState<string | null>(null);
 
     const [deletingStudent, setDeletingStudent] = useState<Student | null>(null);
 
@@ -574,7 +574,7 @@ export const Students = () => {
 
                                     <div>
                                         <label className="text-xs font-bold text-text-muted uppercase tracking-wider ml-1 mb-1 block">{editingStudent ? 'Turma Matriculada' : 'Matricular na Turma (Opcional)'}</label>
-                                        <select className="glass-input cursor-pointer" value={editingStudent ? editClassId : selectedClassId} onChange={e => editingStudent ? setEditClassId(Number(e.target.value) || '') : setSelectedClassId(Number(e.target.value) || '')}>
+                                        <select className="glass-input cursor-pointer" value={editingStudent ? editClassId : selectedClassId} onChange={e => editingStudent ? setEditClassId(e.target.value) : setSelectedClassId(e.target.value)}>
                                             <option value="" className="bg-bg-dark text-white">-- Nenhuma turma --</option>
                                             {classes.map(c => <option key={c.id} value={c.id} className="bg-bg-dark text-white">{c.name}</option>)}
                                         </select>

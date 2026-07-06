@@ -17,7 +17,7 @@ interface Student {
 }
 
 interface ClassModel {
-    id: number;
+    id: string;
     name: string;
     schedule: string;
 }
