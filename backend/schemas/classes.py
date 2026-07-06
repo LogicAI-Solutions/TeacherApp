@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 from typing import List, Optional
+from uuid import UUID
 from backend.schemas.students import Student
 
 class ClassBase(BaseModel):
@@ -10,11 +11,11 @@ class ClassCreate(ClassBase):
     pass
 
 class ClassReorder(BaseModel):
-    id: int
+    id: UUID
     display_order: int
 
 class Class(ClassBase):
-    id: int
+    id: UUID
     owner_id: int
     display_order: Optional[int] = 0
 

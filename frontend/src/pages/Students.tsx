@@ -28,7 +28,7 @@ interface EvolutionPoint {
 }
 
 interface ClassModel {
-    id: number;
+    id: string;
     name: string;
 }
 
@@ -46,12 +46,12 @@ export const Students = () => {
 
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [newStudentData, setNewStudentData] = useState({ name: '', phone: '', parent_name: '', parent_phone: '', parent_email: '', school_year: '', school: '', intended_profession: '', class_type: '', observation: '', active: true });
-    const [selectedClassId, setSelectedClassId] = useState<number | ''>('');
+    const [selectedClassId, setSelectedClassId] = useState<string | ''>('');
 
     const [editingStudent, setEditingStudent] = useState<Student | null>(null);
     const [editStudentData, setEditStudentData] = useState({ name: '', phone: '', parent_name: '', parent_phone: '', parent_email: '', school_year: '', school: '', intended_profession: '', class_type: '', observation: '', active: true });
-    const [editClassId, setEditClassId] = useState<number | ''>('');
-    const [originalClassId, setOriginalClassId] = useState<number | null>(null);
+    const [editClassId, setEditClassId] = useState<string | ''>('');
+    const [originalClassId, setOriginalClassId] = useState<string | null>(null);
 
     const [deletingStudent, setDeletingStudent] = useState<Student | null>(null);
 
@@ -310,6 +310,7 @@ export const Students = () => {
                                 <th onClick={() => toggleSort('active')} className="p-5 font-semibold text-xs uppercase tracking-wider text-text-muted cursor-pointer hover:text-white transition-colors group select-none text-center whitespace-nowrap">
                                     <div className="flex items-center justify-center gap-2">Status {renderSortIcon('active')}</div>
                                 </th>
+                                <th className="p-5 font-semibold text-xs uppercase tracking-wider text-text-muted hidden xl:table-cell whitespace-nowrap">Observação</th>
                                 <th className="p-5 font-semibold text-xs uppercase tracking-wider text-text-muted text-right whitespace-nowrap">Ações</th>
                             </tr>
                         </thead>
@@ -392,6 +393,11 @@ export const Students = () => {
                                                 {student.active ? <CheckCircle size={14} /> : <XCircle size={14} />}
                                                 {student.active ? 'Ativo' : 'Inativo'}
                                             </button>
+                                        </td>
+                                        <td className="p-5 hidden xl:table-cell align-middle max-w-[200px]">
+                                            <div className="text-sm text-text-muted truncate font-medium" title={student.observation || ''}>
+                                                {student.observation || <span className="text-white/10 italic">Nenhuma</span>}
+                                            </div>
                                         </td>
                                         <td className="p-5 align-middle text-right relative action-menu-container">
                                             <button
@@ -568,7 +574,7 @@ export const Students = () => {
 
                                     <div>
                                         <label className="text-xs font-bold text-text-muted uppercase tracking-wider ml-1 mb-1 block">{editingStudent ? 'Turma Matriculada' : 'Matricular na Turma (Opcional)'}</label>
-                                        <select className="glass-input cursor-pointer" value={editingStudent ? editClassId : selectedClassId} onChange={e => editingStudent ? setEditClassId(Number(e.target.value) || '') : setSelectedClassId(Number(e.target.value) || '')}>
+                                        <select className="glass-input cursor-pointer" value={editingStudent ? editClassId : selectedClassId} onChange={e => editingStudent ? setEditClassId(e.target.value) : setSelectedClassId(e.target.value)}>
                                             <option value="" className="bg-bg-dark text-white">-- Nenhuma turma --</option>
                                             {classes.map(c => <option key={c.id} value={c.id} className="bg-bg-dark text-white">{c.name}</option>)}
                                         </select>

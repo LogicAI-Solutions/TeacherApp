@@ -22,7 +22,7 @@ import {
 import { CSS } from '@dnd-kit/utilities';
 
 interface ClassModel {
-    id: number;
+    id: string;
     name: string;
     schedule: string;
     display_order?: number;

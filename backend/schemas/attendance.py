@@ -1,6 +1,7 @@
 from pydantic import BaseModel
 from typing import List, Optional
 from datetime import date
+from uuid import UUID
 
 class AttendanceLogBase(BaseModel):
     student_id: int
@@ -28,7 +29,7 @@ class AttendanceSessionCreate(AttendanceSessionBase):
 
 class AttendanceSession(AttendanceSessionBase):
     id: int
-    class_id: int
+    class_id: UUID
     logs: List[AttendanceLog] = []
     class Config:
         from_attributes = True
