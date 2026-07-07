@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { ErrorBoundary } from './ErrorBoundary';
 import { LogOut, LayoutDashboard, GraduationCap, BookOpen, Menu, X, ChevronLeft, ChevronRight, Settings, UserCircle, DollarSign, MessageCircle } from 'lucide-react';
 
 export const Layout = () => {
@@ -223,7 +224,9 @@ export const Layout = () => {
             {/* Main Content */}
             <main className="flex-1 overflow-auto px-3 py-4 sm:p-4 md:p-6 lg:p-8 pt-16 md:pt-6 lg:pt-8 w-full h-screen">
                 <div className="w-full h-full">
-                    <Outlet />
+                    <ErrorBoundary>
+                        <Outlet />
+                    </ErrorBoundary>
                 </div>
             </main>
         </div>

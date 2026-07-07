@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import api from '../api';
 import { Plus, Save, Calendar, Users, X, FileText, Pencil, Trash2, AlertTriangle, Eye, Download, RefreshCw, ArrowLeft } from 'lucide-react';
 import { formatPhone, unmaskPhone, formatCurrency, parseCurrency } from '../utils/masks';
+import { getApiErrorMessage } from '../utils/errors';
 import { Loading } from '../components/Loading';
 import { ManageStudentsModal } from '../components/ManageStudentsModal';
 
@@ -115,8 +116,11 @@ export const ClassDetails = () => {
     const [saving, setSaving] = useState(false);
     const [loadError, setLoadError] = useState(false);
 
-    const showNotification = (message: string, type: 'success' | 'error' | 'warning') => {
-        setToast({ message, type });
+    const showNotification = (message: unknown, type: 'success' | 'error' | 'warning') => {
+        // Garante que a mensagem seja sempre uma string. Renderizar um objeto/array
+        // (ex.: `detail` de um 422 do FastAPI) como filho do React quebra a tela toda.
+        const safeMessage = typeof message === 'string' ? message : 'Ocorreu um erro inesperado.';
+        setToast({ message: safeMessage, type });
         setTimeout(() => setToast(null), 3000);
     };
 
@@ -480,6 +484,11 @@ export const ClassDetails = () => {
             return;
         }
 
+        if (!sessionDate) {
+            showNotification('Por favor, informe a data da aula.', 'warning');
+            return;
+        }
+
         setSaving(true);
 
         let logsToProcess = Object.values(attendanceLogs).filter(l => students.find(s => s.id === l.student_id));
@@ -531,8 +540,7 @@ export const ClassDetails = () => {
             setActiveTab('history');
         } catch (e: any) {
             console.error(e);
-            console.log(e.response); // Debug
-            const msg = e.response?.data?.detail || (e.response?.status === 500 && e.response?.data?.detail?.includes("Duplicate") ? "Já existe uma chamada para esta data." : 'Erro ao salvar chamada');
+            const msg = getApiErrorMessage(e, 'Erro ao salvar chamada');
             showNotification(msg, 'error');
         } finally {
             setSaving(false);
@@ -779,6 +787,7 @@ export const ClassDetails = () => {
                         {students.length > 0 && (
                             <div className="mt-8 flex justify-end">
                                 <button
+                                    type="button"
                                     onClick={handleSaveAttendance}
                                     disabled={saving}
                                     className={`
