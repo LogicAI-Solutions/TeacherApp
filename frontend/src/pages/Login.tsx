@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, GraduationCap } from 'lucide-react';
 import loginTeacher from '../assets/login_teacher.png';
 import { getApiErrorMessage } from '../utils/errors';
+import { applyThemeToDOM, getStoredTheme } from '../hooks/useTheme';
 
 export const Login = () => {
     const [nickname, setNickname] = useState('');
@@ -13,6 +14,13 @@ export const Login = () => {
 
     const { login, user } = useAuth();
     const navigate = useNavigate();
+
+    useEffect(() => {
+        applyThemeToDOM('dark-profissional');
+        return () => {
+            applyThemeToDOM(getStoredTheme());
+        };
+    }, []);
 
     useEffect(() => {
         if (user) {
