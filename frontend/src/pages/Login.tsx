@@ -3,6 +3,8 @@ import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, GraduationCap } from 'lucide-react';
 import loginTeacher from '../assets/login_teacher.png';
+import { getApiErrorMessage } from '../utils/errors';
+import { applyThemeToDOM, getStoredTheme } from '../hooks/useTheme';
 
 export const Login = () => {
     const [nickname, setNickname] = useState('');
@@ -12,6 +14,13 @@ export const Login = () => {
 
     const { login, user } = useAuth();
     const navigate = useNavigate();
+
+    useEffect(() => {
+        applyThemeToDOM('dark-profissional');
+        return () => {
+            applyThemeToDOM(getStoredTheme());
+        };
+    }, []);
 
     useEffect(() => {
         if (user) {
@@ -30,10 +39,10 @@ export const Login = () => {
             console.error(err);
             if (err.code === 'ERR_NETWORK' || !err.response) {
                 setError('O sistema parece estar offline. Verifique sua conexão ou tente mais tarde.');
-            } else if (err.response?.data?.detail) {
-                setError(err.response.data.detail);
             } else if (err.response?.status === 401) {
                 setError('Usuário ou senha incorretos. Tente novamente.');
+            } else if (err.response?.data?.detail) {
+                setError(getApiErrorMessage(err, 'Ocorreu um erro inesperado. Tente novamente.'));
             } else {
                 setError('Ocorreu um erro inesperado. Tente novamente.');
             }

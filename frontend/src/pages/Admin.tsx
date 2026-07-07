@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import api from '../api';
 import { User, Plus, Trash2, Key, X, AlertTriangle, Edit, Search } from 'lucide-react';
+import { getApiErrorMessage } from '../utils/errors';
 
 interface UserData {
     id: number;
@@ -95,7 +96,7 @@ const Admin = () => {
             setIsCreateModalOpen(false);
             loadUsers();
         } catch (err: any) {
-            setError(err.response?.data?.detail || 'Erro ao criar usuário');
+            setError(getApiErrorMessage(err, 'Erro ao criar usuário'));
         } finally {
             setLoading(false);
         }
@@ -122,7 +123,7 @@ const Admin = () => {
             setSelectedUser(null);
             loadUsers();
         } catch (err: any) {
-            setError(err.response?.data?.detail || 'Erro ao atualizar usuário');
+            setError(getApiErrorMessage(err, 'Erro ao atualizar usuário'));
         } finally {
             setLoading(false);
         }
@@ -138,7 +139,7 @@ const Admin = () => {
             setSelectedUser(null);
             loadUsers();
         } catch (err: any) {
-            setError(err.response?.data?.detail || 'Erro ao remover usuário');
+            setError(getApiErrorMessage(err, 'Erro ao remover usuário'));
         } finally {
             setLoading(false);
         }
@@ -164,7 +165,7 @@ const Admin = () => {
             setIsResetModalOpen(false);
             setSelectedUser(null);
         } catch (err: any) {
-            setError(err.response?.data?.detail || 'Erro ao atualizar senha');
+            setError(getApiErrorMessage(err, 'Erro ao atualizar senha'));
         } finally {
             setLoading(false);
         }
