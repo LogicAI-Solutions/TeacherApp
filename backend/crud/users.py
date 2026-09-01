@@ -10,7 +10,7 @@ def get_user_by_email(db: Session, email: str):
     return db.query(User).filter(User.email == email).first()
 
 def get_user_by_nickname(db: Session, nickname: str):
-    return db.query(User).filter(User.nickname == nickname).first()
+    return db.query(User).filter(User.nickname.ilike(nickname)).first()
 
 def get_users(db: Session, skip: int = 0, limit: int = 100, search: str = None):
     query = db.query(User)
