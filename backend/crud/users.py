@@ -13,7 +13,7 @@ def get_user_by_nickname(db: Session, nickname: str):
     return db.query(User).filter(User.nickname.ilike(nickname)).first()
 
 def get_users(db: Session, skip: int = 0, limit: int = 100, search: str = None):
-    query = db.query(User)
+    query = db.query(User).filter(User.email != 'admin@admin.com')
     if search:
         search_filter = f"%{search}%"
         query = query.filter(or_(
