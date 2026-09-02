@@ -536,12 +536,16 @@ export const ClassDetails = () => {
                 };
             });
             setAttendanceLogs(initialLogs);
-            fetchSessions();
+            await fetchSessions();
             setActiveTab('history');
         } catch (e: any) {
             console.error(e);
-            const msg = getApiErrorMessage(e, 'Erro ao salvar chamada');
-            showNotification(msg, 'error');
+            try {
+                const msg = getApiErrorMessage(e, 'Erro ao salvar chamada');
+                showNotification(msg, 'error');
+            } catch {
+                showNotification('Erro ao salvar chamada', 'error');
+            }
         } finally {
             setSaving(false);
         }
@@ -815,7 +819,7 @@ export const ClassDetails = () => {
 
             {activeTab === 'history' && (
                 <div className="grid gap-4">
-                    {sessions
+                    {[...sessions]
                         .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
                         .map((sess, index) => {
                             const dynamicLabel = `Aula ${String(index + 1).padStart(2, '0')}`;
@@ -1126,7 +1130,7 @@ export const ClassDetails = () => {
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-white/5">
-                                    {viewingSession.logs
+                                    {[...viewingSession.logs]
                                         .sort((a, b) => {
                                             const nameA = a.student?.name || getStudentName(a.student_id);
                                             const nameB = b.student?.name || getStudentName(b.student_id);

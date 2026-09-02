@@ -80,18 +80,18 @@ export const Dashboard = () => {
     return (
         <div className="animate-fade-in pb-12">
             {/* Header Section */}
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 gap-6 relative z-20">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-6 md:mb-8 gap-3 md:gap-5 relative z-20">
                 <div className="relative">
                     <div className="absolute -inset-1 bg-gradient-to-r from-primary/20 to-emerald-500/20 blur-xl opacity-60"></div>
-                    <div className="relative flex items-center gap-5">
-                        <div className="p-4 bg-white/5 backdrop-blur-2xl rounded-3xl border border-white/10 shadow-2xl">
-                            <Activity className="text-primary w-10 h-10" />
+                    <div className="relative flex items-center gap-3 md:gap-4">
+                        <div className="p-2 md:p-3 bg-white/5 backdrop-blur-2xl rounded-2xl border border-white/10 shadow-2xl">
+                            <Activity className="text-primary w-6 h-6 md:w-8 md:h-8" />
                         </div>
                         <div>
-                            <h1 className="text-4xl font-extrabold text-text-main tracking-tight">
+                            <h1 className="text-2xl md:text-3xl font-extrabold text-text-main tracking-tight">
                                 Painel de Bordo
                             </h1>
-                            <p className="text-text-muted mt-2 text-base font-medium">Acompanhe a saúde do seu negócio em tempo real.</p>
+                            <p className="text-text-muted mt-0.5 md:mt-1 text-xs md:text-sm font-medium">Acompanhe a saúde do seu negócio em tempo real.</p>
                         </div>
                     </div>
                 </div>
@@ -100,76 +100,76 @@ export const Dashboard = () => {
             {/* Premium Stat Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
                 {/* Total Students Card */}
-                <div className="glass-card relative overflow-hidden group hover:-translate-y-1 transition-all duration-300">
-                    <div className="absolute -right-10 -top-10 w-32 h-32 bg-primary/10 rounded-full blur-2xl group-hover:bg-primary/20 transition-all"></div>
-                    <div className="flex justify-between items-start mb-6">
-                        <div className="p-3 bg-primary/20 rounded-2xl border border-primary/20">
-                            <Users size={24} className="text-primary-light" />
+                <div className="glass-card relative overflow-hidden group hover:-translate-y-1 transition-all duration-300 p-4 md:p-5">
+                    <div className="absolute -right-10 -top-10 w-24 h-24 md:w-28 md:h-28 bg-primary/10 rounded-full blur-2xl group-hover:bg-primary/20 transition-all"></div>
+                    <div className="flex justify-between items-start mb-3 md:mb-4">
+                        <div className="p-2 bg-primary/20 rounded-lg md:rounded-xl border border-primary/20">
+                            <Users size={18} className="text-primary-light md:w-5 md:h-5" />
                         </div>
-                        <div className="flex items-center gap-1 text-sm font-bold text-success bg-success/10 px-2 py-1 rounded-lg">
-                            <TrendingUp size={14} /> 100%
+                        <div className="flex items-center gap-1 text-[10px] md:text-xs font-bold text-success bg-success/10 px-2 py-1 rounded-lg">
+                            <TrendingUp size={12} /> 100%
                         </div>
                     </div>
                     <div>
-                        <h3 className="text-4xl font-black text-white mb-1">{stats.students.total}</h3>
-                        <p className="text-text-muted font-medium text-sm">Total de Alunos</p>
+                        <h3 className="text-2xl md:text-3xl font-black text-white mb-0.5">{stats.students.total}</h3>
+                        <p className="text-text-muted font-medium text-[11px] md:text-xs">Total de Alunos</p>
                     </div>
                 </div>
 
                 {/* Active Students Card */}
-                <div className="glass-card relative overflow-hidden group hover:-translate-y-1 transition-all duration-300">
-                    <div className="absolute -right-10 -top-10 w-32 h-32 bg-purple-500/10 rounded-full blur-2xl group-hover:bg-purple-500/20 transition-all"></div>
-                    <div className="flex justify-between items-start mb-6">
-                        <div className="p-3 bg-purple-500/20 rounded-2xl border border-purple-500/20">
-                            <Activity size={24} className="text-purple-400" />
+                <div className="glass-card relative overflow-hidden group hover:-translate-y-1 transition-all duration-300 p-4 md:p-5">
+                    <div className="absolute -right-10 -top-10 w-24 h-24 md:w-28 md:h-28 bg-purple-500/10 rounded-full blur-2xl group-hover:bg-purple-500/20 transition-all"></div>
+                    <div className="flex justify-between items-start mb-3 md:mb-4">
+                        <div className="p-2 bg-purple-500/20 rounded-lg md:rounded-xl border border-purple-500/20">
+                            <Activity size={18} className="text-purple-400 md:w-5 md:h-5" />
                         </div>
-                        <div className="flex items-center gap-1 text-sm font-bold text-success bg-success/10 px-2 py-1 rounded-lg">
+                        <div className="flex items-center gap-1 text-[10px] md:text-xs font-bold text-success bg-success/10 px-2 py-1 rounded-lg">
                             {percentActive}%
                         </div>
                     </div>
                     <div>
-                        <h3 className="text-4xl font-black text-white mb-1">{stats.students.active}</h3>
-                        <p className="text-text-muted font-medium text-sm">Alunos Ativos</p>
+                        <h3 className="text-2xl md:text-3xl font-black text-white mb-0.5">{stats.students.active}</h3>
+                        <p className="text-text-muted font-medium text-[11px] md:text-xs">Alunos Ativos</p>
                     </div>
                 </div>
 
                 {/* Payments Card */}
-                <div className="glass-card relative overflow-hidden group hover:-translate-y-1 transition-all duration-300">
-                    <div className="absolute -right-10 -top-10 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl group-hover:bg-emerald-500/20 transition-all"></div>
-                    <div className="flex justify-between items-start mb-6">
-                        <div className="p-3 bg-emerald-500/20 rounded-2xl border border-emerald-500/20">
-                            <Wallet size={24} className="text-emerald-400" />
+                <div className="glass-card relative overflow-hidden group hover:-translate-y-1 transition-all duration-300 p-4 md:p-5">
+                    <div className="absolute -right-10 -top-10 w-24 h-24 md:w-28 md:h-28 bg-emerald-500/10 rounded-full blur-2xl group-hover:bg-emerald-500/20 transition-all"></div>
+                    <div className="flex justify-between items-start mb-3 md:mb-4">
+                        <div className="p-2 bg-emerald-500/20 rounded-lg md:rounded-xl border border-emerald-500/20">
+                            <Wallet size={18} className="text-emerald-400 md:w-5 md:h-5" />
                         </div>
-                        <div className="flex items-center gap-1 text-sm font-bold text-success bg-success/10 px-2 py-1 rounded-lg">
+                        <div className="flex items-center gap-1 text-[10px] md:text-xs font-bold text-success bg-success/10 px-2 py-1 rounded-lg">
                             {percentPaid}%
                         </div>
                     </div>
                     <div>
-                        <h3 className="text-4xl font-black text-white mb-1">{stats.payments.paid}</h3>
-                        <p className="text-text-muted font-medium text-sm">Pagamentos Recebidos</p>
+                        <h3 className="text-2xl md:text-3xl font-black text-white mb-0.5">{stats.payments.paid}</h3>
+                        <p className="text-text-muted font-medium text-[11px] md:text-xs">Pagamentos Recebidos</p>
                     </div>
                 </div>
 
                 {/* Pending Card */}
-                <div className="glass-card relative overflow-hidden group hover:-translate-y-1 transition-all duration-300">
-                    <div className="absolute -right-10 -top-10 w-32 h-32 bg-amber-500/10 rounded-full blur-2xl group-hover:bg-amber-500/20 transition-all"></div>
-                    <div className="flex justify-between items-start mb-6">
-                        <div className="p-3 bg-amber-500/20 rounded-2xl border border-amber-500/20">
-                            <AlertCircle size={24} className="text-amber-400" />
+                <div className="glass-card relative overflow-hidden group hover:-translate-y-1 transition-all duration-300 p-4 md:p-5">
+                    <div className="absolute -right-10 -top-10 w-24 h-24 md:w-28 md:h-28 bg-amber-500/10 rounded-full blur-2xl group-hover:bg-amber-500/20 transition-all"></div>
+                    <div className="flex justify-between items-start mb-3 md:mb-4">
+                        <div className="p-2 bg-amber-500/20 rounded-lg md:rounded-xl border border-amber-500/20">
+                            <AlertCircle size={18} className="text-amber-400 md:w-5 md:h-5" />
                         </div>
                         {stats.payments.pending > 0 ? (
-                            <div className="flex items-center gap-1 text-sm font-bold text-amber-500 bg-amber-500/10 px-2 py-1 rounded-lg">
-                                <ArrowDownRight size={14} /> Foco Aqui
+                            <div className="flex items-center gap-1 text-[10px] md:text-xs font-bold text-amber-500 bg-amber-500/10 px-2 py-1 rounded-lg">
+                                <ArrowDownRight size={12} /> Foco Aqui
                             </div>
                         ) : (
-                            <div className="flex items-center gap-1 text-sm font-bold text-success bg-success/10 px-2 py-1 rounded-lg">
-                                <ArrowUpRight size={14} /> Limpo
+                            <div className="flex items-center gap-1 text-[10px] md:text-xs font-bold text-success bg-success/10 px-2 py-1 rounded-lg">
+                                <ArrowUpRight size={12} /> Limpo
                             </div>
                         )}
                     </div>
                     <div>
-                        <h3 className="text-4xl font-black text-white mb-1">{stats.payments.pending}</h3>
-                        <p className="text-text-muted font-medium text-sm">Pagamentos Pendentes</p>
+                        <h3 className="text-2xl md:text-3xl font-black text-white mb-0.5">{stats.payments.pending}</h3>
+                        <p className="text-text-muted font-medium text-[11px] md:text-xs">Pagamentos Pendentes</p>
                     </div>
                 </div>
             </div>
@@ -177,16 +177,16 @@ export const Dashboard = () => {
             {/* Charts Section */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Students Chart */}
-                <div className="glass-card flex flex-col items-center relative overflow-hidden">
+                <div className="glass-card p-4 md:p-6 flex flex-col items-center relative overflow-hidden">
                     <div className="absolute inset-0 bg-gradient-to-br from-white/[0.02] to-transparent z-0"></div>
-                    <div className="w-full flex items-center justify-between mb-8 z-10 border-b border-white/10 pb-4">
-                        <h3 className="text-lg font-extrabold text-white flex items-center gap-3">
-                            <span className="w-2 h-6 rounded-full bg-primary inline-block"></span>
+                    <div className="w-full flex items-center justify-between mb-3 md:mb-4 z-10 border-b border-white/10 pb-2 md:pb-3">
+                        <h3 className="text-sm md:text-base font-extrabold text-white flex items-center gap-2">
+                            <span className="w-1.5 h-4 md:w-2 md:h-5 rounded-full bg-primary inline-block"></span>
                             Distribuição de Alunos
                         </h3>
                     </div>
-                    <div className="flex-1 w-full flex flex-col items-center justify-center min-h-[350px] z-10">
-                        <div className="h-[280px] w-full relative flex justify-center">
+                    <div className="flex-1 w-full flex flex-col items-center justify-center min-h-[200px] md:min-h-[250px] z-10">
+                        <div className="h-[160px] md:h-[200px] w-full relative flex justify-center">
                             {stats.students.total > 0 ? (
                                 <ResponsiveContainer width="100%" height="100%">
                                     <PieChart>
@@ -236,17 +236,17 @@ export const Dashboard = () => {
                 </div>
 
                 {/* Payments Chart */}
-                <div className="glass-card flex flex-col items-center relative overflow-hidden">
+                <div className="glass-card p-4 md:p-6 flex flex-col items-center relative overflow-hidden">
                     <div className="absolute inset-0 bg-gradient-to-br from-white/[0.02] to-transparent z-0"></div>
-                    <div className="w-full flex items-center justify-between mb-8 z-10 border-b border-white/10 pb-4">
-                        <h3 className="text-lg font-extrabold text-white flex items-center gap-3">
-                            <span className="w-2 h-6 rounded-full bg-emerald-500 inline-block"></span>
+                    <div className="w-full flex items-center justify-between mb-3 md:mb-4 z-10 border-b border-white/10 pb-2 md:pb-3">
+                        <h3 className="text-sm md:text-base font-extrabold text-white flex items-center gap-2">
+                            <span className="w-1.5 h-4 md:w-2 md:h-5 rounded-full bg-emerald-500 inline-block"></span>
                             Balanço Financeiro (Mês)
                         </h3>
                     </div>
-                    <div className="flex-1 w-full min-h-[350px] z-10">
+                    <div className="flex-1 w-full min-h-[200px] md:min-h-[250px] z-10">
                         {paymentData[0].value > 0 || paymentData[1].value > 0 ? (
-                            <ResponsiveContainer width="100%" height={320}>
+                            <ResponsiveContainer width="100%" height={220}>
                                 <BarChart
                                     data={paymentData}
                                     margin={{ top: 20, right: 30, left: -20, bottom: 5 }}

@@ -167,14 +167,14 @@ export const Layout = () => {
                                 </div>
                             </button>
 
-                            <button
+                            {/* <button
                                 onClick={handleSupport}
                                 className="w-full h-10 flex items-center gap-2 px-4 rounded-xl border border-emerald-500/30 bg-emerald-500/15 text-emerald-400 hover:bg-emerald-500/20 transition-all"
                                 title="Suporte"
                             >
                                 <MessageCircle size={17} className="shrink-0" />
                                 <span className="font-medium">Suporte</span>
-                            </button>
+                            </button> */}
 
                             <button
                                 onClick={handleLogout}
@@ -202,13 +202,13 @@ export const Layout = () => {
                                     <UserCircle size={18} />
                                 )}
                             </button>
-                            <button
+                            {/* <button
                                 onClick={handleSupport}
                                 className="w-full h-10 flex items-center justify-center rounded-xl border border-emerald-500/30 bg-emerald-500/15 text-emerald-400 hover:bg-emerald-500/20 transition-all"
                                 title="Suporte"
                             >
                                 <MessageCircle size={17} />
-                            </button>
+                            </button> */}
                             <button
                                 onClick={handleLogout}
                                 className="w-full h-10 flex items-center justify-center rounded-xl border border-danger/30 bg-danger/10 text-danger hover:bg-danger/20 transition-all"

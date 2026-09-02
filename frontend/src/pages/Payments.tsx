@@ -117,7 +117,7 @@ export const Payments = () => {
                     year: selectedYear,
                     status,
                     amount: status === 'ISENTO' ? 0 : Number(p.amount),
-                    paid_at: status === 'PAID' ? new Date().toISOString().split('T')[0] : null
+                    paid_at: status === 'ISENTO' ? null : (p.paid_at || (status === 'PAID' ? new Date().toISOString().split('T')[0] : null))
                 };
 
                 if (p.id) {
@@ -347,6 +347,7 @@ export const Payments = () => {
                                 <th className="p-5 font-semibold text-xs uppercase tracking-wider text-text-muted hidden md:table-cell whitespace-nowrap">Responsável</th>
                                 <th className="p-5 font-semibold text-xs uppercase tracking-wider text-text-muted hidden lg:table-cell whitespace-nowrap">Turma</th>
                                 <th className="p-5 font-semibold text-xs uppercase tracking-wider text-text-muted text-center w-[160px] whitespace-nowrap">Status</th>
+                                <th className="p-5 font-semibold text-xs uppercase tracking-wider text-text-muted text-center w-[160px] whitespace-nowrap">Data Pagto.</th>
                                 <th className="p-5 font-semibold text-xs uppercase tracking-wider text-text-muted text-right w-[180px] whitespace-nowrap">Valor Final</th>
                             </tr>
                         </thead>
@@ -391,6 +392,17 @@ export const Payments = () => {
                                                 </div>
                                             </div>
                                         </td>
+                                        <td className="p-5 align-middle text-center">
+                                            <div className={`relative ${isExempt ? 'opacity-50 grayscale' : ''}`}>
+                                                <input
+                                                    type="date"
+                                                    className="w-full bg-white/5 border border-white/10 rounded-xl outline-none py-2.5 px-3 text-sm transition-all focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/50 text-text-main text-center cursor-pointer disabled:cursor-not-allowed"
+                                                    value={payment.paid_at || ''}
+                                                    onChange={e => updateLocalPayment(student.id, 'paid_at', e.target.value)}
+                                                    disabled={isExempt}
+                                                />
+                                            </div>
+                                        </td>
                                         <td className="p-5 align-middle text-right">
                                             <div className={`relative flex items-center justify-end ${isExempt ? 'opacity-50 grayscale' : ''}`}>
                                                 <span className="absolute left-3 text-text-muted font-mono text-sm">R$</span>
@@ -409,7 +421,7 @@ export const Payments = () => {
                             })}
                             {students.length === 0 && !loading && (
                                 <tr>
-                                    <td colSpan={5} className="p-12 text-center">
+                                    <td colSpan={6} className="p-12 text-center">
                                         <div className="flex flex-col items-center justify-center text-white/30">
                                             <DollarSign size={48} className="mb-4 opacity-50" />
                                             <p className="text-lg font-medium">Nenhum aluno no filtro atual</p>
