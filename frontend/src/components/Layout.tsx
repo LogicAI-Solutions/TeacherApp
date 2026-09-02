@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { ErrorBoundary } from './ErrorBoundary';
-import { LogOut, LayoutDashboard, GraduationCap, BookOpen, Menu, X, ChevronLeft, ChevronRight, Settings, UserCircle, DollarSign, MessageCircle } from 'lucide-react';
+import { LogOut, LayoutDashboard, GraduationCap, BookOpen, Menu, X, ChevronLeft, ChevronRight, Settings, UserCircle, DollarSign } from 'lucide-react';
 
 export const Layout = () => {
     const { logout, user } = useAuth();
@@ -26,10 +26,6 @@ export const Layout = () => {
     const handleLogout = () => {
         logout();
         navigate('/login');
-    };
-
-    const handleSupport = () => {
-        window.open('https://wa.me/5521974546156?text=Ol%C3%A1,+preciso+de+suporte+no+sistema+de+gest%C3%A3o.', '_blank');
     };
 
     const handleOpenProfile = () => {
